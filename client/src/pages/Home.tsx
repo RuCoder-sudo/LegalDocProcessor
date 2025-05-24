@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import DocumentWizard from "@/components/DocumentWizard";
 import PremiumGate from "@/components/PremiumGate";
-import { DOCUMENT_TYPES, SUBSCRIPTION_LIMITS } from "@/lib/constants";
+import { DOCUMENT_TYPES, SUBSCRIPTION_PLANS } from "@/lib/constants";
 import { UserDocument, Notification } from "@/lib/types";
 import { 
   Plus, 
@@ -278,7 +278,7 @@ export default function Home() {
                 {user?.subscription === 'premium' ? (
                   <div className="space-y-3">
                     <ul className="text-sm space-y-2">
-                      {SUBSCRIPTION_LIMITS.premium.features.slice(0, 3).map((feature, index) => (
+                      {SUBSCRIPTION_PLANS.premium.features.slice(0, 3).map((feature: string, index: number) => (
                         <li key={index} className="flex items-center gap-2">
                           <i className="fas fa-check text-success w-4"></i>
                           {feature}
@@ -293,7 +293,7 @@ export default function Home() {
                 ) : (
                   <div className="space-y-3">
                     <ul className="text-sm space-y-2">
-                      {SUBSCRIPTION_LIMITS.free.features.slice(0, 3).map((feature, index) => (
+                      {SUBSCRIPTION_PLANS.free.features.slice(0, 3).map((feature: string, index: number) => (
                         <li key={index} className="flex items-center gap-2">
                           <i className="fas fa-check text-success w-4"></i>
                           {feature}

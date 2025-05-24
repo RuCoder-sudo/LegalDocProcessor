@@ -38,6 +38,9 @@ export const users = pgTable("users", {
   premiumUntil: timestamp("premium_until"),
   telegramBotToken: varchar("telegram_bot_token"),
   telegramChannelId: varchar("telegram_channel_id"),
+  referralCode: varchar("referral_code").unique(),
+  referredBy: varchar("referred_by").references(() => users.id),
+  referralEarnings: integer("referral_earnings").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
