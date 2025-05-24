@@ -3,7 +3,9 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DocumentWizard from "@/components/DocumentWizard";
+import AuthForms from "@/components/AuthForms";
 import { DOCUMENT_TYPES } from "@/lib/constants";
 import { 
   Scale, 
@@ -35,14 +37,20 @@ export default function Landing() {
               Политики конфиденциальности, пользовательские соглашения и другие обязательные документы для вашего сайта.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                className="px-8 py-4 text-lg font-semibold transition-all transform hover:scale-105"
-                onClick={() => setWizardOpen(true)}
-              >
-                <Rocket className="mr-2 h-5 w-5" />
-                Начать создание
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    size="lg" 
+                    className="px-8 py-4 text-lg font-semibold transition-all transform hover:scale-105"
+                  >
+                    <Rocket className="mr-2 h-5 w-5" />
+                    Начать создание
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <AuthForms />
+                </DialogContent>
+              </Dialog>
               <Button 
                 variant="outline" 
                 size="lg" 
