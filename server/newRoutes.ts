@@ -1,14 +1,67 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupSimpleAuth, requireAuth } from "./simpleAuth";
+import session from "express-session";
 import { users, userDocuments, blogPosts, adminSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+// Auth middleware
+const requireAuth = async (req: any, res: any, next: any) => {
+  try {
+    const userId = req.session?.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "Необходима авторизация" });
+    }
+
+    // Проверяем админа
+    if (userId === "admin_main") {
+      const adminUser = {
+        id: "admin_main",
+        email: "rucoder.rf@yandex.ru",
+        firstName: "Admin",
+        lastName: "User",
+        role: "admin" as const,
+        subscription: "premium" as const,
+        documentsCreated: 0,
+        documentsLimit: -1
+      };
+      req.user = adminUser;
+      return next();
+    }
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return res.status(401).json({ message: "Пользователь не найден" });
+    }
+
+    req.user = { ...user, password: undefined };
+    next();
+  } catch (error) {
+    console.error("Auth middleware error:", error);
+    res.status(401).json({ message: "Ошибка авторизации" });
+  }
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Simple Auth middleware
-  setupSimpleAuth(app);
+  // Session middleware
+  app.use(session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      httpOnly: false,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'lax'
+    }
+  }));
 
   // Регистрация пользователя
   app.post('/api/register', async (req, res) => {
@@ -89,6 +142,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email и пароль обязательны" });
       }
 
+      // Проверяем админа
+      if (email === "rucoder.rf@yandex.ru" && password === "lizeR3056806") {
+        const adminUser = {
+          id: "admin_main",
+          email: "rucoder.rf@yandex.ru",
+          firstName: "Admin",
+          lastName: "User",
+          role: "admin" as const,
+          subscription: "premium" as const,
+          documentsCreated: 0,
+          documentsLimit: -1
+        };
+
+        (req as any).session.userId = adminUser.id;
+        (req as any).session.user = adminUser;
+        
+        console.log("Admin login - session set:", (req as any).session);
+        
+        // Принудительно сохраняем сессию
+        (req as any).session.save((err: any) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Ошибка сохранения сессии" });
+          }
+          console.log("Session saved successfully");
+          res.json({ 
+            message: "Вход выполнен успешно", 
+            user: adminUser 
+          });
+        });
+        return;
+      }
+
       // Находим пользователя
       const [user] = await db
         .select()
@@ -100,37 +186,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Неверный email или пароль" });
       }
 
+      // Проверяем пароль
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Неверный email или пароль" });
+      }
+
       // Устанавливаем сессию
       (req as any).session.userId = user.id;
-      (req as any).session.user = user;
+      (req as any).session.user = { ...user, password: undefined };
       
-      console.log('Login - session set:', (req as any).session);
+      console.log('User login - session set:', (req as any).session);
       
       // Сохраняем сессию принудительно
-      await new Promise((resolve, reject) => {
-        (req as any).session.save((err: any) => {
-          if (err) {
-            console.error('Session save error:', err);
-            reject(err);
-          } else {
-            console.log('Session saved successfully');
-            resolve(true);
+      (req as any).session.save((err: any) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ message: "Ошибка сохранения сессии" });
+        }
+        console.log('Session saved successfully');
+        
+        res.json({ 
+          message: "Вход выполнен успешно",
+          user: {
+            id: user.id, 
+            email: user.email, 
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            subscription: user.subscription,
+            documentsCreated: user.documentsCreated,
+            documentsLimit: user.documentsLimit
           }
         });
-      });
-      
-      res.json({ 
-        message: "Вход выполнен успешно",
-        user: {
-          id: user.id, 
-          email: user.email, 
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-          subscription: user.subscription,
-          documentsCreated: user.documentsCreated,
-          documentsLimit: user.documentsLimit
-        }
       });
     } catch (error) {
       console.error("Ошибка входа:", error);
@@ -153,32 +241,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('Session data:', (req as any).session);
       const userId = (req as any).session?.userId;
+      const user = (req as any).session?.user;
       
-      if (!userId) {
+      if (!userId || !user) {
         console.log('No userId in session');
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const [user] = await db
+      // Если это админ, возвращаем данные админа
+      if (userId === "admin_main") {
+        return res.json(user);
+      }
+
+      // Для обычных пользователей получаем свежие данные из БД
+      const userResults = await db
         .select()
         .from(users)
         .where(eq(users.id, userId))
         .limit(1);
 
-      if (!user) {
+      const dbUser = userResults[0];
+
+      if (!dbUser) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      res.json({
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        subscription: user.subscription,
-        documentsCreated: user.documentsCreated,
-        documentsLimit: user.documentsLimit
-      });
+      const userResponse = {
+        id: dbUser.id,
+        email: dbUser.email,
+        firstName: dbUser.firstName,
+        lastName: dbUser.lastName,
+        role: dbUser.role,
+        subscription: dbUser.subscription,
+        documentsCreated: dbUser.documentsCreated,
+        documentsLimit: dbUser.documentsLimit
+      };
+
+      res.json(userResponse);
     } catch (error) {
       console.error("Ошибка получения пользователя:", error);
       res.status(500).json({ message: "Ошибка сервера" });
