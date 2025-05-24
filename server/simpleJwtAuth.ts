@@ -209,8 +209,11 @@ export function setupJwtAuth(app: Express) {
         return res.status(401).json({ message: "Invalid token" });
       }
 
+      console.log("Token data:", tokenData);
+
       // Если это админ
-      if (tokenData.id === "admin_main") {
+      if (tokenData.id === "admin_main" && tokenData.role === "admin") {
+        console.log("Admin user authenticated via token");
         return res.json({
           id: "admin_main",
           email: "rucoder.rf@yandex.ru",

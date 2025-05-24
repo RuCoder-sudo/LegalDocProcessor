@@ -44,6 +44,45 @@ export default function Admin() {
 
   // Проверяем права доступа
   if (!user || user.role !== 'admin') {
+    // Попробуем получить токен и проверить авторизацию с ним напрямую
+    const getToken = () => {
+      const localToken = localStorage.getItem('auth-token');
+      if (localToken) return localToken;
+      
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'auth-token') return value;
+      }
+      return null;
+    };
+    
+    const token = getToken();
+    if (token) {
+      console.log("Найден токен, проверяем права доступа к админке...");
+      
+      // Сделаем запрос с токеном, чтобы проверить авторизацию
+      setTimeout(() => {
+        fetch("/api/auth/user", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: "include"
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Ошибка авторизации");
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.role === 'admin') {
+            console.log("Доступ подтвержден через токен, обновляем страницу");
+            window.location.reload();
+          }
+        })
+        .catch(e => console.error("Ошибка проверки токена:", e));
+      }, 500);
+    }
+    
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
@@ -53,10 +92,13 @@ export default function Admin() {
               У вас нет прав для доступа к панели администратора
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
-            <Button asChild>
-              <a href="/api/login">Войти как администратор</a>
+          <CardContent className="text-center space-y-4">
+            <Button asChild className="w-full">
+              <a href="/test-login">Войти как администратор</a>
             </Button>
+            <div className="text-sm text-gray-500">
+              Если вы уже вошли как администратор, попробуйте обновить страницу
+            </div>
           </CardContent>
         </Card>
       </div>

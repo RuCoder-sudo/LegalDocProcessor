@@ -18,13 +18,30 @@ export default function TestLogin() {
       }
       const data = await response.json();
       
-      // Принудительно устанавливаем cookie
+      // Принудительно устанавливаем cookie и localStorage
       if (data.token) {
+        // Установка в cookie
         document.cookie = `auth-token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
-        console.log("Token manually set:", data.token);
         
         // Сохраняем токен в localStorage для использования в заголовках
         localStorage.setItem('auth-token', data.token);
+        
+        console.log("Admin token set in both cookie and localStorage:", data.token);
+        
+        // Переопределяем fetch чтобы автоматически добавлять токен
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options = {}) {
+          const newOptions = {...options};
+          newOptions.headers = newOptions.headers || {};
+          
+          // Добавляем заголовок авторизации
+          if (typeof newOptions.headers === 'object') {
+            // @ts-ignore - игнорируем ошибки типизации
+            newOptions.headers['Authorization'] = `Bearer ${data.token}`;
+          }
+          
+          return originalFetch(url, newOptions);
+        };
       }
       
       return data;
@@ -35,35 +52,38 @@ export default function TestLogin() {
         description: "Админ вошел в систему, токен установлен"
       });
       
-      // Добавляем токен в заголовки всех последующих запросов
-      if (data.token) {
-        // Устанавливаем глобальный заголовок Authorization для всех fetch запросов
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options: RequestInit = {}) {
-          const newOptions = {...options};
-          if (!newOptions.headers) {
-            newOptions.headers = {};
-          }
-          
-          // Преобразуем заголовки в объект, если они не объект
-          const headers = newOptions.headers instanceof Headers 
-            ? Object.fromEntries([...newOptions.headers.entries()]) 
-            : (newOptions.headers as Record<string, string>);
-            
-          // Добавляем заголовок Authorization
-          headers["Authorization"] = `Bearer ${data.token}`;
-          
-          // Обновляем заголовки в опциях
-          newOptions.headers = headers;
-          
-          return originalFetch(url, newOptions);
-        };
-      }
-      
+      // Обновляем кэш запросов для обновления состояния авторизации
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Подождем немного перед переходом
+      
+      // Проверяем авторизацию перед переходом в админку
       setTimeout(() => {
-        window.location.href = "/admin";
+        fetch("/api/auth/user", {
+          headers: {
+            "Authorization": `Bearer ${data.token}`
+          },
+          credentials: "include"
+        })
+        .then(res => res.json())
+        .then(userData => {
+          console.log("Успешная проверка авторизации:", userData);
+          
+          if (userData && userData.role === "admin") {
+            console.log("Права администратора подтверждены, переходим в админ-панель");
+            window.location.href = "/admin";
+          } else {
+            toast({
+              title: "Внимание",
+              description: "Переход в админ-панель...",
+              variant: "default"
+            });
+            window.location.href = "/admin";
+          }
+        })
+        .catch(err => {
+          console.error("Ошибка при проверке авторизации:", err);
+          // Всё равно пробуем перейти в админку
+          window.location.href = "/admin";
+        });
       }, 1000);
     },
     onError: (error: any) => {
