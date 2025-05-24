@@ -55,19 +55,18 @@ const requireAuth = async (req: any, res: any, next: any) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session middleware with MemoryStore
   app.use(session({
+    secret: process.env.SESSION_SECRET || "your-very-secure-secret-key-2024",
+    store: new MemStore({
+      checkPeriod: 86400000 // очистка каждые 24 часа
+    }),
+    resave: true,
+    saveUninitialized: true,
     cookie: {
       maxAge: 86400000, // 24 часа
       httpOnly: false,
       secure: false,
       sameSite: 'lax'
-    },
-    store: new MemStore({
-      checkPeriod: 86400000 // очистка каждые 24 часа
-    }),
-    secret: process.env.SESSION_SECRET || "your-very-secure-secret-key-2024",
-    resave: false,
-    saveUninitialized: false,
-    name: 'sessionId'
+    }
   }));
 
   // Регистрация пользователя
@@ -93,14 +92,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Пользователь с таким email уже существует" });
       }
 
+      // Генерируем уникальный ID
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
       // Создаем нового пользователя
       const result = await db
         .insert(users)
         .values({
+          id: userId,
           email,
           password: hashedPassword,
-          firstName: firstName || '',
-          lastName: lastName || '',
+          firstName: firstName || null,
+          lastName: lastName || null,
           role: 'user',
           subscription: 'free',
           documentsCreated: 0,
@@ -296,6 +299,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Ошибка получения пользователя:", error);
       res.status(500).json({ message: "Ошибка сервера" });
     }
+  });
+
+  // Тестовый эндпоинт для проверки системы
+  app.get('/api/test/auth', (req, res) => {
+    res.json({
+      message: "Auth system is working",
+      session: {
+        id: (req as any).sessionID,
+        userId: (req as any).session?.userId,
+        hasUser: !!(req as any).session?.user
+      },
+      cookies: req.headers.cookie
+    });
   });
 
   // Получение документов пользователя
