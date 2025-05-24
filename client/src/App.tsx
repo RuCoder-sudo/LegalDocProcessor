@@ -52,10 +52,11 @@ function Router() {
             <Route path="/dashboard" component={Home} />
             <Route path="/documents" component={Home} />
             <Route path="/notifications" component={Home} />
+            <Route path="/admin" component={Admin} />
           </>
         )}
         
-        {/* Admin routes - accessible even if not fully authenticated */}
+        {/* Admin routes fallback */}
         <Route path="/admin" component={Admin} />
         
         {/* Fallback to 404 */}

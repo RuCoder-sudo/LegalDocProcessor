@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { DOCUMENT_TYPES, INDUSTRIES } from "@/lib/constants";
 import { DocumentFormData } from "@/lib/types";
-import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles, Copy } from "lucide-react";
 
 const formSchema = z.object({
   type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return"]),

@@ -204,9 +204,9 @@ Email: info@education-platform.ru`
             <div className="overflow-x-auto pb-2">
               <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 h-auto p-1">
                 {Object.entries(DOCUMENT_TYPES).map(([key, type]) => (
-                  <TabsTrigger key={key} value={key} className="text-xs">
-                    <i className={`${type.icon} mr-1`}></i>
-                    <span className="hidden sm:inline">{type.name}</span>
+                  <TabsTrigger key={key} value={key} className="text-xs sm:text-sm p-2 sm:p-3 flex-1 min-w-fit">
+                    <i className={`${type.icon} mr-1 sm:mr-2`}></i>
+                    <span className="truncate">{type.name.split(' ')[0]}</span>
                   </TabsTrigger>
                 ))}
               </TabsList>

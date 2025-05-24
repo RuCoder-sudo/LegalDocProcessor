@@ -136,11 +136,20 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <a href="/api/logout" className="cursor-pointer">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Выйти
-                      </a>
+                    <DropdownMenuItem 
+                      onClick={async () => {
+                        try {
+                          await fetch("/api/logout", { method: "POST" });
+                          window.location.href = "/";
+                        } catch (error) {
+                          console.error("Logout error:", error);
+                          window.location.href = "/";
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Выйти
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
