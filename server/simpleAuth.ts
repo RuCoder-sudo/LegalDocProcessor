@@ -77,6 +77,30 @@ export function setupSimpleAuth(app: Express) {
         return res.status(400).json({ message: "Email и пароль обязательны" });
       }
 
+      // Проверяем админа
+      if (email === "rucoder.rf@yandex.ru" && password === "lizeR3056806") {
+        const adminUser = {
+          id: "admin_main",
+          email: "rucoder.rf@yandex.ru",
+          firstName: "Admin",
+          lastName: "User",
+          role: "admin" as const,
+          subscription: "premium" as const,
+          documentsCreated: 0,
+          documentsLimit: -1
+        };
+
+        // @ts-ignore
+        req.session.userId = adminUser.id;
+        // @ts-ignore
+        req.session.user = adminUser;
+
+        return res.json({ 
+          message: "Вход выполнен успешно", 
+          user: adminUser 
+        });
+      }
+
       // Находим пользователя
       const [user] = await db
         .select()
@@ -97,6 +121,8 @@ export function setupSimpleAuth(app: Express) {
       // Сохраняем в сессии
       // @ts-ignore
       req.session.userId = user.id;
+      // @ts-ignore
+      req.session.user = { ...user, password: undefined };
       
       // Возвращаем пользователя без пароля
       const { password: _, ...userWithoutPassword } = user;
@@ -154,6 +180,23 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
     
     if (!userId) {
       return res.status(401).json({ message: "Необходима авторизация" });
+    }
+
+    // Проверяем админа
+    if (userId === "admin_main") {
+      const adminUser = {
+        id: "admin_main",
+        email: "rucoder.rf@yandex.ru",
+        firstName: "Admin",
+        lastName: "User",
+        role: "admin" as const,
+        subscription: "premium" as const,
+        documentsCreated: 0,
+        documentsLimit: -1
+      };
+      // @ts-ignore
+      req.user = adminUser;
+      return next();
     }
 
     const [user] = await db
