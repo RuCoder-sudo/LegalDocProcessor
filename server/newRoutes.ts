@@ -10,13 +10,67 @@ import bcrypt from "bcryptjs";
 // Auth middleware
 const requireAuth = async (req: any, res: any, next: any) => {
   try {
+    // Пробуем получить из сессии
     const userId = req.session?.userId;
     
+    // Проверяем JWT токен, если в сессии нет данных
     if (!userId) {
-      return res.status(401).json({ message: "Необходима авторизация" });
+      // Проверяем токен в куках или заголовке Authorization
+      let token = req.cookies['auth-token'];
+      
+      if (!token && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+          token = authHeader.substring(7);
+        }
+      }
+      
+      console.log("Auth middleware - Cookie token:", req.cookies['auth-token'] ? "present" : "missing");
+      console.log("Auth middleware - Auth header:", req.headers.authorization ? "present" : "missing");
+      
+      if (!token) {
+        return res.status(401).json({ message: "Необходима авторизация" });
+      }
+      
+      try {
+        // Декодируем токен (простая реализация для примера)
+        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
+        
+        // Если это админ из токена
+        if (decoded.id === "admin_main" && decoded.role === "admin") {
+          const adminUser = {
+            id: "admin_main",
+            email: "rucoder.rf@yandex.ru",
+            firstName: "Admin",
+            lastName: "User",
+            role: "admin" as const,
+            subscription: "premium" as const,
+            documentsCreated: 0,
+            documentsLimit: -1
+          };
+          req.user = adminUser;
+          return next();
+        }
+        
+        // Обычный пользователь из токена
+        const [tokenUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, decoded.id))
+          .limit(1);
+          
+        if (tokenUser) {
+          req.user = { ...tokenUser, password: undefined };
+          return next();
+        }
+      } catch (err) {
+        console.error("Token decode error:", err);
+      }
+      
+      return res.status(401).json({ message: "Неверный токен авторизации" });
     }
 
-    // Проверяем админа
+    // Проверяем админа из сессии
     if (userId === "admin_main") {
       const adminUser = {
         id: "admin_main",
@@ -87,6 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       role: adminUser.role
     })).toString('base64');
 
+    // Устанавливаем cookie
     res.cookie('auth-token', token, {
       httpOnly: false,
       secure: false,
@@ -95,7 +150,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
     
     console.log("TEST - Admin logged in with JWT token");
+    console.log("Set cookie auth-token:", token);
     
+    // Возвращаем токен в ответе для установки в заголовках
     res.json({ 
       message: "Test admin login successful with JWT", 
       user: adminUser,

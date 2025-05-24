@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/components/Layout";
+import { useEffect } from "react";
 import Landing from "@/pages/Landing";
 import Home from "@/pages/Home";
 import Premium from "@/pages/Premium";
@@ -27,7 +28,60 @@ import TestLogin from "@/pages/TestLogin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  // Регистрируем глобальный обработчик для всех fetch запросов
+  useEffect(() => {
+    // Получаем токен из cookie или localStorage
+    const getToken = () => {
+      const localToken = localStorage.getItem('auth-token');
+      if (localToken) return localToken;
+      
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'auth-token') return value;
+      }
+      return null;
+    };
+    
+    const token = getToken();
+    if (token) {
+      console.log("Found authentication token, adding to all future requests");
+      
+      // Monkey patch fetch to include Authorization header
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options: RequestInit = {}) {
+        const newOptions = {...options};
+        
+        // Make sure headers exist
+        if (!newOptions.headers) {
+          newOptions.headers = {};
+        }
+        
+        // Convert headers to a regular object
+        let headerObj: Record<string, string> = {};
+        
+        if (newOptions.headers instanceof Headers) {
+          // For Headers object
+          newOptions.headers.forEach((value, key) => {
+            headerObj[key] = value;
+          });
+        } else if (typeof newOptions.headers === 'object') {
+          // For plain object
+          headerObj = {...newOptions.headers as Record<string, string>};
+        }
+        
+        // Add Authorization header if not present
+        if (!headerObj.Authorization && !headerObj.authorization) {
+          headerObj.Authorization = `Bearer ${token}`;
+        }
+        
+        newOptions.headers = headerObj;
+        return originalFetch(url, newOptions);
+      };
+    }
+  }, [user]);
 
   if (isLoading) {
     return (

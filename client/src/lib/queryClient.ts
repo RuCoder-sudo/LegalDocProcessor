@@ -13,10 +13,16 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const token = getAuthToken();
-  const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
+  // Всегда добавляем Content-Type для всех запросов
+  const headers: Record<string, string> = { 
+    "Content-Type": "application/json" 
+  };
   
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    console.log(`Sending request to ${url} with token`);
+  } else {
+    console.log(`Sending request to ${url} without token`);
   }
 
   const res = await fetch(url, {

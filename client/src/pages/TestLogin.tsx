@@ -34,6 +34,32 @@ export default function TestLogin() {
         title: "Тестовый вход выполнен!",
         description: "Админ вошел в систему, токен установлен"
       });
+      
+      // Добавляем токен в заголовки всех последующих запросов
+      if (data.token) {
+        // Устанавливаем глобальный заголовок Authorization для всех fetch запросов
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options: RequestInit = {}) {
+          const newOptions = {...options};
+          if (!newOptions.headers) {
+            newOptions.headers = {};
+          }
+          
+          // Преобразуем заголовки в объект, если они не объект
+          const headers = newOptions.headers instanceof Headers 
+            ? Object.fromEntries([...newOptions.headers.entries()]) 
+            : (newOptions.headers as Record<string, string>);
+            
+          // Добавляем заголовок Authorization
+          headers["Authorization"] = `Bearer ${data.token}`;
+          
+          // Обновляем заголовки в опциях
+          newOptions.headers = headers;
+          
+          return originalFetch(url, newOptions);
+        };
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       // Подождем немного перед переходом
       setTimeout(() => {
