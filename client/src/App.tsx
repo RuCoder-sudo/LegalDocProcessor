@@ -14,6 +14,7 @@ import Generator from "@/pages/Generator";
 import News from "@/pages/News";
 import Contacts from "@/pages/Contacts";
 import Admin from "@/pages/Admin";
+import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
@@ -51,7 +52,7 @@ function Router() {
         {/* Protected routes */}
         {isAuthenticated && (
           <>
-            <Route path="/dashboard" component={Home} />
+            <Route path="/dashboard" component={Dashboard} />
             <Route path="/documents" component={Home} />
             <Route path="/notifications" component={Home} />
             <Route path="/admin" component={Admin} />

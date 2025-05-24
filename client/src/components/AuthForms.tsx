@@ -43,15 +43,19 @@ export default function AuthForms() {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast({
         title: "Успешный вход",
         description: "Добро пожаловать!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Переадресация на главную страницу после успешного входа
+      // Переходим в соответствующий раздел в зависимости от роли
       setTimeout(() => {
-        window.location.href = "/";
+        if (data.user?.role === 'admin') {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/dashboard";
+        }
       }, 500);
     },
     onError: (error: any) => {

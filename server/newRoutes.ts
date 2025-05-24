@@ -185,6 +185,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Получение документов пользователя
+  app.get('/api/user/documents', async (req, res) => {
+    try {
+      const userId = (req as any).session?.userId;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const userDocs = await db
+        .select()
+        .from(userDocuments)
+        .where(eq(userDocuments.userId, userId))
+        .orderBy(desc(userDocuments.createdAt));
+
+      res.json(userDocs);
+    } catch (error) {
+      console.error("Error fetching user documents:", error);
+      res.status(500).json({ message: "Ошибка при загрузке документов" });
+    }
+  });
+
   // Blog posts (public)
   app.get('/api/blog', async (req, res) => {
     try {
