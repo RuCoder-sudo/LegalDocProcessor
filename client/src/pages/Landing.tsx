@@ -29,8 +29,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Создавайте юридические документы{" "}
-              <span className="text-primary">за минуты</span>
+              <span className="gradient-text animate-gradient">Автоматическое создание юридических документов</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               Профессиональная платформа для автоматического создания документов в соответствии с 152-ФЗ. 

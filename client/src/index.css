@@ -172,6 +172,41 @@
   color: hsl(var(--premium-foreground));
 }
 
+/* Gradient text animation */
+.gradient-text {
+  background: linear-gradient(
+    45deg,
+    hsl(var(--primary)),
+    hsl(var(--premium)),
+    hsl(var(--success)),
+    hsl(var(--warning)),
+    hsl(var(--primary))
+  );
+  background-size: 400% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.animate-gradient {
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Logo title color fix for dark mode */
+.dark .logo-title {
+  color: hsl(var(--foreground)) !important;
+}
+
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
