@@ -344,21 +344,17 @@ async function generateDocumentContent(type: string, formData: any): Promise<str
   console.log('Generating document content for type:', type);
   console.log('FormData received:', formData);
   
-  if (!formData || typeof formData !== 'object') {
-    console.error('Invalid formData:', formData);
-    throw new Error('FormData is required and must be an object');
-  }
+  // Извлекаем данные напрямую из formData, учитывая возможные вложенности
+  const companyName = formData?.companyName || formData?.company_name || 'Не указано';
+  const inn = formData?.inn || 'Не указан';
+  const legalAddress = formData?.legalAddress || formData?.legal_address || 'Не указан';
+  const websiteUrl = formData?.websiteUrl || formData?.website_url || 'example.com';
+  const contactEmail = formData?.contactEmail || formData?.contact_email || 'contact@example.com';
+  const phone = formData?.phone || 'Не указан';
+  const registrar = formData?.registrar || 'Не указан';
+  const hostingProvider = formData?.hostingProvider || formData?.hosting_provider || 'Не указан';
   
-  const { 
-    companyName = 'Не указано', 
-    inn = 'Не указан', 
-    legalAddress = 'Не указан', 
-    websiteUrl = 'Не указан', 
-    contactEmail = 'Не указан', 
-    phone = 'Не указан', 
-    registrar = 'Не указан', 
-    hostingProvider = 'Не указан' 
-  } = formData;
+  console.log('Extracted values:', { companyName, inn, legalAddress, websiteUrl, contactEmail });
   
   if (type === 'privacy') {
     return `ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ

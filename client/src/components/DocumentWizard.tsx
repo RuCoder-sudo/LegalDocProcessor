@@ -66,7 +66,18 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
 
   const createDocumentMutation = useMutation({
     mutationFn: async (data: DocumentFormData) => {
-      const response = await apiRequest("POST", "/api/documents", data);
+      console.log('Sending document data:', data);
+      const response = await fetch("/api/documents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Ошибка создания документа');
+      }
       return response.json();
     },
     onSuccess: (document) => {

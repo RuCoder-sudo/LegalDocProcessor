@@ -13,6 +13,7 @@ import Examples from "@/pages/Examples";
 import News from "@/pages/News";
 import Contacts from "@/pages/Contacts";
 import Admin from "@/pages/Admin";
+import Login from "@/pages/Login";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import Important from "@/pages/Important";
@@ -35,7 +36,7 @@ function Router() {
         {/* Public routes */}
         <Route path="/" component={isAuthenticated ? Home : Landing} />
         <Route path="/auth" component={Landing} />
-        <Route path="/login" component={Landing} />
+        <Route path="/login" component={Login} />
         <Route path="/premium" component={Premium} />
         <Route path="/examples" component={Examples} />
         <Route path="/news" component={News} />
