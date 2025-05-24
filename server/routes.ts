@@ -282,7 +282,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Page generation endpoint
-  app.post("/api/generate-page", isAuthenticated, async (req, res) => {
+  app.post("/api/generate-page", async (req, res) => {
+    const session = req.session as any;
+    const userId = session?.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "Требуется авторизация" });
+    }
     try {
       const { pageType, siteName, companyName, industry, contactEmail, phone, address, specialOffers, targetAudience } = req.body;
       
