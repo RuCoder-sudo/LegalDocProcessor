@@ -49,9 +49,11 @@ function Router() {
           <>
             <Route path="/dashboard" component={Home} />
             <Route path="/documents" component={Home} />
-            <Route path="/admin" component={Admin} />
           </>
         )}
+        
+        {/* Admin routes - accessible even if not fully authenticated */}
+        <Route path="/admin" component={Admin} />
         
         {/* Fallback to 404 */}
         <Route component={NotFound} />

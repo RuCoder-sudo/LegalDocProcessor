@@ -289,7 +289,7 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Free Plan */}
             <Card className="border-2">
               <CardHeader>
@@ -368,6 +368,42 @@ export default function Landing() {
                   <Link href="/premium">
                     <Crown className="mr-2 h-4 w-4" />
                     Узнать больше
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Ultra Plan */}
+            <Card className="border-2 border-gray-200">
+              <CardHeader>
+                <div className="text-center">
+                  <CardTitle className="text-2xl">Ультра</CardTitle>
+                  <div className="text-4xl font-bold my-2">₽4,990</div>
+                  <CardDescription>в месяц</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <span>Все функции Премиум</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <span>Персональный менеджер</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <span>Юридические консультации</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <span>Индивидуальные шаблоны</span>
+                  </li>
+                </ul>
+                <Button className="w-full" variant="outline" asChild>
+                  <Link href="/contacts">
+                    Связаться с нами
                   </Link>
                 </Button>
               </CardContent>

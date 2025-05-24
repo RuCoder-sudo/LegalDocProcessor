@@ -176,13 +176,16 @@
 .gradient-text {
   background: linear-gradient(
     45deg,
-    hsl(var(--primary)),
-    hsl(var(--premium)),
-    hsl(var(--success)),
-    hsl(var(--warning)),
-    hsl(var(--primary))
+    #1e40af,
+    #3b82f6,
+    #60a5fa,
+    #93c5fd,
+    #dbeafe,
+    #60a5fa,
+    #3b82f6,
+    #1e40af
   );
-  background-size: 400% 400%;
+  background-size: 800% 800%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -190,21 +193,74 @@
 }
 
 .animate-gradient {
-  animation: gradientShift 4s ease-in-out infinite;
+  animation: gradientShift 8s ease-in-out infinite;
 }
 
 @keyframes gradientShift {
   0%, 100% {
     background-position: 0% 50%;
   }
-  50% {
+  25% {
     background-position: 100% 50%;
+  }
+  50% {
+    background-position: 200% 50%;
+  }
+  75% {
+    background-position: 300% 50%;
   }
 }
 
 /* Logo title color fix for dark mode */
 .dark .logo-title {
   color: hsl(var(--foreground)) !important;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  .mobile-center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mobile-spacing {
+    padding: 1rem;
+    margin: 0.5rem 0;
+  }
+  
+  .mobile-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .mobile-card {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+}
+
+/* Document wizard mobile optimization */
+.wizard-mobile {
+  @apply p-4 space-y-4;
+}
+
+@media (max-width: 640px) {
+  .wizard-mobile {
+    @apply p-2 space-y-2;
+  }
+  
+  .wizard-mobile .form-field {
+    @apply mb-3;
+  }
+  
+  .wizard-mobile input,
+  .wizard-mobile textarea,
+  .wizard-mobile select {
+    @apply text-base;
+  }
 }
 
 /* Custom scrollbar */
