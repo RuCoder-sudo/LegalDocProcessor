@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+// import { useTheme } from "@/components/ThemeProvider";
 import type { AuthUser } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Menu, X, Scale, Crown, User, LogOut, Settings, Bell } from "lucide-react";
+import ScrollToTop from "@/components/ScrollToTop";
+import { Menu, X, Scale, Crown, User, LogOut, Settings, Bell, Sun, Moon } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,6 +24,7 @@ interface LayoutProps {
 export default function Layout({ children, showFooter = true }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
+  // const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
 
   const navigation = [
@@ -255,25 +258,31 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
               <div className="text-center text-xs text-gray-500">
                 <p className="mb-2">
                   <i className="fas fa-exclamation-triangle mr-1"></i>
-                  Документы, создаваемые на платформе, носят информационный характер. 
-                  Для решения сложных правовых вопросов рекомендуется консультация с квалифицированным юристом.
+                  Документы,создаваемыенаплатформе,носятинформационныйхарактер.Длярешениясложныхправовыхвопросоврекомендуетсяконсультациясквалифицированнымюристом.Сайтиспользуетфайлыcookiedляулучшенияпользовательскогоопыта.Продолжаяиспользованиесайта,высоглашаетесьсобработкойданных.
                 </p>
-                <p>
-                  Сайт использует файлы cookie для улучшения пользовательского опыта. 
-                  Продолжая использование сайта, вы соглашаетесь с обработкой данных.
-                </p>
-                <div className="mt-4 space-x-4">
-                  <Link href="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link>
-                  <span className="text-gray-600">•</span>
-                  <Link href="/terms" className="hover:text-primary transition-colors">Пользовательское соглашение</Link>
-                  <span className="text-gray-600">•</span>
-                  <Link href="/important" className="hover:text-primary transition-colors">Отказ от ответственности</Link>
+                <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <div className="flex items-center space-x-4">
+                    <Link href="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link>
+                    <span className="text-gray-600">•</span>
+                    <Link href="/terms" className="hover:text-primary transition-colors">Пользовательское соглашение</Link>
+                    <span className="text-gray-600">•</span>
+                    <Link href="/important" className="hover:text-primary transition-colors">Отказ от ответственности</Link>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => document.documentElement.classList.toggle('dark')}
+                    className="p-2"
+                  >
+                    <Moon className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </footer>
       )}
+      <ScrollToTop />
     </div>
   );
 }
