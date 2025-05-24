@@ -23,6 +23,7 @@ import Login from "@/pages/Login";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import Important from "@/pages/Important";
+import TestLogin from "@/pages/TestLogin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -56,6 +57,7 @@ function Router() {
         <Route path="/privacy" component={Privacy} />
         <Route path="/terms" component={Terms} />
         <Route path="/important" component={Important} />
+        <Route path="/test-login" component={TestLogin} />
         
         {/* Protected routes */}
         {isAuthenticated && (

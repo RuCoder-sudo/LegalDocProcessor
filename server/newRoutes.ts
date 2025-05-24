@@ -62,22 +62,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Session middleware with MemoryStore
+  // Session middleware - простая и надежная конфигурация
   app.use(session({
-    secret: process.env.SESSION_SECRET || "your-very-secure-secret-key-2024",
-    store: new MemStore({
-      checkPeriod: 86400000 // очистка каждые 24 часа
-    }),
-    resave: false,
-    saveUninitialized: false,
+    secret: 'simple-secret-key-for-development-2024',
+    resave: true,
+    saveUninitialized: true,
     cookie: {
-      maxAge: 86400000, // 24 часа
-      httpOnly: false,
       secure: false,
-      sameSite: 'none',
-      path: '/'
-    },
-    name: 'connect.sid'
+      httpOnly: false,
+      maxAge: 24 * 60 * 60 * 1000 // 24 часа
+    }
   }));
 
   // Регистрация пользователя
@@ -310,6 +304,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Ошибка получения пользователя:", error);
       res.status(500).json({ message: "Ошибка сервера" });
     }
+  });
+
+  // Простой тест для проверки авторизации
+  app.get('/api/test/login-admin', (req, res) => {
+    // Принудительно логиним админа для тестирования
+    const adminUser = {
+      id: "admin_main",
+      email: "rucoder.rf@yandex.ru",
+      firstName: "Admin",
+      lastName: "User",
+      role: "admin",
+      subscription: "premium",
+      documentsCreated: 0,
+      documentsLimit: -1
+    };
+
+    (req as any).session.userId = adminUser.id;
+    (req as any).session.user = adminUser;
+    
+    console.log("TEST - Admin logged in, session:", (req as any).session);
+    
+    res.json({ 
+      message: "Test admin login successful", 
+      user: adminUser,
+      sessionId: (req as any).sessionID
+    });
   });
 
   // Тестовый эндпоинт для проверки системы
