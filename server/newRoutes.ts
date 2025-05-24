@@ -30,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Создаем нового пользователя
-      const newUser = await db
+      const result = await db
         .insert(users)
         .values({
           email,
@@ -42,6 +42,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           documentsLimit: 3
         })
         .returning();
+
+      const newUser = result[0];
 
       // Устанавливаем сессию
       (req as any).session.userId = newUser.id;
