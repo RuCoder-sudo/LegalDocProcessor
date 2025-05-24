@@ -109,7 +109,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                         Уведомления
                       </Link>
                     </DropdownMenuItem>
-                    {user.role === 'admin' && (
+                    {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin" className="cursor-pointer">
                           <Settings className="mr-2 h-4 w-4" />
