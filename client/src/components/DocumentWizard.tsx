@@ -16,21 +16,19 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { DOCUMENT_TYPES, INDUSTRIES } from "@/lib/constants";
 import { DocumentFormData } from "@/lib/types";
-import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles, Copy, Crown } from "lucide-react";
-
-const formSchema = z.object({
-  type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return"]),
-  companyName: z.string().min(1, "Название компании обязательно"),
-  inn: z.string().min(10, "ИНН должен содержать минимум 10 цифр").max(12),
-  ogrn: z.string().optional(),
-  legalAddress: z.string().min(1, "Юридический адрес обязателен"),
-  websiteUrl: z.string().url("Некорректный URL сайта"),
-  contactEmail: z.string().email("Некорректный email"),
-  registrar: z.string().optional(),
-  hostingProvider: z.string().optional(),
-  phone: z.string().optional(),
-  industry: z.string().optional(),
-});
+import { documentFormSchema } from "@shared/schema";
+import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles, Copy, Crown, QrCode, Settings } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { 
+  USER_RIGHTS_OPTIONS, 
+  ADMIN_RIGHTS_OPTIONS, 
+  USER_OBLIGATIONS_OPTIONS, 
+  ADMIN_OBLIGATIONS_OPTIONS,
+  DATA_TYPES_OPTIONS 
+} from "@/lib/constants";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import PremiumGate from "@/components/PremiumGate";
 
 interface DocumentWizardProps {
   open: boolean;
@@ -43,12 +41,16 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
   const [selectedType, setSelectedType] = useState<string>("");
   const [createdDocument, setCreatedDocument] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [useAdvancedTemplate, setUseAdvancedTemplate] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  const isPremiumUser = user?.subscription === 'premium' || user?.subscription === 'ultra' || user?.role === 'admin';
 
   const form = useForm<DocumentFormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(documentFormSchema),
     defaultValues: {
       type: "privacy",
       companyName: "",
@@ -61,6 +63,21 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
       hostingProvider: "",
       phone: "",
       industry: "",
+      // Расширенные поля
+      ownerType: "legal",
+      isSmi: false,
+      userCanPost: false,
+      agreementStart: "any_use",
+      agreementDuration: "indefinite",
+      canAdminChange: true,
+      notifyChanges: "yes",
+      userRights: [],
+      adminRights: [],
+      userObligations: [],
+      adminObligations: [],
+      dataTypes: [],
+      generateQr: false,
+      qrData: "",
     },
   });
 

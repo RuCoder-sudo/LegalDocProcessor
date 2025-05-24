@@ -65,7 +65,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                       : "text-muted-foreground hover:text-primary"
                   }`}
                 >
-                  <i className={`${item.icon} mr-2`}></i>
+                  <i className={`${item.icon} mr-2 text-blue-500`}></i>
                   {item.name}
                 </Link>
               ))}
@@ -193,7 +193,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <i className={`${item.icon} mr-2`}></i>
+                  <i className={`${item.icon} mr-2 text-blue-500`}></i>
                   {item.name}
                 </Link>
               ))}
@@ -240,6 +240,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   <li><Link href="/examples?type=offer" className="hover:text-primary transition-colors text-sm"><i className="fas fa-file-contract mr-2"></i>Публичная оферта</Link></li>
                   <li><Link href="/examples?type=cookie" className="hover:text-primary transition-colors text-sm"><i className="fas fa-cookie-bite mr-2"></i>Политика Cookie</Link></li>
                   <li><Link href="/examples?type=return" className="hover:text-primary transition-colors text-sm"><i className="fas fa-undo-alt mr-2"></i>Политика возврата</Link></li>
+                  <li><Link href="/examples?type=charter" className="hover:text-primary transition-colors text-sm"><i className="fas fa-scroll mr-2"></i>Устав сайта</Link></li>
                 </ul>
               </div>
 
@@ -250,11 +251,12 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   <li><Link href="/premium" className="hover:text-primary transition-colors text-sm"><i className="fas fa-crown mr-2"></i>Тарифы</Link></li>
                   <li><Link href="/examples" className="hover:text-primary transition-colors text-sm"><i className="fas fa-eye mr-2"></i>Примеры документов</Link></li>
                   <li><Link href="/news" className="hover:text-primary transition-colors text-sm"><i className="fas fa-newspaper mr-2"></i>Правовые новости</Link></li>
+                  <li><Link href="/help" className="hover:text-primary transition-colors text-sm"><i className="fas fa-question-circle mr-2"></i>Справка</Link></li>
                   <li><Link href="/contacts" className="hover:text-primary transition-colors text-sm"><i className="fas fa-phone mr-2"></i>Контакты</Link></li>
+                  <li><Link href="/feedback" className="hover:text-primary transition-colors text-sm"><i className="fas fa-comments mr-2"></i>Обратная связь</Link></li>
                   {user?.role === 'admin' && (
                     <li><Link href="/admin" className="hover:text-primary transition-colors text-sm"><i className="fas fa-cog mr-2"></i>Панель управления</Link></li>
                   )}
-                  <li><a href="#help" className="hover:text-primary transition-colors text-sm"><i className="fas fa-question-circle mr-2"></i>Помощь</a></li>
                 </ul>
               </div>
             </div>
