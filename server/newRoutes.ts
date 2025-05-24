@@ -240,7 +240,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(users)
         .where(eq(users.id, userId));
 
-      const limit = user?.subscription === 'premium' ? 100 : 10;
+      // Устанавливаем лимиты в зависимости от подписки
+      let limit;
+      if (user?.role === 'admin') {
+        limit = -1; // Безлимитно для админов
+      } else if (user?.subscription === 'premium') {
+        limit = 100; // 100 документов для премиум
+      } else {
+        limit = 3; // 3 документа для бесплатных пользователей
+      }
 
       if (userDocCount.length >= limit) {
         return res.status(403).json({ 
