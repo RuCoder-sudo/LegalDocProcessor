@@ -45,7 +45,7 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const isPremiumUser = user?.subscription === 'premium' || user?.subscription === 'ultra' || user?.role === 'admin';
 
@@ -139,6 +139,16 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
       form.setValue("type", selectedType as any);
       setCurrentStep(2);
     } else if (currentStep === 2) {
+      // Проверяем авторизацию для бесплатных пользователей
+      if (!isAuthenticated) {
+        toast({
+          title: "Требуется регистрация",
+          description: "Для создания документов необходимо зарегистрироваться",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       form.handleSubmit((data) => {
         setIsGenerating(true);
         createDocumentMutation.mutate(data);

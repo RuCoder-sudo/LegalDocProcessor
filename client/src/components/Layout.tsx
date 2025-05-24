@@ -301,6 +301,8 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                     <span className="text-gray-600">•</span>
                     <Link href="/terms" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Пользовательское соглашение</Link>
                     <span className="text-gray-600">•</span>
+                    <Link href="/sitemap" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Карта сайта</Link>
+                    <span className="text-gray-600">•</span>
                     <Link href="/important" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Отказ от ответственности</Link>
                   </div>
                   {!isAuthenticated && (
