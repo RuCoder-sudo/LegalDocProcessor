@@ -80,13 +80,16 @@ export default function AuthForms() {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       toast({
         title: "Успешная регистрация",
         description: "Аккаунт создан! Добро пожаловать!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      setTimeout(() => window.location.href = "/", 1000);
+      // Переходим в личный кабинет после регистрации
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
     },
     onError: (error: any) => {
       toast({

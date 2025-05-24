@@ -7,11 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import { Plus, FileText, Download, Eye, Trash2, Crown, Zap } from "lucide-react";
 import { useState } from "react";
 import DocumentWizard from "@/components/DocumentWizard";
+import DocumentViewer from "@/components/DocumentViewer";
 import Layout from "@/components/Layout";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<any>(null);
 
   const { data: documents = [], refetch } = useQuery({
     queryKey: ["/api/user/documents"],
