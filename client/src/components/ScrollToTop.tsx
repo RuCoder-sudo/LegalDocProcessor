@@ -5,6 +5,15 @@ import { ArrowUp } from "lucide-react";
 
 export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const [location] = useLocation();
+
+  // Автоматический скролл к началу при смене страницы
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [location]);
 
   useEffect(() => {
     const toggleVisibility = () => {
