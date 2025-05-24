@@ -174,9 +174,16 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedDocument(doc);
+                            setViewerOpen(true);
+                          }}
+                        >
                           <Eye className="h-4 w-4 mr-1" />
-                          Просмотр
+                          Полный просмотр
                         </Button>
                         <Button variant="outline" size="sm">
                           <Download className="h-4 w-4 mr-1" />
@@ -202,6 +209,13 @@ export default function Dashboard() {
             setWizardOpen(false);
             refetch();
           }}
+        />
+
+        {/* Document Viewer */}
+        <DocumentViewer
+          document={selectedDocument}
+          open={viewerOpen}
+          onOpenChange={setViewerOpen}
         />
       </div>
     </Layout>

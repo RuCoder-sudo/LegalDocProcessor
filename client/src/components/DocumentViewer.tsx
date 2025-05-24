@@ -19,12 +19,12 @@ export default function DocumentViewer({ document, open, onOpenChange }: Documen
     const content = document.generatedContent || 'Содержимое документа недоступно';
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = window.document.createElement('a');
     link.href = url;
     link.download = `${document.name}.txt`;
-    document.body.appendChild(link);
+    window.document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    window.document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
