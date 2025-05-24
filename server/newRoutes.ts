@@ -6,103 +6,7 @@ import { users, userDocuments, blogPosts, adminSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-
-// Auth middleware
-const requireAuth = async (req: any, res: any, next: any) => {
-  try {
-    // Пробуем получить из сессии
-    const userId = req.session?.userId;
-    
-    // Проверяем JWT токен, если в сессии нет данных
-    if (!userId) {
-      // Проверяем токен в куках или заголовке Authorization
-      let token = req.cookies['auth-token'];
-      
-      if (!token && req.headers.authorization) {
-        const authHeader = req.headers.authorization;
-        if (authHeader.startsWith('Bearer ')) {
-          token = authHeader.substring(7);
-        }
-      }
-      
-      console.log("Auth middleware - Cookie token:", req.cookies['auth-token'] ? "present" : "missing");
-      console.log("Auth middleware - Auth header:", req.headers.authorization ? "present" : "missing");
-      
-      if (!token) {
-        return res.status(401).json({ message: "Необходима авторизация" });
-      }
-      
-      try {
-        // Декодируем токен (простая реализация для примера)
-        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
-        
-        // Если это админ из токена
-        if (decoded.id === "admin_main" && decoded.role === "admin") {
-          const adminUser = {
-            id: "admin_main",
-            email: "rucoder.rf@yandex.ru",
-            firstName: "Admin",
-            lastName: "User",
-            role: "admin" as const,
-            subscription: "premium" as const,
-            documentsCreated: 0,
-            documentsLimit: -1
-          };
-          req.user = adminUser;
-          return next();
-        }
-        
-        // Обычный пользователь из токена
-        const [tokenUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, decoded.id))
-          .limit(1);
-          
-        if (tokenUser) {
-          req.user = { ...tokenUser, password: undefined };
-          return next();
-        }
-      } catch (err) {
-        console.error("Token decode error:", err);
-      }
-      
-      return res.status(401).json({ message: "Неверный токен авторизации" });
-    }
-
-    // Проверяем админа из сессии
-    if (userId === "admin_main") {
-      const adminUser = {
-        id: "admin_main",
-        email: "rucoder.rf@yandex.ru",
-        firstName: "Admin",
-        lastName: "User",
-        role: "admin" as const,
-        subscription: "premium" as const,
-        documentsCreated: 0,
-        documentsLimit: -1
-      };
-      req.user = adminUser;
-      return next();
-    }
-
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    if (!user) {
-      return res.status(401).json({ message: "Пользователь не найден" });
-    }
-
-    req.user = { ...user, password: undefined };
-    next();
-  } catch (error) {
-    console.error("Auth middleware error:", error);
-    res.status(401).json({ message: "Ошибка авторизации" });
-  }
-};
+import { requireAuth, requireAdmin } from "./authMiddleware";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Cookie parser middleware
@@ -421,12 +325,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin settings (protected - admin only)
-  app.get('/api/admin/settings', requireAuth, async (req: any, res) => {
+  app.get('/api/admin/settings', requireAuth, requireAdmin, async (req: any, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Доступ запрещен" });
-      }
-
       const [settings] = await db
         .select()
         .from(adminSettings)
@@ -449,12 +349,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update admin settings (protected - admin only)
-  app.put('/api/admin/settings', requireAuth, async (req: any, res) => {
+  app.put('/api/admin/settings', requireAuth, requireAdmin, async (req: any, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Доступ запрещен" });
-      }
-
       const updates = req.body;
       
       const [settings] = await db
@@ -484,17 +380,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all users (admin only)
-  app.get('/api/admin/users', requireAuth, async (req: any, res) => {
+  app.get('/api/admin/users', requireAuth, requireAdmin, async (req: any, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Доступ запрещен" });
-      }
-
       const allUsers = await db
         .select()
         .from(users)
         .orderBy(desc(users.createdAt));
 
+      // Remove passwords for security
       res.json(allUsers.map(user => ({ ...user, password: undefined })));
     } catch (error) {
       console.error("Error fetching users:", error);
