@@ -159,6 +159,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all users (admin only)
+  app.get('/api/admin/users', requireAuth, async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: "Доступ запрещен" });
+      }
+
+      const allUsers = await db
+        .select()
+        .from(users)
+        .orderBy(desc(users.createdAt));
+
+      res.json(allUsers.map(user => ({ ...user, password: undefined })));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Ошибка при загрузке пользователей" });
+    }
+  });
+
+  // Update user role (admin only)
+  app.put('/api/admin/users/:userId/role', requireAuth, async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: "Доступ запрещен" });
+      }
+
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      const [updatedUser] = await db
+        .update(users)
+        .set({ role, subscription: role === 'premium' ? 'premium' : role === 'admin' ? 'premium' : 'free' })
+        .where(eq(users.id, userId))
+        .returning();
+
+      res.json({ ...updatedUser, password: undefined });
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ message: "Ошибка при обновлении роли" });
+    }
+  });
+
+  // Get admin stats (admin only)
+  app.get('/api/admin/stats', requireAuth, async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: "Доступ запрещен" });
+      }
+
+      const allUsers = await db.select().from(users);
+      const totalUsers = allUsers.length;
+      const premiumUsers = allUsers.filter(u => u.subscription === 'premium').length;
+      const documentsCreated = allUsers.reduce((sum, u) => sum + (u.documentsCreated || 0), 0);
+
+      res.json({
+        totalUsers,
+        premiumUsers,
+        documentsCreated
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      res.status(500).json({ message: "Ошибка при загрузке статистики" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
