@@ -51,7 +51,7 @@ export default function Contacts() {
                     <Code className="h-8 w-8 text-blue-500" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Разработчик</CardTitle>
+                    <CardTitle className="text-xl text-foreground dark:text-gray-900">Разработчик</CardTitle>
                     <CardDescription>{CONTACT_INFO.developer.name}</CardDescription>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export default function Contacts() {
                     <Headphones className="h-8 w-8 text-green-500" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl dark:text-white">Техподдержка</CardTitle>
+                    <CardTitle className="text-xl text-foreground dark:text-gray-900">Техподдержка</CardTitle>
                     <CardDescription>Помощь в использовании сервиса</CardDescription>
                   </div>
                 </div>

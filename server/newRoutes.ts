@@ -191,7 +191,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const tempUserResult = await db
           .insert(users)
           .values({
+            id: `temp_${Date.now()}`,
             email: `temp_${Date.now()}@demo.com`,
+            password: 'temp_password',
             firstName: 'Анонимный',
             lastName: 'Пользователь',
             role: 'user',

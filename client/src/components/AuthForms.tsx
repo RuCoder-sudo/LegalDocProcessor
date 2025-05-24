@@ -82,6 +82,7 @@ export default function AuthForms() {
         description: "Аккаунт создан! Добро пожаловать!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setTimeout(() => window.location.href = "/", 1000);
     },
     onError: (error: any) => {
       toast({
