@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             user: adminUser 
           });
         });
-        return;
+
       }
 
       // Находим пользователя
