@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Generate document content
-      const content = generateDocumentContent(type, formData);
+      const content = await generateDocumentContent(type, formData);
 
       const [newDocument] = await db
         .insert(userDocuments)
@@ -240,8 +240,21 @@ function getDocumentTypeName(type: string): string {
   return types[type as keyof typeof types] || "Документ";
 }
 
-function generateDocumentContent(type: string, formData: any): string {
-  const { companyName, inn, legalAddress, websiteUrl, contactEmail, phone, registrar, hostingProvider } = formData;
+async function generateDocumentContent(type: string, formData: any): Promise<string> {
+  if (!formData) {
+    throw new Error('FormData is required');
+  }
+  
+  const { 
+    companyName = 'Не указано', 
+    inn = 'Не указан', 
+    legalAddress = 'Не указан', 
+    websiteUrl = 'Не указан', 
+    contactEmail = 'Не указан', 
+    phone = 'Не указан', 
+    registrar = 'Не указан', 
+    hostingProvider = 'Не указан' 
+  } = formData;
   
   if (type === 'privacy') {
     return `ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ

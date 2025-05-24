@@ -193,21 +193,15 @@
 }
 
 .animate-gradient {
-  animation: gradientShift 8s ease-in-out infinite;
+  animation: gradientShift 15s ease-in-out infinite;
 }
 
 @keyframes gradientShift {
   0%, 100% {
     background-position: 0% 50%;
   }
-  25% {
-    background-position: 100% 50%;
-  }
   50% {
-    background-position: 200% 50%;
-  }
-  75% {
-    background-position: 300% 50%;
+    background-position: 100% 50%;
   }
 }
 
