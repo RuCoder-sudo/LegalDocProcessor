@@ -16,15 +16,26 @@ export default function TestLogin() {
       if (!response.ok) {
         throw new Error("Ошибка тестового входа");
       }
-      return response.json();
+      const data = await response.json();
+      
+      // Принудительно устанавливаем cookie
+      if (data.token) {
+        document.cookie = `auth-token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
+        console.log("Token manually set:", data.token);
+      }
+      
+      return data;
     },
     onSuccess: (data) => {
       toast({
         title: "Тестовый вход выполнен!",
-        description: "Админ вошел в систему"
+        description: "Админ вошел в систему, токен установлен"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      window.location.href = "/admin";
+      // Подождем немного перед переходом
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 1000);
     },
     onError: (error: any) => {
       toast({
