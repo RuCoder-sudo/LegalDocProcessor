@@ -281,6 +281,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Page generation endpoint
+  app.post("/api/generate-page", isAuthenticated, async (req, res) => {
+    try {
+      const { pageType, siteName, companyName, industry, contactEmail, phone, address, specialOffers, targetAudience } = req.body;
+      
+      const content = generatePageContent(pageType, {
+        siteName,
+        companyName,
+        industry,
+        contactEmail,
+        phone,
+        address,
+        specialOffers,
+        targetAudience
+      });
+
+      res.json({ content });
+    } catch (error) {
+      console.error("Page generation error:", error);
+      res.status(500).json({ message: "Ошибка генерации страницы" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -624,5 +647,254 @@ ${isSmi ? 'Сайт зарегистрирован как СМИ' : 'Сайт н
 
 Документ типа "${type}" находится в разработке.
 Обратитесь в службу поддержки: ${contactEmail}`;
+  }
+}
+
+function generatePageContent(pageType: string, data: any): string {
+  const { siteName, companyName, industry, contactEmail, phone, address, specialOffers, targetAudience } = data;
+  
+  switch (pageType) {
+    case 'faq':
+      return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Часто задаваемые вопросы - ${siteName}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        .faq-item { margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .question { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; }
+        .answer { padding: 15px; display: none; }
+        .contact-info { background: #e8f4fd; padding: 20px; border-radius: 5px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Часто задаваемые вопросы</h1>
+        <p><strong>${companyName}</strong> - ${industry}</p>
+        
+        <div class="faq-item">
+            <div class="question" onclick="toggleAnswer(this)">Как связаться с поддержкой?</div>
+            <div class="answer">Вы можете связаться с нами по email: ${contactEmail}${phone ? ` или по телефону: ${phone}` : ''}</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="question" onclick="toggleAnswer(this)">Какие услуги вы предоставляете?</div>
+            <div class="answer">Мы специализируемся в сфере ${industry} и предоставляем качественные услуги для ${targetAudience || 'наших клиентов'}.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="question" onclick="toggleAnswer(this)">Где вы находитесь?</div>
+            <div class="answer">${address || 'Информация об адресе доступна по запросу через контактную форму.'}</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="question" onclick="toggleAnswer(this)">Как долго вы работаете на рынке?</div>
+            <div class="answer">Наша компания имеет многолетний опыт работы в сфере ${industry} и постоянно развивается.</div>
+        </div>
+        
+        <div class="contact-info">
+            <h3>Контактная информация</h3>
+            <p><strong>Email:</strong> ${contactEmail}</p>
+            ${phone ? `<p><strong>Телефон:</strong> ${phone}</p>` : ''}
+            ${address ? `<p><strong>Адрес:</strong> ${address}</p>` : ''}
+        </div>
+    </div>
+    
+    <script>
+        function toggleAnswer(element) {
+            const answer = element.nextElementSibling;
+            answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>`;
+
+    case 'offers':
+      return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Специальные предложения - ${siteName}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; font-size: 2.5em; }
+        .offer-card { background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0; text-align: center; }
+        .price { font-size: 3em; font-weight: bold; margin: 20px 0; }
+        .features { text-align: left; margin: 20px 0; }
+        .cta-button { background: #ff6b6b; color: white; padding: 15px 30px; border: none; border-radius: 25px; font-size: 1.2em; cursor: pointer; }
+        .contact-section { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Специальные предложения</h1>
+        <p style="text-align: center; font-size: 1.2em;"><strong>${companyName}</strong> - лучшие предложения в сфере ${industry}</p>
+        
+        <div class="offer-card">
+            <h2>Ограниченное предложение!</h2>
+            <div class="price">-50%</div>
+            <p>${specialOffers || 'Специальная скидка на все наши услуги!'}</p>
+            <button class="cta-button">Получить предложение</button>
+        </div>
+        
+        <div class="offer-card" style="background: linear-gradient(45deg, #a8edea 0%, #fed6e3 100%);">
+            <h2>Для новых клиентов</h2>
+            <div class="features">
+                <p>✅ Бесплатная консультация</p>
+                <p>✅ Индивидуальный подход</p>
+                <p>✅ Качественный сервис</p>
+                <p>✅ Поддержка 24/7</p>
+            </div>
+            <button class="cta-button">Стать клиентом</button>
+        </div>
+        
+        <div class="contact-section">
+            <h3>Как воспользоваться предложением?</h3>
+            <p>Свяжитесь с нами любым удобным способом:</p>
+            <p><strong>📧 Email:</strong> ${contactEmail}</p>
+            ${phone ? `<p><strong>📞 Телефон:</strong> ${phone}</p>` : ''}
+            ${address ? `<p><strong>📍 Адрес:</strong> ${address}</p>` : ''}
+            <p><em>*Предложение ограничено по времени</em></p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    case 'support':
+      return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техническая поддержка - ${siteName}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f1f3f4; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; }
+        .support-option { background: #f8f9fa; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #1a73e8; }
+        .urgent { border-left-color: #ea4335; background: #fce8e6; }
+        .contact-form { background: #e8f0fe; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .online { background: #34a853; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Техническая поддержка</h1>
+        <p style="text-align: center;"><strong>${companyName}</strong> - мы всегда готовы помочь!</p>
+        
+        <div class="support-option urgent">
+            <h3>🚨 Экстренная поддержка</h3>
+            <p>Для критических проблем, требующих немедленного решения</p>
+            <p><strong>Время ответа:</strong> до 30 минут</p>
+            ${phone ? `<p><strong>Телефон:</strong> ${phone}</p>` : ''}
+        </div>
+        
+        <div class="support-option">
+            <h3>📧 Email поддержка</h3>
+            <p><span class="status-indicator online"></span>Онлайн</p>
+            <p><strong>Email:</strong> ${contactEmail}</p>
+            <p><strong>Время ответа:</strong> до 2 часов в рабочее время</p>
+        </div>
+        
+        <div class="support-option">
+            <h3>📋 База знаний</h3>
+            <p>Популярные решения и инструкции:</p>
+            <ul>
+                <li>Как настроить ${industry.toLowerCase()}</li>
+                <li>Часто задаваемые вопросы</li>
+                <li>Руководство пользователя</li>
+                <li>Устранение неполадок</li>
+            </ul>
+        </div>
+        
+        <div class="contact-form">
+            <h3>Отправить запрос в поддержку</h3>
+            <p>Опишите вашу проблему, и мы свяжемся с вами в ближайшее время:</p>
+            <p><strong>Email для обращений:</strong> ${contactEmail}</p>
+            ${address ? `<p><strong>Офис:</strong> ${address}</p>` : ''}
+            <p><em>Рабочие часы: Пн-Пт 9:00-18:00 МСК</em></p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    case 'about':
+      return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О компании - ${siteName}</title>
+    <style>
+        body { font-family: 'Georgia', serif; line-height: 1.8; margin: 0; padding: 20px; background: #fafafa; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 40px; font-size: 2.5em; }
+        .company-info { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin: 30px 0; }
+        .values { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+        .value-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; }
+        .team-section { background: #e8f4fd; padding: 30px; border-radius: 10px; margin: 30px 0; }
+        .contact-footer { text-align: center; background: #34495e; color: white; padding: 20px; border-radius: 10px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>О компании ${companyName}</h1>
+        
+        <div class="company-info">
+            <h2>Кто мы</h2>
+            <p>Мы - команда профессионалов в сфере ${industry}, которая стремится предоставлять высококачественные услуги для ${targetAudience || 'наших клиентов'}. Наша миссия - делать ${industry.toLowerCase()} доступным и понятным для каждого.</p>
+        </div>
+        
+        <div class="values">
+            <div class="value-card">
+                <h3>🎯 Качество</h3>
+                <p>Мы никогда не идем на компромиссы в вопросах качества наших услуг</p>
+            </div>
+            <div class="value-card">
+                <h3>⚡ Скорость</h3>
+                <p>Быстрое реагирование и оперативное решение задач клиентов</p>
+            </div>
+            <div class="value-card">
+                <h3>🤝 Надежность</h3>
+                <p>Мы всегда выполняем взятые на себя обязательства</p>
+            </div>
+        </div>
+        
+        <div class="team-section">
+            <h2>Наша команда</h2>
+            <p>В нашей команде работают опытные специалисты с многолетним стажем в сфере ${industry}. Мы постоянно повышаем квалификацию и следим за новейшими тенденциями в отрасли.</p>
+            <p>Каждый сотрудник ${companyName} разделяет наши ценности и стремится к достижению лучших результатов для клиентов.</p>
+        </div>
+        
+        <h2>Почему выбирают нас?</h2>
+        <ul style="font-size: 1.1em;">
+            <li>Индивидуальный подход к каждому клиенту</li>
+            <li>Прозрачность в работе и ценообразовании</li>
+            <li>Современные методы и технологии</li>
+            <li>Профессиональная поддержка на всех этапах</li>
+            <li>Гарантия качества выполненных работ</li>
+        </ul>
+        
+        <div class="contact-footer">
+            <h3>Свяжитесь с нами</h3>
+            <p><strong>Email:</strong> ${contactEmail}</p>
+            ${phone ? `<p><strong>Телефон:</strong> ${phone}</p>` : ''}
+            ${address ? `<p><strong>Адрес:</strong> ${address}</p>` : ''}
+            <p><em>Мы всегда рады новым проектам и сотрудничеству!</em></p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    default:
+      return `<h1>Тип страницы "${pageType}" в разработке</h1>
+               <p>Обратитесь в службу поддержки: ${contactEmail}</p>`;
   }
 }

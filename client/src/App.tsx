@@ -18,6 +18,7 @@ import Dashboard from "@/pages/Dashboard";
 import Feedback from "@/pages/Feedback";
 import Help from "@/pages/Help";
 import Sitemap from "@/pages/Sitemap";
+import PageGenerator from "@/pages/PageGenerator";
 import Login from "@/pages/Login";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
@@ -51,6 +52,7 @@ function Router() {
         <Route path="/feedback" component={Feedback} />
         <Route path="/help" component={Help} />
         <Route path="/sitemap" component={Sitemap} />
+        <Route path="/page-generator" component={PageGenerator} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/terms" component={Terms} />
         <Route path="/important" component={Important} />

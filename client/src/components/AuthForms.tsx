@@ -54,7 +54,7 @@ export default function AuthForms() {
         if (data.user?.role === 'admin') {
           window.location.href = "/admin";
         } else {
-          window.location.href = "/";
+          window.location.href = "/dashboard";
         }
       }, 500);
     },
@@ -88,7 +88,11 @@ export default function AuthForms() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       // Переходим в личный кабинет после регистрации
       setTimeout(() => {
-        window.location.href = "/";
+        if (data.user?.role === 'admin') {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/dashboard";
+        }
       }, 1000);
     },
     onError: (error: any) => {
