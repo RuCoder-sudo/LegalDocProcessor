@@ -49,6 +49,10 @@ export default function AuthForms() {
         description: "Добро пожаловать!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      // Переадресация на главную страницу после успешного входа
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500);
     },
     onError: (error: any) => {
       toast({
@@ -161,11 +165,6 @@ export default function AuthForms() {
                 >
                   {loginMutation.isPending ? "Вход..." : "Войти"}
                 </Button>
-                
-                <div className="text-center text-sm text-muted-foreground">
-                  <p>Для тестирования админки:</p>
-                  <p className="text-xs">admin@legalrfdocs.ru / password</p>
-                </div>
               </form>
             </TabsContent>
             
