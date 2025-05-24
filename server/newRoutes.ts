@@ -171,16 +171,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create document - ИСПРАВЛЕНА ПЕРЕДАЧА ДАННЫХ
+  // Create document - Теперь работает для всех пользователей
   app.post('/api/documents', async (req: any, res) => {
     try {
       console.log('Full request body:', req.body);
       
       const { type, ...formData } = req.body;
-      const userId = "admin_main"; // Временная заглушка
+      
+      // Получаем пользователя из сессии, если есть, иначе создаем временного пользователя
+      let userId = (req as any).session?.userId;
+      
+      if (!userId) {
+        // Создаем временного анонимного пользователя для демонстрации
+        const tempUserResult = await db
+          .insert(users)
+          .values({
+            email: `temp_${Date.now()}@demo.com`,
+            firstName: 'Анонимный',
+            lastName: 'Пользователь',
+            role: 'user',
+            subscription: 'free',
+            documentsCreated: 0,
+            documentsLimit: 10
+          })
+          .returning();
+        
+        userId = tempUserResult[0].id;
+      }
 
       console.log('Extracted type:', type);
       console.log('Extracted formData:', formData);
+      console.log('Using userId:', userId);
 
       // Check document limit
       const userDocCount = await db
@@ -188,8 +209,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(userDocuments)
         .where(eq(userDocuments.userId, userId));
 
-      const user = { subscription: 'premium' }; // Временная заглушка
-      const limit = 100;
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId));
+
+      const limit = user?.subscription === 'premium' ? 100 : 10;
 
       if (userDocCount.length >= limit) {
         return res.status(403).json({ 
@@ -200,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate document content with extracted form data
       const content = await generateDocumentContent(type, formData);
 
-      const [newDocument] = await db
+      const result = await db
         .insert(userDocuments)
         .values({
           userId,
@@ -211,6 +236,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: 'completed'
         })
         .returning();
+
+      const newDocument = result[0];
+
+      // Обновляем счетчик документов пользователя
+      await db
+        .update(users)
+        .set({ 
+          documentsCreated: (user?.documentsCreated || 0) + 1 
+        })
+        .where(eq(users.id, userId));
 
       res.json(newDocument);
     } catch (error) {
