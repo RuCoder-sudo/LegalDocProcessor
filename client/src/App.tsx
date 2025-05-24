@@ -10,6 +10,7 @@ import Landing from "@/pages/Landing";
 import Home from "@/pages/Home";
 import Premium from "@/pages/Premium";
 import Examples from "@/pages/Examples";
+import Generator from "@/pages/Generator";
 import News from "@/pages/News";
 import Contacts from "@/pages/Contacts";
 import Admin from "@/pages/Admin";
@@ -39,6 +40,7 @@ function Router() {
         <Route path="/login" component={Login} />
         <Route path="/premium" component={Premium} />
         <Route path="/examples" component={Examples} />
+        <Route path="/generator" component={Generator} />
         <Route path="/news" component={News} />
         <Route path="/news/:slug" component={News} />
         <Route path="/contacts" component={Contacts} />

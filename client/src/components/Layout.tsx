@@ -29,6 +29,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
 
   const navigation = [
     { name: "Главная", href: "/", icon: "fas fa-home" },
+    { name: "Генератор", href: "/generator", icon: "fas fa-magic" },
     { name: "Документы", href: "/documents", icon: "fas fa-file-alt", authRequired: true },
     { name: "Примеры", href: "/examples", icon: "fas fa-eye" },
     { name: "Тарифы", href: "/premium", icon: "fas fa-crown" },
