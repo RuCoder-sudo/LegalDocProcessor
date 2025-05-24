@@ -9,11 +9,13 @@ export function setupSimpleAuth(app: Express) {
   // Session middleware
   app.use(session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
       secure: false, // для разработки
-      maxAge: 24 * 60 * 60 * 1000 // 24 часа
+      httpOnly: false,
+      maxAge: 24 * 60 * 60 * 1000, // 24 часа
+      sameSite: 'lax'
     }
   }));
 
@@ -55,7 +57,7 @@ export function setupSimpleAuth(app: Express) {
         })
         .returning();
       
-      const newUser = newUsers[0];
+      const newUser = Array.isArray(newUsers) ? newUsers[0] : newUsers;
 
       // Сохраняем в сессии
       // @ts-ignore

@@ -186,17 +186,17 @@ export const NEWS_CATEGORIES = {
 } as const;
 
 export const FEEDBACK_TYPES = {
-  suggestion: { name: "Предложение", icon: "fas fa-lightbulb", color: "blue" },
-  complaint: { name: "Жалоба", icon: "fas fa-exclamation-triangle", color: "red" },
-  compliment: { name: "Благодарность", icon: "fas fa-heart", color: "green" },
-  question: { name: "Вопрос", icon: "fas fa-question-circle", color: "purple" },
+  suggestion: "Предложение",
+  complaint: "Жалоба", 
+  compliment: "Благодарность",
+  question: "Вопрос",
 } as const;
 
 export const FEEDBACK_CATEGORIES = {
-  interface: { name: "Интерфейс", icon: "fas fa-desktop" },
-  functionality: { name: "Функциональность", icon: "fas fa-cogs" },
-  content: { name: "Контент", icon: "fas fa-file-alt" },
-  performance: { name: "Производительность", icon: "fas fa-tachometer-alt" },
+  interface: "Интерфейс",
+  functionality: "Функциональность",
+  content: "Контент", 
+  performance: "Производительность",
 } as const;
 
 export const USER_RIGHTS_OPTIONS = [

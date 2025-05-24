@@ -206,11 +206,11 @@ export default function Feedback() {
                               defaultValue={field.value}
                               className="grid grid-cols-2 gap-4"
                             >
-                              {Object.entries(FEEDBACK_TYPES).map(([key, type]) => (
+                              {Object.entries(FEEDBACK_TYPES).map(([key, value]) => (
                                 <div key={key} className="flex items-center space-x-2">
                                   <RadioGroupItem value={key} id={key} />
                                   <label htmlFor={key} className="text-sm font-medium cursor-pointer">
-                                    {type}
+                                    {value}
                                   </label>
                                 </div>
                               ))}
@@ -234,11 +234,11 @@ export default function Feedback() {
                               defaultValue={field.value}
                               className="grid grid-cols-1 gap-3"
                             >
-                              {Object.entries(FEEDBACK_CATEGORIES).map(([key, category]) => (
+                              {Object.entries(FEEDBACK_CATEGORIES).map(([key, value]) => (
                                 <div key={key} className="flex items-center space-x-2">
                                   <RadioGroupItem value={key} id={key} />
                                   <label htmlFor={key} className="text-sm font-medium cursor-pointer">
-                                    {category}
+                                    {value}
                                   </label>
                                 </div>
                               ))}
