@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { User, AdminStats } from "@/lib/types";
+import { AuthUser as User, AdminStats } from "@/lib/types";
 import { 
   Users, 
   FileText, 
@@ -75,11 +75,13 @@ export default function Admin() {
   // Мутации
   const updateUserRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      return await apiRequest(`/api/admin/users/${userId}/role`, {
+      const response = await fetch(`/api/admin/users/${userId}/role`, {
         method: 'PATCH',
         body: JSON.stringify({ role }),
         headers: { 'Content-Type': 'application/json' },
       });
+      if (!response.ok) throw new Error('Failed to update role');
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Роль пользователя обновлена" });
@@ -89,11 +91,13 @@ export default function Admin() {
 
   const sendNotification = useMutation({
     mutationFn: async (data: { title: string; message: string; userId?: string }) => {
-      return await apiRequest('/api/admin/notifications', {
+      const response = await fetch('/api/admin/notifications', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' },
       });
+      if (!response.ok) throw new Error('Failed to send notification');
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Уведомление отправлено" });
