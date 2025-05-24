@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { DOCUMENT_TYPES, INDUSTRIES } from "@/lib/constants";
 import { DocumentFormData } from "@/lib/types";
-import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles, Copy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles, Copy, Crown } from "lucide-react";
 
 const formSchema = z.object({
   type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return"]),
@@ -362,25 +362,53 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <Button 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => {
-                            navigator.clipboard.writeText(createdDocument.generatedContent || '');
-                            toast({
-                              title: "Скопировано!",
-                              description: "Содержимое документа скопировано в буфер обмена",
-                            });
-                          }}
-                        >
-                          <Copy className="mr-2 h-4 w-4" />
-                          Копировать текст
-                        </Button>
-                        <Button className="flex-1">
-                          <Download className="mr-2 h-4 w-4" />
-                          Скачать PDF
-                        </Button>
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Button 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => {
+                              navigator.clipboard.writeText(createdDocument.generatedContent || '');
+                              toast({
+                                title: "Скопировано!",
+                                description: "Содержимое документа скопировано в буфер обмена",
+                              });
+                            }}
+                          >
+                            <Copy className="mr-2 h-4 w-4" />
+                            Копировать текст
+                          </Button>
+                          <Button 
+                            className="flex-1"
+                            onClick={() => {
+                              toast({
+                                title: "Премиум функция",
+                                description: "Скачивание PDF доступно в премиум тарифе. Обновитесь для полного доступа!",
+                                variant: "destructive",
+                              });
+                            }}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Скачать PDF
+                          </Button>
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground bg-muted p-3 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <Crown className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="font-medium mb-1">Премиум возможности:</p>
+                              <ul className="space-y-1 text-xs">
+                                <li>• Редактирование созданных документов</li>
+                                <li>• Экспорт в PDF, DOC, TXT форматы</li>
+                                <li>• Безлимитное создание документов</li>
+                                <li>• Расширенные шаблоны для разных отраслей</li>
+                                <li>• Приоритетная поддержка</li>
+                                <li>• API доступ для интеграции</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
