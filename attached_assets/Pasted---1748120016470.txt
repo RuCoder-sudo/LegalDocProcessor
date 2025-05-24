@@ -1,0 +1,141 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:44:38 2025 from 109.252.119.183
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/<meta name="description"/a\рф.jpg" client/public/og-image.jpg
+\p: cannot create regular file 'client/public/og-image.jpg': No such file or directoryent/public/og-im
+    <!-- Open Graph / Social Media -->\sed -i '/<meta name="description"/a\
+    <meta property="og:type" content="website">\
+    <meta property="og:url" content="http://legalrfdocs.ru">\
+    <meta property="og:title" content="ЮрДок Генератор - Создание юридических документов">\
+    <meta property="og:description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ">\itle" content="ЮрДок Генератор - Создание юридических
+    <meta property="og:image" content="http://legalrfdocs.ru/og-image.jpg">\соз▒
+    \meta property="og:image" content="http://legalrfdocs.ru/og-image.jpg">\
+    <!-- Twitter Card -->\
+    <meta name="twitter:card" content="summary_large_image">\
+    <meta name="twitter:image" content="http://legalrfdocs.ru/og-image.jpg">
+' client8b3c5b5c3:~/LegalDocProcessor# cp "/root/LegalDocProcessor/рукодер.рф.jpg" client/public/og-image.jpg
+cp: cannot create regular file 'client/public/og-image.jpg': No such file or directoryent/public/og-im
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/email,/a\          password: hashedPassword,' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   2.05 kB │ gzip:   1.03 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.39s
+✘ [ERROR] Expected ";" but found ":"
+
+    server/newRoutes.ts:18:18:
+      18 │           password: hashedPassword,
+         │                   ^
+         ╵                   ;
+
+1 error
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 5    │ online    │ 0%       │ 37.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocPrmkdir -p client/publicnt/public
+cp "/root/LegalDocProcessor/рукодер.рф.jpg" client/public/og-image.jpg
+root@f418b3c5b5c3:~/LegalDocProcessor# cat > client/public/favicon.svg << 'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+  <path fill="#2563eb" d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4z"/>
+  <path fill="white" d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+</svg>
+EOF
+root@f418b3c5b5c3:~/LegalDocProcessor# git checkout -- server/newRoutes.ts
+sed -i '1i import bcrypt from "bcryptjs";' server/newRoutes.ts
+sed -i '/const { email, password, firstName, lastName } = req.body;/a\      const hashedPassword = await bcrypt.hash(password, 10);' server/newRoutes.ts
+sed -i '/firstName: firstName || \x27\x27,/a\          password: hashedPassword,' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/<meta name="viewport"/a\    <link rel="icon" type="image/svg+xml" href="/favicon.svg">' client/index.html
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   2.11 kB │ gzip:   1.03 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 17.42s
+
+  dist/index.js  76.2kb
+
+⚡ Done in 11ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 6    │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ls -la client/public/
+curl http://legalrfdocs.ru | grep favicon
+total 96
+drwxr-xr-x 2 root root  4096 May 24 20:52 .
+drwxr-xr-x 4 root root  4096 May 24 20:52 ..
+-rw-r--r-- 1 root root   264 May 24 20:52 favicon.svg
+-rw-r--r-- 1 root root 84567 May 24 20:52 og-image.jpg
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  2424  100  2424    0     0  94813      0 --:--:-- --:--:-- --:--:-- 96960
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+root@f418b3c5b5c3:~/LegalDocProcessor# ls -la client/public/
+curl http://legalrfdocs.ru | grep favicon
+total 96
+drwxr-xr-x 2 root root  4096 May 24 20:52 .
+drwxr-xr-x 4 root root  4096 May 24 20:52 ..
+-rw-r--r-- 1 root root   264 May 24 20:52 favicon.svg
+-rw-r--r-- 1 root root 84567 May 24 20:52 og-image.jpg
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  2424  100  2424    0     0   167k      0 --:--:-- --:--:-- --:--:--  169k
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+root@f418b3c5b5c3:~/LegalDocProcessor#

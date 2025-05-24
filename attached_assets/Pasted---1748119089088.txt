@@ -1,0 +1,251 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:32:02 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# pm2 logs legalrfdocs --lines 10
+[TAILING] Tailing last 10 lines for [legalrfdocs] process (change the value with --lines option)
+/root/.pm2/logs/legalrfdocs-error-0.log last 10 lines:
+0|legalrfd | memory, and will not scale past a single process.
+0|legalrfd | Warning: connect.session() MemoryStore is not
+0|legalrfd | designed for a production environment, as it will leak
+0|legalrfd | memory, and will not scale past a single process.
+0|legalrfd | Warning: connect.session() MemoryStore is not
+0|legalrfd | designed for a production environment, as it will leak
+0|legalrfd | memory, and will not scale past a single process.
+0|legalrfd | Warning: connect.session() MemoryStore is not
+0|legalrfd | designed for a production environment, as it will leak
+0|legalrfd | memory, and will not scale past a single process.
+
+/root/.pm2/logs/legalrfdocs-out-0.log last 10 lines:
+0|legalrfd | 8:23:25 PM [express] serving on port 5000
+0|legalrfd | 8:26:40 PM [express] serving on port 5000
+0|legalrfd | 8:27:40 PM [express] serving on port 5000
+0|legalrfd | 8:27:54 PM [express] serving on port 5000
+0|legalrfd | 8:29:00 PM [express] serving on port 5000
+0|legalrfd | 8:31:13 PM [express] serving on port 5000
+0|legalrfd | 8:31:17 PM [express] serving on port 5000
+0|legalrfd | 8:33:26 PM [express] serving on port 5000
+0|legalrfd | 8:33:32 PM [express] serving on port 5000
+0|legalrfd | 8:34:06 PM [express] serving on port 5000
+
+^C
+root@f418b3c5b5c3:~# curl http://localhost:5000
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>ЮрДок Генератор - Создание юридических документов для сайтов</title>
+    <meta name="description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ. Политики конфиденциальности, пользовательские соглашения, согласия на обработку ПД.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script type="module" crossorigin src="/assets/index-CLXOecP4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DiBjQOS4.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>
+root@f418b3c5b5c3:~# pm2 describe legalrfdocs
+ Describing process with id 0 - name legalrfdocs
+┌───────────────────┬─────────────────────────────────────────┐
+│ status            │ online                                  │
+│ name              │ legalrfdocs                             │
+│ namespace         │ default                                 │
+│ version           │ 1.0.0                                   │
+│ restarts          │ 25                                      │
+│ uptime            │ 96s                                     │
+│ script path       │ /root/LegalDocProcessor/dist/index.js   │
+│ script args       │ N/A                                     │
+│ error log path    │ /root/.pm2/logs/legalrfdocs-error-0.log │
+│ out log path      │ /root/.pm2/logs/legalrfdocs-out-0.log   │
+│ pid path          │ /root/.pm2/pids/legalrfdocs-0.pid       │
+│ interpreter       │ node                                    │
+│ interpreter args  │ N/A                                     │
+│ script id         │ 0                                       │
+│ exec cwd          │ /root/LegalDocProcessor                 │
+│ exec mode         │ cluster_mode                            │
+│ node.js version   │ 20.11.0                                 │
+│ node env          │ production                              │
+│ watch & reload    │ ✘                                       │
+│ unstable restarts │ 0                                       │
+│ created at        │ 2025-05-24T20:34:05.571Z                │
+└───────────────────┴─────────────────────────────────────────┘
+ Actions available
+┌────────────────────────┐
+│ km:heapdump            │
+│ km:cpu:profiling:start │
+│ km:cpu:profiling:stop  │
+│ km:heap:sampling:start │
+│ km:heap:sampling:stop  │
+└────────────────────────┘
+ Trigger via: pm2 trigger legalrfdocs <action_name>
+
+ Code metrics value
+┌────────────────────────┬──────────────┐
+│ Used Heap Size         │ 20.45 MiB    │
+│ Heap Usage             │ 96.63 %      │
+│ Heap Size              │ 21.16 MiB    │
+│ Event Loop Latency p95 │ 1.05 ms      │
+│ Event Loop Latency     │ 0.43 ms      │
+│ Active handles         │ 2            │
+│ Active requests        │ 0            │
+│ HTTP                   │ 0.02 req/min │
+│ HTTP P95 Latency       │ 23 ms        │
+│ HTTP Mean Latency      │ 23 ms        │
+└────────────────────────┴──────────────┘
+ Divergent env variables from local env
+┌────────────────┬──────────────────────┐
+│ PWD            │ /root/LegalDocProces │
+│ SSH_CONNECTION │ 109.252.119.183 2742 │
+│ XDG_SESSION_ID │ 157491552            │
+│ SSH_CLIENT     │ 109.252.119.183 2742 │
+└────────────────┴──────────────────────┘
+
+ Add your own code metrics: http://bit.ly/code-metrics
+ Use `pm2 logs legalrfdocs [--lines 1000]` to display logs
+ Use `pm2 env 0` to display environment variables
+ Use `pm2 monit` to monitor CPU and Memory usage legalrfdocs
+root@f418b3c5b5c3:~# pm2 delete legalrfdocs
+pm2 start ecosystem.config.cjs
+[PM2] Applying action deleteProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][WARN] Applications legalrfdocs not running, starting...
+[PM2] App [legalrfdocs] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 0    │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~# sed -i '/<head>/a\    <meta name="yandex-verification" content="cac514186201f343" />' dist/public/index.html
+sed: can't read dist/public/index.html: No such file or directory
+root@f418b3c5b5c3:~# ^C
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor
+sed -i '/<head>/a\    <meta name="yandex-verification" content="cac514186201f343" />' dist/public/index.html
+root@f418b3c5b5c3:~/LegalDocProcessor# nginx -t
+systemctl status nginx
+nginx: [emerg] "location" directive is not allowed here in /etc/nginx/sites-enabled/legalrfdocs.ru:18
+nginx: configuration file /etc/nginx/nginx.conf test failed
+× nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset:>
+     Active: failed (Result: exit-code) since Sat 2025-05-24 20:35:01 UTC; 1min>
+       Docs: man:nginx(8)
+    Process: 306548 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_pro>
+
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru systemd[1]: Starting A high performa>
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru nginx[306548]: nginx: [emerg] "locat>
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru nginx[306548]: nginx: configuration >
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru systemd[1]: nginx.service: Control p>
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru systemd[1]: nginx.service: Failed wi>
+May 24 20:35:01 f418b3c5b5c3.vps.myjino.ru systemd[1]: Failed to start A high p>
+lines 1-12/12 (END)
+^C
+root@f418b3c5b5c3:~/LegalDocProcessor# ^[[200~cat /etc/nginx/sites-available/legalrfdocs.ru~
+-bash: $'\E[200~cat': command not found
+root@f418b3c5b5c3:~/LegalDocProcessor# systemctl reload nginx
+nginx.service is not active, cannot reload.
+root@f418b3c5b5c3:~/LegalDocProcessor# curl -I https://legalrfdocs.ru
+HTTP/2 502
+server: nginx
+date: Sat, 24 May 2025 20:36:42 GMT
+content-type: text/html
+content-length: 166
+
+root@f418b3c5b5c3:~/LegalDocProcessor# curl -I https://legalrfdocs.ru
+HTTP/2 502
+server: nginx
+date: Sat, 24 May 2025 20:36:48 GMT
+content-type: text/html
+content-length: 166
+
+root@f418b3c5b5c3:~/LegalDocProcessor# curl https://legalrfdocs.ru | grep yandex
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   166  100   166    0     0   2266      0 --:--:-- --:--:-- --:--:--  2273
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# curl https://legalrfdocs.ru | grep yandex
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   166  100   166    0     0   1209      0 --:--:-- --:--:-- --:--:--  1211
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# cat /etc/nginx/sites-available/legalrfdocs.ru
+server {
+    listen 80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+
+    location / {
+        proxy_pass http://localhost:5000
+;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+location ~ /yandex_.*\.html$ {
+    root /root/LegalDocProcessor/dist/public;
+}
+root@f418b3c5b5c3:~/LegalDocProcessor# cp /etc/nginx/sites-available/legalrfdocs.ru /etc/nginx/sites-available/legalrfdocs.ru.backup
+root@f418b3c5b5c3:~/LegalDocProcessor# cat > /etc/nginx/sites-available/legalrfdocs.ru << 'EOF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+
+    ssl_certificate /etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/legalrfdocs.ru/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+EOF }   proxy_cache_bypass $http_upgrade;o $scheme;_x_forwarded_for;
+root@f418b3c5b5c3:~/LegalDocProcessor# nginx -t
+nginx: [emerg] cannot load certificate "/etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem, r) error:10000080:BIO routines::no such file)
+nginx: configuration file /etc/nginx/nginx.conf test failed
+root@f418b3c5b5c3:~/LegalDocProcessor# systemctl start nginx
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@f418b3c5b5c3:~/LegalDocProcessor# curl https://legalrfdocs.ru | grep yandex
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   166  100   166    0     0   2303      0 --:--:-- --:--:-- --:--:--  2338
+root@f418b3c5b5c3:~/LegalDocProcessor#

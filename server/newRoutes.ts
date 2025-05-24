@@ -4,6 +4,7 @@ import { setupSimpleAuth, requireAuth } from "./simpleAuth";
 import { users, userDocuments, blogPosts, adminSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Simple Auth middleware
@@ -17,6 +18,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!email || !password) {
         return res.status(400).json({ message: "Email и пароль обязательны" });
       }
+
+      // Хешируем пароль
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       // Проверяем, существует ли пользователь
       const existingUser = await db
@@ -34,13 +38,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .insert(users)
         .values({
           email,
-          password,
+          password: hashedPassword,
           firstName: firstName || '',
           lastName: lastName || '',
           role: 'user',
           subscription: 'free',
           documentsCreated: 0,
-          documentsLimit: 3
+          documentsLimit: 2
         })
         .returning();
 

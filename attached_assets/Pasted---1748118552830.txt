@@ -1,0 +1,209 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:12:10 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.60s
+✘ [ERROR] Unterminated string literal
+
+    server/newRoutes.ts:41:37:
+      41 │           firstName: firstName || '''
+         ╵                                      ^
+
+1 error
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legalrfdocs
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 17   │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i "s/firstName: firstName || '''/firstName: firstName || ''/g" server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i "s/lastName: lastName || '''/lastName: lastName || ''/g" server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '35,45p' server/newRoutes.ts
+        .values({
+          email,
+          password,
+          email,
+          password,
+          password,
+          firstName: firstName || ''
+          lastName: lastName || '',
+          role: 'user',
+          subscription: 'free',
+          documentsCreated: 0,
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.98s
+✘ [ERROR] Expected "}" but found "lastName"
+
+    server/newRoutes.ts:42:10:
+      42 │           lastName: lastName || '',
+         │           ~~~~~~~~
+         ╵           }
+
+1 error
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legalrfdocs
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 18   │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# curl -I https://legalrfdocs.ru
+HTTP/2 502
+server: nginx
+date: Sat, 24 May 2025 20:27:46 GMT
+content-type: text/html
+content-length: 166
+
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legalrfdocs
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 19   │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 logs legalrfdocs --lines 5
+[TAILING] Tailing last 5 lines for [legalrfdocs] process (change the value with --lines option)
+/root/.pm2/logs/legalrfdocs-error-0.log last 5 lines:
+0|legalrfd | designed for a production environment, as it will leak
+0|legalrfd | memory, and will not scale past a single process.
+0|legalrfd | Warning: connect.session() MemoryStore is not
+0|legalrfd | designed for a production environment, as it will leak
+0|legalrfd | memory, and will not scale past a single process.
+
+/root/.pm2/logs/legalrfdocs-out-0.log last 5 lines:
+0|legalrfd | 8:19:32 PM [express] serving on port 5000
+0|legalrfd | 8:23:25 PM [express] serving on port 5000
+0|legalrfd | 8:26:40 PM [express] serving on port 5000
+0|legalrfd | 8:27:40 PM [express] serving on port 5000
+0|legalrfd | 8:27:54 PM [express] serving on port 5000
+
+^C
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '35,45d' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '34a\        .values({\
+          email,\
+          password,\
+          firstName: firstName || '\''\'',\
+          lastName: lastName || '\''\'',\
+          role: '\''user'\'',\
+          subscription: '\''free'\'',\
+          documentsCreated: 0,\
+          documentsLimit: 3\
+        })' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor#
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '35,45p' server/newRoutes.ts
+        .values({
+          email,
+          password,
+          firstName: firstName || ',
+          lastName: lastName || ',
+          role: 'user',
+          subscription: 'free',
+          documentsCreated: 0,
+          documentsLimit: 3
+        })
+          documentsLimit: 3
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.33s
+✘ [ERROR] Unterminated string literal
+
+    server/newRoutes.ts:38:36:
+      38 │           firstName: firstName || ',
+         ╵                                     ^
+
+1 error
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legalrfdocs
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 20   │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# curl -I https://legalrfdocs.ru
+HTTP/2 502
+server: nginx
+date: Sat, 24 May 2025 20:29:05 GMT
+content-type: text/html
+content-length: 166
+
+root@f418b3c5b5c3:~/LegalDocProcessor#

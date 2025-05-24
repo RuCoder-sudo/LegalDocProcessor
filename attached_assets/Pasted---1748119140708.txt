@@ -1,0 +1,88 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:35:26 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# at /etc/nginx/sites-available/legalrfdocs.ru
+-bash: at: command not found
+root@f418b3c5b5c3:~# cat /etc/nginx/sites-available/legalrfdocs.ru
+server {
+    listen 80;
+    listen [::]:80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+
+    ssl_certificate /etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/legalrfdocs.ru/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+root@f418b3c5b5c3:~# cp /etc/nginx/sites-available/legalrfdocs.ru /etc/nginx/sites-available/legalrfdocs.ru.backup
+root@f418b3c5b5c3:~# cat > /etc/nginx/sites-available/legalrfdocs.ru << 'EOF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+    return 301 https://$server_name$request_uri;
+}
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+    ssl_certificate /etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/legalrfdocs.ru/privkey.pem;
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+EOF }   proxy_cache_bypass $http_upgrade;
+root@f418b3c5b5c3:~# nginx -t
+systemctl start nginx
+nginx: [emerg] cannot load certificate "/etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/letsencrypt/live/legalrfdocs.ru/fullchain.pem, r) error:10000080:BIO routines::no such file)
+nginx: configuration file /etc/nginx/nginx.conf test failed
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@f418b3c5b5c3:~# curl https://legalrfdocs.ru
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body bgcolor="white">
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+root@f418b3c5b5c3:~#

@@ -1,0 +1,253 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:38:20 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# cat > /etc/nginx/sites-available/legalrfdocs.ru << 'EOF'
+server {
+    listen 80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOF
+root@f418b3c5b5c3:~/LegalDocProcessor# nginx -t
+systemctl start nginx
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+root@f418b3c5b5c3:~/LegalDocProcessor# curl http://legalrfdocs.ru
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta name="yandex-verification" content="cac514186201f343" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>ЮрДок Генератор - Создание юридических документов для сайтов</title>
+    <meta name="description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ. Политики конфиденциальности, пользовательские соглашения, согласия на обработку ПД.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script type="module" crossorigin src="/assets/index-CLXOecP4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DiBjQOS4.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>
+root@f418b3c5b5c3:~/LegalDocProcessor# cd /root/LegalDocProcessor
+sed -i '/<head>/a\    <meta name="yandex-verification" content="cac514186201f343" />' dist/public/index.html
+root@f418b3c5b5c3:~/LegalDocProcessor# curl http://legalrfdocs.ru | grep yandex
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1697  100  1697    0     0   100k      0 --:--:-- --:--:-- --:--:--  103k
+    <meta name="yandex-verification" content="cac514186201f343" />
+    <meta name="yandex-verification" content="cac514186201f343" />
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# cd /root/LegalDocProcessor
+git add .
+git commit -m "Working backup: site restored, Yandex verification added"
+[main 316e3da] Working backup: site restored, Yandex verification added
+ Committer: root <root@f418b3c5b5c3.vps.myjino.ru>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 9 files changed, 118 insertions(+), 8 deletions(-)
+ create mode 100644 .env
+ create mode 100644 client/src/pages/Help.tsx
+ create mode 100644 ecosystem.config.cjs
+ create mode 100644 ecosystem.config.js
+ create mode 100644 yandex_cac514186201f343.html
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '10,50p' server/newRoutes.ts
+  setupSimpleAuth(app);
+
+  // Регистрация пользователя
+  app.post('/api/register', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email и пароль обязательны" });
+      }
+
+      // Проверяем, существует ли пользователь
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Пользователь с таким email уже существует" });
+      }
+
+      // Создаем нового пользователя
+      const result = await db
+        .insert(users)
+        .values({
+          email,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          role: 'user',
+          subscription: 'free',
+          documentsCreated: 0,
+          documentsLimit: 3
+        })
+        .returning();
+
+      const newUser = result[0];
+
+      // Устанавливаем сессию
+      (req as any).session.userId = newUser.id;
+
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/const { email, password, firstName, lastName } = req.body;/a\
+\
+      // Хешируем пароль\
+      const hashedPassword = await bcrypt.hash(password, 10);' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/password,/password: hashedPassword,/' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '15,45p' server/newRoutes.ts
+      const { email, password: hashedPassword, firstName, lastName } = req.body;
+
+      // Хешируем пароль
+      const hashedPassword = await bcrypt.hash(password: hashedPassword, 10);
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email и пароль обязательны" });
+      }
+
+      // Проверяем, существует ли пользователь
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Пользователь с таким email уже существует" });
+      }
+
+      // Создаем нового пользователя
+      const result = await db
+        .insert(users)
+        .values({
+          email,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          role: 'user',
+          subscription: 'free',
+          documentsCreated: 0,
+          documentsLimit: 3
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.26s
+✘ [ERROR] The symbol "hashedPassword" has already been declared
+
+    server/newRoutes.ts:18:12:
+      18 │       const hashedPassword = await bcrypt.hash(password: hashedPas...
+         ╵             ~~~~~~~~~~~~~~
+
+  The symbol "hashedPassword" was originally declared here:
+
+    server/newRoutes.ts:15:31:
+      15 │ ...const { email, password: hashedPassword, firstName, lastName } ...
+         ╵                             ~~~~~~~~~~~~~~
+
+✘ [ERROR] Expected ")" but found ":"
+
+    server/newRoutes.ts:18:55:
+      18 │ ... hashedPassword = await bcrypt.hash(password: hashedPassword, 10);
+         │                                                ^
+         ╵                                                )
+
+2 errors
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 1    │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# curl http://legalrfdocs.ru
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>ЮрДок Генератор - Создание юридических документов для сайтов</title>
+    <meta name="description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ. Политики конфиденциальности, пользовательские соглашения, согласия на обработку ПД.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script type="module" crossorigin src="/assets/index-CLXOecP4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DiBjQOS4.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>
+root@f418b3c5b5c3:~/LegalDocProcessor#
