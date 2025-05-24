@@ -165,6 +165,118 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Benefits Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Преимущества нашей платформы
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Почему ведущие компании выбирают нас для создания юридических документов
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-blue-500/10 p-3">
+                    <Shield className="h-8 w-8 text-blue-500" />
+                  </div>
+                  <CardTitle className="text-lg">100% соответствие закону</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Все документы создаются с учетом последних изменений в 152-ФЗ и требований Роскомнадзора
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-green-500/10 p-3">
+                    <Wand2 className="h-8 w-8 text-green-500" />
+                  </div>
+                  <CardTitle className="text-lg">Экономия времени</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Создание документа занимает 5-10 минут вместо нескольких дней работы с юристом
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-purple-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-purple-500/10 p-3">
+                    <Download className="h-8 w-8 text-purple-500" />
+                  </div>
+                  <CardTitle className="text-lg">Готовые к использованию</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Документы сразу готовы для размещения на сайте в форматах PDF, DOC, HTML
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-orange-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-orange-500/10 p-3">
+                    <CheckCircle className="h-8 w-8 text-orange-500" />
+                  </div>
+                  <CardTitle className="text-lg">Проверено экспертами</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Шаблоны разработаны практикующими юристами с опытом работы в IT-сфере
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-red-500/10 p-3">
+                    <Crown className="h-8 w-8 text-red-500" />
+                  </div>
+                  <CardTitle className="text-lg">Премиум возможности</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Безлимитное создание, редактирование, экспорт документов и персональная поддержка
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-indigo-200 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-indigo-500/10 p-3">
+                    <ArrowRight className="h-8 w-8 text-indigo-500" />
+                  </div>
+                  <CardTitle className="text-lg">Постоянные обновления</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Мы следим за изменениями в законодательстве и обновляем шаблоны автоматически
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Teaser */}
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,9 +318,16 @@ export default function Landing() {
                     <span>Стандартная поддержка</span>
                   </li>
                 </ul>
-                <Button className="w-full" variant="outline" onClick={() => setWizardOpen(true)}>
-                  Начать бесплатно
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="w-full" variant="outline">
+                      Начать бесплатно
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <AuthForms />
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
 

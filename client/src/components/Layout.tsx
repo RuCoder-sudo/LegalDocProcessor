@@ -224,6 +224,9 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   <li><Link href="/examples" className="hover:text-primary transition-colors text-sm"><i className="fas fa-eye mr-2"></i>Примеры документов</Link></li>
                   <li><Link href="/news" className="hover:text-primary transition-colors text-sm"><i className="fas fa-newspaper mr-2"></i>Правовые новости</Link></li>
                   <li><Link href="/contacts" className="hover:text-primary transition-colors text-sm"><i className="fas fa-phone mr-2"></i>Контакты</Link></li>
+                  {user?.role === 'admin' && (
+                    <li><Link href="/admin" className="hover:text-primary transition-colors text-sm"><i className="fas fa-cog mr-2"></i>Панель управления</Link></li>
+                  )}
                   <li><a href="#help" className="hover:text-primary transition-colors text-sm"><i className="fas fa-question-circle mr-2"></i>Помощь</a></li>
                 </ul>
               </div>
