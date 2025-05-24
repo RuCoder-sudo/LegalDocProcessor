@@ -72,6 +72,21 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
 
             {/* Auth Section */}
             <div className="flex items-center space-x-4">
+              {/* Переключатель темы для всех пользователей */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="h-9 w-9"
+                title={theme === 'light' ? 'Переключить на темную тему' : 'Переключить на светлую тему'}
+              >
+                {theme === 'light' ? (
+                  <Moon className="h-4 w-4" />
+                ) : (
+                  <Sun className="h-4 w-4" />
+                )}
+              </Button>
+
               {isLoading ? (
                 <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
               ) : isAuthenticated && user ? (
