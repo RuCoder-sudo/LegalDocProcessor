@@ -31,8 +31,8 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role").default("user"), // user, premium, admin
-  subscription: varchar("subscription").default("free"), // free, premium
+  role: varchar("role").default("user"), // user, premium, ultra, admin
+  subscription: varchar("subscription").default("free"), // free, premium, ultra
   documentsCreated: integer("documents_created").default(0),
   documentsLimit: integer("documents_limit").default(3),
   premiumUntil: timestamp("premium_until"),
@@ -69,6 +69,10 @@ export const adminSettings = pgTable("admin_settings", {
   premiumPlanName: varchar("premium_plan_name").default("Премиум"),
   premiumPlanPrice: integer("premium_plan_price").default(500),
   premiumPlanDescription: text("premium_plan_description").default("Безлимитное создание документов, редактирование, экспорт в разные форматы, QR-коды"),
+  ultraPlanLimit: integer("ultra_plan_limit").default(-1), // -1 = unlimited
+  ultraPlanName: varchar("ultra_plan_name").default("Ультра"),
+  ultraPlanPrice: integer("ultra_plan_price").default(1500),
+  ultraPlanDescription: text("ultra_plan_description").default("Все премиум функции + персональная поддержка, приоритетная обработка, API доступ, персональные шаблоны"),
   // SEO
   seoTitle: varchar("seo_title").default("ЮрДок Генератор - Автоматическое создание юридических документов"),
   seoDescription: text("seo_description").default("Профессиональный генератор юридических документов в соответствии с российским законодательством. Политики конфиденциальности, согласия на обработку ПД и другие документы."),
@@ -141,6 +145,64 @@ export const blogPosts = pgTable("blog_posts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// QR Codes table
+export const qrCodes = pgTable("qr_codes", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").notNull().references(() => userDocuments.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  qrData: text("qr_data").notNull(),
+  qrSvg: text("qr_svg").notNull(),
+  downloadCount: integer("download_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Feedback and suggestions
+export const feedback = pgTable("feedback", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id),
+  type: varchar("type").notNull(), // suggestion, complaint, compliment, question
+  category: varchar("category").notNull(), // interface, functionality, content, performance
+  rating: integer("rating"), // 1-5 stars
+  subject: varchar("subject").notNull(),
+  message: text("message").notNull(),
+  email: varchar("email"),
+  isAnonymous: boolean("is_anonymous").default(false),
+  status: varchar("status").default("new"), // new, reviewing, resolved
+  adminResponse: text("admin_response"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Help articles
+export const helpArticles = pgTable("help_articles", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  slug: varchar("slug").notNull().unique(),
+  content: text("content").notNull(),
+  category: varchar("category").notNull(), // getting-started, features, troubleshooting, faq
+  subcategory: varchar("subcategory"),
+  order: integer("order").default(0),
+  isPublished: boolean("is_published").default(true),
+  viewCount: integer("view_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Document advanced templates
+export const advancedTemplates = pgTable("advanced_templates", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  type: varchar("type").notNull(), // privacy, terms, consent, offer, cookie, return, charter
+  industry: varchar("industry"),
+  content: text("content").notNull(),
+  formConfig: jsonb("form_config").notNull(), // advanced form configuration with radio buttons, checkboxes, etc
+  isPremium: boolean("is_premium").default(true),
+  isUltra: boolean("is_ultra").default(false),
+  features: text("features").array(), // list of features like qr_code, export_formats, etc
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -177,12 +239,39 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
   createdAt: true,
 });
 
+export const insertQrCodeSchema = createInsertSchema(qrCodes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertFeedbackSchema = createInsertSchema(feedback).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertHelpArticleSchema = createInsertSchema(helpArticles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAdvancedTemplateSchema = createInsertSchema(advancedTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Select schemas  
 export const selectUserSchema = createSelectSchema(users);
 export const selectDocumentTemplateSchema = createSelectSchema(documentTemplates);
 export const selectUserDocumentSchema = createSelectSchema(userDocuments);
 export const selectBlogPostSchema = createSelectSchema(blogPosts);
 export const selectNotificationSchema = createSelectSchema(notifications);
+export const selectQrCodeSchema = createSelectSchema(qrCodes);
+export const selectFeedbackSchema = createSelectSchema(feedback);
+export const selectHelpArticleSchema = createSelectSchema(helpArticles);
+export const selectAdvancedTemplateSchema = createSelectSchema(advancedTemplates);
 
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
