@@ -53,20 +53,31 @@ const requireAuth = async (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // CORS middleware для правильной работы с cookie
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    next();
+  });
+
   // Session middleware with MemoryStore
   app.use(session({
     secret: process.env.SESSION_SECRET || "your-very-secure-secret-key-2024",
     store: new MemStore({
       checkPeriod: 86400000 // очистка каждые 24 часа
     }),
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       maxAge: 86400000, // 24 часа
       httpOnly: false,
       secure: false,
-      sameSite: 'lax'
-    }
+      sameSite: 'none',
+      path: '/'
+    },
+    name: 'connect.sid'
   }));
 
   // Регистрация пользователя
