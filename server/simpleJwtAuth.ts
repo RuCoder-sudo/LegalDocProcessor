@@ -185,7 +185,20 @@ export function setupJwtAuth(app: Express) {
   // Получить текущего пользователя
   app.get("/api/auth/user", async (req, res) => {
     try {
-      const token = req.cookies['auth-token'];
+      // Пробуем получить токен из cookie или заголовков
+      let token = req.cookies['auth-token'];
+      
+      if (!token) {
+        // Пробуем получить из заголовка Authorization
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          token = authHeader.substring(7);
+        }
+      }
+      
+      console.log("Auth check - Cookie token:", req.cookies['auth-token'] ? "present" : "missing");
+      console.log("Auth check - Auth header:", req.headers.authorization ? "present" : "missing");
+      console.log("Auth check - Final token:", token ? "present" : "missing");
       
       if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
