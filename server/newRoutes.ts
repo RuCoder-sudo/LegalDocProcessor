@@ -197,6 +197,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .returning();
         
         userId = tempUserResult[0].id;
+      } else {
+        // Проверяем, существует ли пользователь в базе
+        const existingUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        if (existingUser.length === 0) {
+          // Если пользователь не найден, создаем нового
+          const newUserResult = await db
+            .insert(users)
+            .values({
+              id: userId,
+              email: `user_${userId}@demo.com`,
+              firstName: 'Пользователь',
+              lastName: 'Системы',
+              role: 'user',
+              subscription: 'free',
+              documentsCreated: 0,
+              documentsLimit: 10
+            })
+            .returning();
+          
+          userId = newUserResult[0].id;
+        }
       }
 
       console.log('Extracted type:', type);

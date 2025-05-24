@@ -291,13 +291,22 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                     <span className="text-gray-600">•</span>
                     <Link href="/important" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Отказ от ответственности</Link>
                   </div>
+                  {!isAuthenticated && (
+                    <Button asChild size="sm" className="animate-pulse-glow">
+                      <Link href="/login">
+                        <User className="mr-2 h-4 w-4" />
+                        Войти
+                      </Link>
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => document.documentElement.classList.toggle('dark')}
+                    onClick={toggleTheme}
                     className="p-2"
+                    title={theme === 'light' ? 'Темная тема' : 'Светлая тема'}
                   >
-                    <Moon className="h-4 w-4" />
+                    {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
