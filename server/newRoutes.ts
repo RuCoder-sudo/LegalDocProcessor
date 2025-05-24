@@ -250,19 +250,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role === 'admin') {
         limit = -1; // Безлимитно для админов
       } else if (user?.subscription === 'premium') {
-        limit = 100; // 100 документов для премиум
+        limit = -1; // Безлимитно для премиум
       } else {
-        limit = 3; // 3 документа для бесплатных пользователей
+        limit = 2; // 2 документа для бесплатных пользователей
       }
 
-      if (userDocCount.length >= limit) {
+      if (limit > 0 && userDocCount.length >= limit) {
         return res.status(403).json({ 
-          message: `Достигнут лимит документов (${limit}). Обновитесь до премиум для создания большего количества документов.` 
+          message: `Достигнут лимит документов (${limit}). Обновитесь до премиум для безлимитного создания документов.`,
+          code: "LIMIT_REACHED"
         });
       }
 
       // Generate document content with extracted form data
-      const content = await generateDocumentContent(type, formData);
+      let content = await generateDocumentContent(type, formData);
+      
+      // Добавляем водяной знак для бесплатных пользователей
+      if (user?.subscription !== 'premium') {
+        content += '\n\n---\nДокумент создан с помощью ЮрДок Генератор (legalrfdocs.ru)\nДля удаления данной подписи и получения полного функционала обновитесь до премиум-плана.';
+      }
 
       const result = await db
         .insert(userDocuments)
@@ -290,6 +296,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating document:", error);
       res.status(500).json({ message: "Ошибка при создании документа" });
+    }
+  });
+
+  // Download PDF (с ограничениями для бесплатных пользователей)
+  app.get('/api/documents/:id/pdf', async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).session?.userId;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Требуется авторизация для скачивания PDF" });
+      }
+
+      // Получаем пользователя
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId));
+
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      // Проверяем подписку для скачивания PDF
+      if (user.subscription !== 'premium') {
+        return res.status(403).json({ 
+          message: "Скачивание PDF доступно только для премиум пользователей. Обновитесь до премиум-плана!",
+          code: "PREMIUM_REQUIRED"
+        });
+      }
+
+      // Получаем документ
+      const [document] = await db
+        .select()
+        .from(userDocuments)
+        .where(eq(userDocuments.id, parseInt(id)));
+
+      if (!document || document.userId !== userId) {
+        return res.status(404).json({ message: "Документ не найден" });
+      }
+
+      res.json({ 
+        message: "PDF генерация доступна в премиум версии",
+        content: document.generatedContent 
+      });
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      res.status(500).json({ message: "Ошибка при скачивании PDF" });
     }
   });
 
