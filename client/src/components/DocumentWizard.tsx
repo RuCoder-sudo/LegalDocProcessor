@@ -1,0 +1,410 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { DOCUMENT_TYPES, INDUSTRIES } from "@/lib/constants";
+import { DocumentFormData } from "@/lib/types";
+import { ArrowLeft, ArrowRight, Check, Download, Eye, Sparkles } from "lucide-react";
+
+const formSchema = z.object({
+  type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return"]),
+  companyName: z.string().min(1, "Название компании обязательно"),
+  inn: z.string().min(10, "ИНН должен содержать минимум 10 цифр").max(12),
+  ogrn: z.string().optional(),
+  legalAddress: z.string().min(1, "Юридический адрес обязателен"),
+  websiteUrl: z.string().url("Некорректный URL сайта"),
+  contactEmail: z.string().email("Некорректный email"),
+  registrar: z.string().optional(),
+  hostingProvider: z.string().optional(),
+  phone: z.string().optional(),
+  industry: z.string().optional(),
+});
+
+interface DocumentWizardProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess?: (document: any) => void;
+}
+
+export default function DocumentWizard({ open, onOpenChange, onSuccess }: DocumentWizardProps) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [createdDocument, setCreatedDocument] = useState<any>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const form = useForm<DocumentFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: "privacy",
+      companyName: "",
+      inn: "",
+      ogrn: "",
+      legalAddress: "",
+      websiteUrl: "",
+      contactEmail: "",
+      registrar: "",
+      hostingProvider: "",
+      phone: "",
+      industry: "",
+    },
+  });
+
+  const createDocumentMutation = useMutation({
+    mutationFn: async (data: DocumentFormData) => {
+      const response = await apiRequest("POST", "/api/documents", data);
+      return response.json();
+    },
+    onSuccess: (document) => {
+      setCreatedDocument(document);
+      setCurrentStep(3);
+      queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+      toast({
+        title: "Документ создан!",
+        description: "Ваш документ успешно сгенерирован и готов к использованию.",
+      });
+      onSuccess?.(document);
+    },
+    onError: (error: any) => {
+      if (error.message.includes("LIMIT_REACHED")) {
+        toast({
+          title: "Лимит документов исчерпан",
+          description: "Перейдите на премиум-план для безлимитного создания документов.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Ошибка создания документа",
+          description: error.message || "Произошла ошибка при создании документа",
+          variant: "destructive",
+        });
+      }
+    },
+  });
+
+  const handleNext = () => {
+    if (currentStep === 1) {
+      if (!selectedType) {
+        toast({
+          title: "Выберите тип документа",
+          description: "Необходимо выбрать тип документа для продолжения",
+          variant: "destructive",
+        });
+        return;
+      }
+      form.setValue("type", selectedType as any);
+      setCurrentStep(2);
+    } else if (currentStep === 2) {
+      form.handleSubmit((data) => {
+        setIsGenerating(true);
+        createDocumentMutation.mutate(data);
+      })();
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const resetWizard = () => {
+    setCurrentStep(1);
+    setSelectedType("");
+    setCreatedDocument(null);
+    setIsGenerating(false);
+    form.reset();
+  };
+
+  const handleClose = () => {
+    resetWizard();
+    onOpenChange(false);
+  };
+
+  const progress = (currentStep / 3) * 100;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            Создание документа
+          </DialogTitle>
+          <div className="flex items-center space-x-4 mt-4">
+            <Progress value={progress} className="flex-1" />
+            <span className="text-sm text-muted-foreground">Шаг {currentStep} из 3</span>
+          </div>
+        </DialogHeader>
+
+        <div className="mt-6">
+          {/* Step 1: Document Type Selection */}
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Выберите тип документа</h3>
+                <p className="text-muted-foreground">Выберите тип юридического документа, который вы хотите создать</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {Object.entries(DOCUMENT_TYPES).map(([key, type]) => (
+                  <Card
+                    key={key}
+                    className={`cursor-pointer transition-all hover:shadow-md ${
+                      selectedType === key ? "ring-2 ring-primary" : ""
+                    }`}
+                    onClick={() => setSelectedType(key)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center space-x-3">
+                        <i className={`${type.icon} text-xl text-${type.color}-500`}></i>
+                        <div>
+                          <CardTitle className="text-lg">{type.name}</CardTitle>
+                          <CardDescription>{type.description}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Company Information */}
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Информация о компании</h3>
+                <p className="text-muted-foreground">Заполните данные вашей компании для генерации документа</p>
+              </div>
+
+              <form className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Название компании *</Label>
+                  <Input
+                    id="companyName"
+                    placeholder="ООО 'Ваша компания'"
+                    {...form.register("companyName")}
+                  />
+                  {form.formState.errors.companyName && (
+                    <p className="text-sm text-destructive">{form.formState.errors.companyName.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="inn">ИНН *</Label>
+                  <Input
+                    id="inn"
+                    placeholder="1234567890"
+                    {...form.register("inn")}
+                  />
+                  {form.formState.errors.inn && (
+                    <p className="text-sm text-destructive">{form.formState.errors.inn.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ogrn">ОГРН</Label>
+                  <Input
+                    id="ogrn"
+                    placeholder="1234567890123"
+                    {...form.register("ogrn")}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="websiteUrl">URL сайта *</Label>
+                  <Input
+                    id="websiteUrl"
+                    type="url"
+                    placeholder="https://example.com"
+                    {...form.register("websiteUrl")}
+                  />
+                  {form.formState.errors.websiteUrl && (
+                    <p className="text-sm text-destructive">{form.formState.errors.websiteUrl.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="contactEmail">Email для связи *</Label>
+                  <Input
+                    id="contactEmail"
+                    type="email"
+                    placeholder="info@example.com"
+                    {...form.register("contactEmail")}
+                  />
+                  {form.formState.errors.contactEmail && (
+                    <p className="text-sm text-destructive">{form.formState.errors.contactEmail.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Телефон</Label>
+                  <Input
+                    id="phone"
+                    placeholder="+7 (999) 999-99-99"
+                    {...form.register("phone")}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="legalAddress">Юридический адрес *</Label>
+                  <Textarea
+                    id="legalAddress"
+                    placeholder="г. Москва, ул. Примерная, д. 1"
+                    {...form.register("legalAddress")}
+                  />
+                  {form.formState.errors.legalAddress && (
+                    <p className="text-sm text-destructive">{form.formState.errors.legalAddress.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="registrar">Регистратор домена</Label>
+                  <Input
+                    id="registrar"
+                    placeholder="REG.RU, Timeweb, др."
+                    {...form.register("registrar")}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hostingProvider">Хостинг-провайдер</Label>
+                  <Input
+                    id="hostingProvider"
+                    placeholder="Timeweb, Beget, др."
+                    {...form.register("hostingProvider")}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="industry">Отрасль</Label>
+                  <Select onValueChange={(value) => form.setValue("industry", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите отрасль" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDUSTRIES.map((industry) => (
+                        <SelectItem key={industry.value} value={industry.value}>
+                          {industry.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Step 3: Document Generation */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              {isGenerating || createDocumentMutation.isPending ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <h3 className="text-lg font-semibold mb-2">Создание документа...</h3>
+                  <p className="text-muted-foreground">Пожалуйста, подождите, документ генерируется</p>
+                </div>
+              ) : createdDocument ? (
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <div className="rounded-full bg-success/10 p-3">
+                      <Check className="h-8 w-8 text-success" />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Документ готов!</h3>
+                    <p className="text-muted-foreground">
+                      Ваш документ "{createdDocument.name}" успешно создан и готов к использованию
+                    </p>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-left">{createdDocument.name}</CardTitle>
+                          <CardDescription className="text-left">
+                            Создан {new Date(createdDocument.createdAt).toLocaleDateString('ru-RU')}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="secondary">
+                          {DOCUMENT_TYPES[createdDocument.type as keyof typeof DOCUMENT_TYPES]?.name}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-4">
+                        <Button variant="outline" className="flex-1">
+                          <Eye className="mr-2 h-4 w-4" />
+                          Просмотреть
+                        </Button>
+                        <Button className="flex-1">
+                          <Download className="mr-2 h-4 w-4" />
+                          Скачать PDF
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between pt-6 border-t">
+          <Button
+            variant="outline"
+            onClick={handlePrev}
+            disabled={currentStep === 1 || isGenerating}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Назад
+          </Button>
+
+          <div className="flex gap-2">
+            {currentStep < 3 ? (
+              <Button
+                onClick={handleNext}
+                disabled={isGenerating}
+                className={currentStep === 2 ? "bg-success hover:bg-success/90" : ""}
+              >
+                {currentStep === 2 ? (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Создать документ
+                  </>
+                ) : (
+                  <>
+                    Далее
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button onClick={handleClose}>
+                Закрыть
+              </Button>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
