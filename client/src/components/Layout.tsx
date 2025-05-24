@@ -261,6 +261,13 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   Сайт использует файлы cookie для улучшения пользовательского опыта. 
                   Продолжая использование сайта, вы соглашаетесь с обработкой данных.
                 </p>
+                <div className="mt-4 space-x-4">
+                  <Link href="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link>
+                  <span className="text-gray-600">•</span>
+                  <Link href="/terms" className="hover:text-primary transition-colors">Пользовательское соглашение</Link>
+                  <span className="text-gray-600">•</span>
+                  <Link href="/important" className="hover:text-primary transition-colors">Отказ от ответственности</Link>
+                </div>
               </div>
             </div>
           </div>

@@ -36,7 +36,11 @@ function Router() {
         <Route path="/premium" component={Premium} />
         <Route path="/examples" component={Examples} />
         <Route path="/news" component={News} />
+        <Route path="/news/:slug" component={News} />
         <Route path="/contacts" component={Contacts} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/terms" component={Terms} />
+        <Route path="/important" component={Important} />
         
         {/* Protected routes */}
         {isAuthenticated && (

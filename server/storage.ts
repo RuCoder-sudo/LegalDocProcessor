@@ -23,6 +23,7 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  createUser(user: UpsertUser): Promise<User>;
   getUserByEmail(email: string): Promise<User | undefined>;
   updateUserDocumentCount(userId: string): Promise<void>;
   
@@ -60,10 +61,36 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
+  async createUser(userData: UpsertUser): Promise<User> {
+    const userToInsert = {
+      ...userData,
+      id: crypto.randomUUID(),
+      role: userData.role || 'user',
+      subscription: userData.subscription || 'free',
+      documentsCreated: userData.documentsCreated || 0,
+      documentsLimit: userData.documentsLimit || 3,
+    };
+
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values(userToInsert)
+      .returning();
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const userToInsert = {
+      ...userData,
+      id: userData.id || crypto.randomUUID(),
+      role: userData.role || 'user',
+      subscription: userData.subscription || 'free',
+      documentsCreated: userData.documentsCreated || 0,
+      documentsLimit: userData.documentsLimit || 3,
+    };
+
+    const [user] = await db
+      .insert(users)
+      .values(userToInsert)
       .onConflictDoUpdate({
         target: users.id,
         set: {
