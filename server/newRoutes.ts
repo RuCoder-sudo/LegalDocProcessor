@@ -1,13 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import session from "express-session";
-import MemoryStore from "memorystore";
+import cookieParser from "cookie-parser";
+import { setupJwtAuth, requireJwtAuth } from "./simpleJwtAuth";
 import { users, userDocuments, blogPosts, adminSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-
-const MemStore = MemoryStore(session);
 
 // Auth middleware
 const requireAuth = async (req: any, res: any, next: any) => {
@@ -53,6 +51,9 @@ const requireAuth = async (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Cookie parser middleware
+  app.use(cookieParser());
+
   // CORS middleware для правильной работы с cookie
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -62,251 +63,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Session middleware - простая и надежная конфигурация
-  app.use(session({
-    secret: 'simple-secret-key-for-development-2024',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      secure: false,
-      httpOnly: false,
-      maxAge: 24 * 60 * 60 * 1000 // 24 часа
-    }
-  }));
+  // JWT Auth system
+  setupJwtAuth(app);
 
-  // Регистрация пользователя
-  app.post('/api/register', async (req, res) => {
-    try {
-      const { email, password, firstName, lastName } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email и пароль обязательны" });
-      }
-
-      // Хешируем пароль
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Проверяем, существует ли пользователь
-      const existingUser = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      if (existingUser.length > 0) {
-        return res.status(400).json({ message: "Пользователь с таким email уже существует" });
-      }
-
-      // Генерируем уникальный ID
-      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      // Создаем нового пользователя
-      const result = await db
-        .insert(users)
-        .values({
-          id: userId,
-          email,
-          password: hashedPassword,
-          firstName: firstName || null,
-          lastName: lastName || null,
-          role: 'user',
-          subscription: 'free',
-          documentsCreated: 0,
-          documentsLimit: 2
-        })
-        .returning();
-
-      const newUser = result[0];
-
-      // Устанавливаем сессию
-      (req as any).session.userId = newUser.id;
-      (req as any).session.user = newUser;
-      
-      // Сохраняем сессию принудительно
-      await new Promise((resolve, reject) => {
-        (req as any).session.save((err: any) => {
-          if (err) reject(err);
-          else resolve(true);
-        });
-      });
-      
-      res.json({ 
-        user: {
-          id: newUser.id, 
-          email: newUser.email, 
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          role: newUser.role,
-          subscription: newUser.subscription,
-          documentsCreated: newUser.documentsCreated,
-          documentsLimit: newUser.documentsLimit
-        }
-      });
-    } catch (error) {
-      console.error("Ошибка регистрации:", error);
-      res.status(500).json({ message: "Ошибка сервера при регистрации" });
-    }
-  });
-
-  // Вход пользователя
-  app.post('/api/login', async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email и пароль обязательны" });
-      }
-
-      // Проверяем админа
-      if (email === "rucoder.rf@yandex.ru" && password === "lizeR3056806") {
-        const adminUser = {
-          id: "admin_main",
-          email: "rucoder.rf@yandex.ru",
-          firstName: "Admin",
-          lastName: "User",
-          role: "admin" as const,
-          subscription: "premium" as const,
-          documentsCreated: 0,
-          documentsLimit: -1
-        };
-
-        (req as any).session.userId = adminUser.id;
-        (req as any).session.user = adminUser;
-        
-        console.log("Admin login - session set:", (req as any).session);
-        console.log("Session ID:", (req as any).sessionID);
-        
-        // Принудительно сохраняем сессию
-        return (req as any).session.save((err: any) => {
-          if (err) {
-            console.error("Session save error:", err);
-            return res.status(500).json({ message: "Ошибка сохранения сессии" });
-          }
-          console.log("Session saved successfully");
-          res.json({ 
-            message: "Вход выполнен успешно", 
-            user: adminUser 
-          });
-        });
-      }
-
-      // Находим пользователя
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      if (!user) {
-        return res.status(401).json({ message: "Неверный email или пароль" });
-      }
-
-      // Проверяем пароль
-      const isValidPassword = await bcrypt.compare(password, user.password);
-      if (!isValidPassword) {
-        return res.status(401).json({ message: "Неверный email или пароль" });
-      }
-
-      // Устанавливаем сессию
-      (req as any).session.userId = user.id;
-      (req as any).session.user = { ...user, password: undefined };
-      
-      console.log('User login - session set:', (req as any).session);
-      
-      // Сохраняем сессию принудительно
-      (req as any).session.save((err: any) => {
-        if (err) {
-          console.error('Session save error:', err);
-          return res.status(500).json({ message: "Ошибка сохранения сессии" });
-        }
-        console.log('Session saved successfully');
-        
-        res.json({ 
-          message: "Вход выполнен успешно",
-          user: {
-            id: user.id, 
-            email: user.email, 
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role,
-            subscription: user.subscription,
-            documentsCreated: user.documentsCreated,
-            documentsLimit: user.documentsLimit
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Ошибка входа:", error);
-      res.status(500).json({ message: "Ошибка сервера при входе" });
-    }
-  });
-
-  // Выход пользователя
-  app.post('/api/logout', (req, res) => {
-    (req as any).session.destroy((err: any) => {
-      if (err) {
-        return res.status(500).json({ message: "Ошибка при выходе" });
-      }
-      res.json({ message: "Успешный выход" });
-    });
-  });
-
-  // Получение данных текущего пользователя
-  app.get('/api/auth/user', async (req, res) => {
-    try {
-      console.log('=== GET /api/auth/user ===');
-      console.log('Session ID:', (req as any).sessionID);
-      console.log('Session data:', (req as any).session);
-      console.log('Headers:', req.headers.cookie);
-      
-      const userId = (req as any).session?.userId;
-      const user = (req as any).session?.user;
-      
-      console.log('UserId from session:', userId);
-      console.log('User from session:', user);
-      
-      if (!userId || !user) {
-        console.log('No userId in session - returning 401');
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      // Если это админ, возвращаем данные админа
-      if (userId === "admin_main") {
-        return res.json(user);
-      }
-
-      // Для обычных пользователей получаем свежие данные из БД
-      const userResults = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-
-      const dbUser = userResults[0];
-
-      if (!dbUser) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-
-      const userResponse = {
-        id: dbUser.id,
-        email: dbUser.email,
-        firstName: dbUser.firstName,
-        lastName: dbUser.lastName,
-        role: dbUser.role,
-        subscription: dbUser.subscription,
-        documentsCreated: dbUser.documentsCreated,
-        documentsLimit: dbUser.documentsLimit
-      };
-
-      res.json(userResponse);
-    } catch (error) {
-      console.error("Ошибка получения пользователя:", error);
-      res.status(500).json({ message: "Ошибка сервера" });
-    }
-  });
-
-  // Простой тест для проверки авторизации
+  // Простой тест для проверки авторизации с JWT
   app.get('/api/test/login-admin', (req, res) => {
     // Принудительно логиним админа для тестирования
     const adminUser = {
@@ -320,27 +80,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       documentsLimit: -1
     };
 
-    (req as any).session.userId = adminUser.id;
-    (req as any).session.user = adminUser;
+    // Создаем простой токен
+    const token = Buffer.from(JSON.stringify({
+      id: adminUser.id,
+      email: adminUser.email,
+      role: adminUser.role
+    })).toString('base64');
+
+    res.cookie('auth-token', token, {
+      httpOnly: false,
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'lax'
+    });
     
-    console.log("TEST - Admin logged in, session:", (req as any).session);
+    console.log("TEST - Admin logged in with JWT token");
     
     res.json({ 
-      message: "Test admin login successful", 
+      message: "Test admin login successful with JWT", 
       user: adminUser,
-      sessionId: (req as any).sessionID
+      token: token
     });
   });
 
-  // Тестовый эндпоинт для проверки системы
+  // Тестовый эндпоинт для проверки JWT системы
   app.get('/api/test/auth', (req, res) => {
+    const token = (req as any).cookies['auth-token'];
+    let tokenData = null;
+    
+    if (token) {
+      try {
+        tokenData = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
+      } catch (e) {
+        // Invalid token
+      }
+    }
+    
     res.json({
-      message: "Auth system is working",
-      session: {
-        id: (req as any).sessionID,
-        userId: (req as any).session?.userId,
-        hasUser: !!(req as any).session?.user
-      },
+      message: "JWT Auth system is working",
+      hasToken: !!token,
+      tokenData: tokenData,
       cookies: req.headers.cookie
     });
   });
