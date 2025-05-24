@@ -22,6 +22,9 @@ export default function TestLogin() {
       if (data.token) {
         document.cookie = `auth-token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
         console.log("Token manually set:", data.token);
+        
+        // Сохраняем токен в localStorage для использования в заголовках
+        localStorage.setItem('auth-token', data.token);
       }
       
       return data;

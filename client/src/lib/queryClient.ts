@@ -32,6 +32,12 @@ export async function apiRequest(
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 function getAuthToken(): string | null {
+  // Сначала пробуем получить из localStorage (добавлено для авторизации админа)
+  const localToken = localStorage.getItem('auth-token');
+  if (localToken) {
+    return localToken;
+  }
+  
   // Пробуем получить токен из cookie
   const cookies = document.cookie.split(';');
   for (let cookie of cookies) {
@@ -49,9 +55,7 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = getAuthToken();
-    const headers: HeadersInit = {
-      'credentials': 'include',
-    };
+    const headers: HeadersInit = {};
     
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
