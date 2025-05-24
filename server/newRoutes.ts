@@ -34,6 +34,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .insert(users)
         .values({
           email,
+          password,
           firstName: firstName || '',
           lastName: lastName || '',
           role: 'user',

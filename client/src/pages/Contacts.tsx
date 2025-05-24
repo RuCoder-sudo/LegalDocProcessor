@@ -118,7 +118,7 @@ export default function Contacts() {
                     <Headphones className="h-8 w-8 text-green-500" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Техподдержка</CardTitle>
+                    <CardTitle className="text-xl dark:text-white">Техподдержка</CardTitle>
                     <CardDescription>Помощь в использовании сервиса</CardDescription>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function Contacts() {
                     <Scale className="h-8 w-8 text-purple-500" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Юридические консультации</CardTitle>
+                    <CardTitle className="text-xl dark:text-white">Юридические консультации</CardTitle>
                     <CardDescription>Правовая поддержка</CardDescription>
                   </div>
                 </div>

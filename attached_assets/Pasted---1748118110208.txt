@@ -1,0 +1,281 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 20:08:41 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# grep -n "text-xl text-foreground dark:text-white" client/src/pages/Contacts.tsx
+grep: client/src/pages/Contacts.tsx: No such file or directory
+root@f418b3c5b5c3:~# sed -i 's/CardTitle className="text-xl"/CardTitle className="text-xl text-black dark:text-white"/g' client/src/pages/Contacts.tsx
+sed: can't read client/src/pages/Contacts.tsx: No such file or directory
+root@f418b3c5b5c3:~# pm2 logs legalrfdocs --lines 10 | grep -i "register\|error"
+/root/.pm2/logs/legalrfdocs-error-0.log last 10 lines:
+0|legalrfd |   [Symbol(kError)]: Error: connect ECONNREFUSED 127.0.0.1:443
+0|legalrfd | 8:10:49 PM [express] POST /api/register 500 in 59ms :: {"message":"Ошибка при регистрации"}
+npm run build
+pm2 restart legalrfdocs
+
+^C
+root@f418b3c5b5c3:~# npm run build
+pm2 restart legalrfdocs
+npm ERR! code ENOENT
+npm ERR! syscall open
+npm ERR! path /root/package.json
+npm ERR! errno -2
+npm ERR! enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/root/package.json'
+npm ERR! enoent This is related to npm not being able to find a file.
+npm ERR! enoent
+
+npm ERR! A complete log of this run can be found in: /root/.npm/_logs/2025-05-24T20_12_45_487Z-debug-0.log
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 12   │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~# ^C
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/CardTitle className="text-xl text-foreground dark:text-white"/CardTitle className="text-xl text-black dark:text-white"/g' client/src/pages/Contacts.tsx
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/email,/a\          password: password,' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '20,40p' server/newRoutes.ts
+      }
+
+      // Проверяем, существует ли пользователь
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+          password: password,
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Пользователь с таким email уже существует" });
+      }
+
+      // Создаем нового пользователя
+      const result = await db
+        .insert(users)
+        .values({
+          email,
+          password: password,
+          firstName: firstName || '',
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.18s
+✘ [ERROR] Unexpected "if"
+
+    server/newRoutes.ts:18:6:
+      18 │       if (!email || !password) {
+         ╵       ~~
+
+1 error
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 13   │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/password: password,/d' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '25,35p' server/newRoutes.ts
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Пользователь с таким email уже существует" });
+      }
+
+      // Создаем нового пользователя
+      const result = await db
+        .insert(users)
+        .values({
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/firstName: firstName || '\'''\'',$/{s/firstName: firstName || '\'''\'',$//; s/.*/          email,\n          password,\n          firstName: firstName || '\''\'',/}' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/\.values({/,/})/ {
+  /firstName: firstName || '\'''\'',$/ {
+    i\          password,
+  }
+}' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -n '30,40p' server/newRoutes.ts
+      }
+
+      // Создаем нового пользователя
+      const result = await db
+        .insert(users)
+        .values({
+          email,
+          email,
+          password,
+          firstName: firstName || ',
+          lastName: lastName || '',
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.89s
+✘ [ERROR] Unterminated string literal
+
+    server/newRoutes.ts:39:36:
+      39 │           firstName: firstName || ',
+         ╵                                     ^
+
+1 error
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 14   │ online    │ 0%       │ 37.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/firstName: firstName || '\''./firstName: firstName || '\'''\''/' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/email,$/email,/' server/newRoutes.ts
+root@f418b3c5b5c3:~/LegalDocPrgrep -A 2 -B 2 "Техподдержка\|Юридические консультации" client/src/pages/Contacts.tsxации" client/src/pages/Contacts.tsxrep -A 2 -B 2 "Техподдержка\|Юридические кон▒
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-black dark:text-white">Техподдержка</CardTitle>
+                    <CardDescription>Помощь в использовании сервиса</CardDescription>
+                  </div>
+--
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-black dark:text-white">Юридические консультации</CardTitle>
+                    <CardDescription>Правовая поддержка</CardDescription>
+                  </div>
+--
+                  </div>
+                  <p className="text-sm text-purple-600">
+                    Юридические консультации доступны только для премиум-пользователей
+                  </p>
+                </div>
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/<CardTitle className="text-xl">/<CardTitle className="text-xl dark:text-white">/g' client/src/pages/Contacts.tsx
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run build
+pm2 restart legalrfdocs
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1757 modules transformed.
+../dist/public/index.html                   1.37 kB │ gzip:   0.85 kB
+../dist/public/assets/index-DiBjQOS4.css   88.15 kB │ gzip:  14.75 kB
+../dist/public/assets/index-CLXOecP4.js   594.86 kB │ gzip: 175.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.21s
+✘ [ERROR] Expected "}" but found "lastName"
+
+    server/newRoutes.ts:42:10:
+      42 │           lastName: lastName || '',
+         │           ~~~~~~~~
+         ╵           }
+
+1 error
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 15   │ online    │ 0%       │ 37.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ls -la /root/LegalDocProcessor/yandex_*.html
+-rw-r--r-- 1 root root 161 May 24 20:16 /root/LegalDocProcessor/yandex_cac514186201f343.html
+root@f418b3c5b5c3:~/LegalDocProcessor# cp /root/LegalDocProcessor/yandex_*.html /root/LegalDocProcessor/dist/public/
+root@f418b3c5b5c3:~/LegalDocProcessor# curl -I https://legalrfdocs.ru/yandex_cac514186201f343.html
+HTTP/2 200
+date: Sat, 24 May 2025 20:19:43 GMT
+content-type: text/html; charset=UTF-8
+content-length: 161
+server: nginx/1.18.0 (Ubuntu)
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Sat, 24 May 2025 20:19:38 GMT
+etag: W/"a1-19703f37d1b"
+
+root@f418b3c5b5c3:~/LegalDocProcessor# echo 'location ~ /yandex_.*\.html$ {
+    root /root/LegalDocProcessor/dist/public;
+}' >> /etc/nginx/sites-available/legalrfdocs.ru
+root@f418b3c5b5c3:~/LegalDocProcessor# nginx -t && systemctl reload nginx
+nginx: [emerg] "location" directive is not allowed here in /etc/nginx/sites-enabled/legalrfdocs.ru:18
+nginx: configuration file /etc/nginx/nginx.conf test failed
+root@f418b3c5b5c3:~/LegalDocProcessor# find /root/LegalDocProcessor -name "index.html" -type f
+/root/LegalDocProcessor/dist/public/index.html
+/root/LegalDocProcessor/client/index.html
+root@f418b3c5b5c3:~/LegalDocProcessor# grep -n "<head>" /root/LegalDocProcessor/dist/public/index.html
+3:  <head>
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/<head>/a\    <meta name="yandex-verification" content="cac514186201f343" />' /root/LegalDocProcessor/dist/public/index.html
+root@f418b3c5b5c3:~/LegalDocProcessor# grep -A 5 "<head>" /root/LegalDocProcessor/dist/public/index.html
+  <head>
+    <meta name="yandex-verification" content="cac514186201f343" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>ЮрДок Генератор - Создание юридических документов для сайтов</title>
+    <meta name="description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ. Политики конфиденциальности, пользовательские соглашения, согласия на обработку ПД.">
+root@f418b3c5b5c3:~/LegalDocProcessor# grep -A 5 "<head>" /root/LegalDocProcessor/dist/public/index.html
+  <head>
+    <meta name="yandex-verification" content="cac514186201f343" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>ЮрДок Генератор - Создание юридических документов для сайтов</title>
+    <meta name="description" content="Профессиональная платформа для создания юридических документов в соответствии с 152-ФЗ. Политики конфиденциальности, пользовательские соглашения, согласия на обработку ПД.">
+root@f418b3c5b5c3:~/LegalDocProcessor# find /root/LegalDocProcessor -name "index.html" -path "*/public/*" -not -path "*/dist/*"
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/<head>/a\    <meta name="yandex-verification" content="cac514186201f343" />' /root/LegalDocProcessor/client/public/index.html
+sed: can't read /root/LegalDocProcessor/client/public/index.html: No such file or directory
+root@f418b3c5b5c3:~/LegalDocProcessor#

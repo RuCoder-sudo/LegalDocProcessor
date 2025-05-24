@@ -1,0 +1,131 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 19:32:23 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# pm2 logs legalrfdocs --lines 50
+[TAILING] Tailing last 50 lines for [legalrfdocs] process (change the value with --lines option)
+/root/.pm2/logs/legalrfdocs-error-0.log last 50 lines:
+0|legalrfd |     syscall: 'connect',
+0|legalrfd |     address: '127.0.0.1',
+0|legalrfd |     port: 443
+0|legalrfd |   },
+0|legalrfd |   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|legalrfd | }
+0|legalrfd | Registration error: ErrorEvent {
+0|legalrfd |   [Symbol(kTarget)]: WebSocket {
+0|legalrfd |     _events: [Object: null prototype] {
+0|legalrfd |       error: [Function],
+0|legalrfd |       message: [Function],
+0|legalrfd |       close: [Function],
+0|legalrfd |       open: [Function]
+0|legalrfd |     },
+0|legalrfd |     _eventsCount: 4,
+0|legalrfd |     _maxListeners: undefined,
+0|legalrfd |     _binaryType: 'arraybuffer',
+0|legalrfd |     _closeCode: 1006,
+0|legalrfd |     _closeFrameReceived: false,
+0|legalrfd |     _closeFrameSent: false,
+0|legalrfd |     _closeMessage: <Buffer >,
+0|legalrfd |     _closeTimer: null,
+0|legalrfd |     _errorEmitted: true,
+0|legalrfd |     _extensions: {},
+0|legalrfd |     _paused: false,
+0|legalrfd |     _protocol: '',
+0|legalrfd |     _readyState: 3,
+0|legalrfd |     _receiver: null,
+0|legalrfd |     _sender: null,
+0|legalrfd |     _socket: null,
+0|legalrfd |     _bufferedAmount: 0,
+0|legalrfd |     _isServer: false,
+0|legalrfd |     _redirects: 0,
+0|legalrfd |     _autoPong: true,
+0|legalrfd |     _url: 'wss://localhost/v2',
+0|legalrfd |     _req: null,
+0|legalrfd |     [Symbol(shapeMode)]: false,
+0|legalrfd |     [Symbol(kCapture)]: false
+0|legalrfd |   },
+0|legalrfd |   [Symbol(kType)]: 'error',
+0|legalrfd |   [Symbol(kError)]: Error: connect ECONNREFUSED 127.0.0.1:443
+0|legalrfd |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1595:16) {
+0|legalrfd |     errno: -111,
+0|legalrfd |     code: 'ECONNREFUSED',
+0|legalrfd |     syscall: 'connect',
+0|legalrfd |     address: '127.0.0.1',
+0|legalrfd |     port: 443
+0|legalrfd |   },
+0|legalrfd |   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|legalrfd | }
+
+/root/.pm2/logs/legalrfdocs-out-0.log last 50 lines:
+0|legalrfd |     originalMaxAge: 86400000,
+0|legalrfd |     httpOnly: true,
+0|legalrfd |     secure: false
+0|legalrfd |   }
+0|legalrfd | }
+0|legalrfd | No userId in session
+0|legalrfd | 7:44:01 PM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|legalrfd | 7:44:42 PM [express] GET /api/templates 200 in 1ms :: []
+0|legalrfd | 7:44:42 PM [express] GET /api/templates 304 in 1ms :: []
+0|legalrfd | 7:45:07 PM [express] GET /api/login 200 in 2ms
+0|legalrfd | Session data: Session {
+0|legalrfd |   cookie: {
+0|legalrfd |     path: '/',
+0|legalrfd |     _expires: 2025-05-25T19:45:08.283Z,
+0|legalrfd |     originalMaxAge: 86400000,
+0|legalrfd |     httpOnly: true,
+0|legalrfd |     secure: false
+0|legalrfd |   }
+0|legalrfd | }
+0|legalrfd | No userId in session
+0|legalrfd | 7:45:08 PM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
+0|legalrfd | 7:47:16 PM [express] GET /api/templates 304 in 2ms :: []
+0|legalrfd | 7:47:16 PM [express] GET /api/templates 304 in 1ms :: []
+0|legalrfd | 7:47:34 PM [express] GET /api/blog 500 in 59ms :: {"message":"Ошибка при загрузке новостей"}
+0|legalrfd | 7:49:47 PM [express] POST /api/register 500 in 7ms :: {"message":"Ошибка при регистрации"}
+0|legalrfd | 7:49:52 PM [express] POST /api/register 500 in 5ms :: {"message":"Ошибка при регистрации"}
+0|legalrfd | 7:50:38 PM [express] POST /api/register 500 in 6ms :: {"message":"Ошибка при регистрации"}
+0|legalrfd | Session data: Session {
+0|legalrfd |   cookie: {
+0|legalrfd |     path: '/',
+0|legalrfd |     _expires: 2025-05-25T19:50:47.109Z,
+0|legalrfd |     originalMaxAge: 86400000,
+0|legalrfd |     httpOnly: true,
+0|legalrfd |     secure: false
+0|legalrfd |   }
+0|legalrfd | }
+0|legalrfd | No userId in session
+0|legalrfd | 7:50:47 PM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|legalrfd | Session data: Session {
+0|legalrfd |   cookie: {
+0|legalrfd |     path: '/',
+0|legalrfd |     _expires: 2025-05-25T19:51:26.444Z,
+0|legalrfd |     originalMaxAge: 86400000,
+0|legalrfd |     httpOnly: true,
+0|legalrfd |     secure: false
+0|legalrfd |   }
+0|legalrfd | }
+0|legalrfd | No userId in session
+0|legalrfd | 7:51:26 PM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|legalrfd | 7:51:51 PM [express] POST /api/register 500 in 8ms :: {"message":"Ошибка при регистрации"}
+
+^C
+root@f418b3c5b5c3:~# grep -r "help\|Help\|помощь\|Помощь" client/src/
+grep: client/src/: No such file or directory
+root@f418b3c5b5c3:~# cat client/src/pages/Contacts.tsx | head -50
+cat: client/src/pages/Contacts.tsx: No such file or directory
+root@f418b3c5b5c3:~#

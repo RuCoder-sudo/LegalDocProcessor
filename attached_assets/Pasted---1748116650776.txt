@@ -1,0 +1,196 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sat May 24 19:55:23 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i 's/from-blue-50 to-blue-100/from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700/g' client/src/pages/Contacts.tsx
+root@f418b3c5b5c3:~/LegalDocProcessor# cat > client/src/pages/Help.tsx << 'EOF'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { HelpCircle, FileText, Shield, CreditCard, Users, Phone } from "lucide-react";
+export default function Help() {
+  const faqData = [
+    {
+      question: "Как создать документ?",
+▒ть документ'."орму с данными вашей компании и нажмите 'Создаокумен▒
+    },
+    {
+      question: "Сколько документов можно создать?",
+ументов."ремиум подписка дает неограниченное количество док▒ента в
+    },
+    {
+      question: "Соответствуют ли документы законодательству?",
+▒ов."персональных данных' и других актуальных нормативных актй 152-ФЗ
+    },
+    {
+      question: "Как получить техническую поддержку?",
+ите на почту support@legalrfdocs.ru"з страницу 'Контакты' или напиш▒
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <section className="bg-gradient-to-br from-primary/5 to-background py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">o-br from-primary/5 to-background py-16">
+            <div className="flex justify-center mb-6"> lg:px-8">
+              <div className="rounded-full bg-primary/10 p-4">
+                <HelpCircle className="h-12 w-12 text-primary" />
+              </div>lassName="rounded-full bg-primary/10 p-4">
+            </div>elpCircle className="h-12 w-12 text-primary" />
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Центр помощи
+            </h1>lassName="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Ответы на часто задаваемые вопросы и руководства по использованию сервиса
+            </p>lassName="text-xl text-muted-foreground max-w-3xl mx-auto">
+          </div>рвисана часто задаваемые вопросы и руководства по ▒
+        </div>p>
+      </section>
+      {/* FAQ Section */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+EOF;</div>ction>on>ся с поддержкойw-5" />p-2">рос, свяжитесь с наш▒ная помощь?</h2>rigger>2>
+root@f418b3c5b5c3:~/LegalDocProcessor#
+root@f418b3c5b5c3:~/LegalDocProcessor# />p-2">рос, свяжитесь с наш▒ная помощь?</h2>rigger>
+root@f418b3c5b5c3:~/LegalDocProcessor# ^[[200~cat > client/src/pages/Help.tsx << 'EOF'
+> import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+> import { Badge } from "@/components/ui/badge";
+> import { Button } from "@/components/ui/button";
+> import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+> import { HelpCircle, FileText, Shield, CreditCard, Users, Phone } from "lucide-react";
+> export default function Help() {
+>   const faqData = [
+>     {
+>       question: "Как создать документ?",
+▒ать документ'."орму с данными вашей компании и нажмите 'Созд докуме▒
+>     },
+>     {
+>       question: "Сколько документов можно создать?",
+кументов."ремиум подписка дает неограниченное количество до▒умента ▒
+>     },
+>     {
+>       question: "Соответствуют ли документы законодательству?",
+▒тов."персональных данных' и других актуальных нормативных акний 152-Ф
+>     },
+>     {
+>       question: "Как получить техническую поддержку?",
+шите на почту support@legalrfdocs.ru"ез страницу 'Контакты' или напи▒
+>     }
+>   ];
+>   return (
+>     <div className="min-h-screen bg-background">
+>       {/* Header */}
+>       <section className="bg-gradient-to-br from-primary/5 to-background py-16">
+>         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+>           <div className="text-center">
+>             <div className="flex justify-center mb-6">
+>               <div className="rounded-full bg-primary/10 p-4">
+>                 <HelpCircle className="h-12 w-12 text-primary" />
+>               </div>
+>             </div>
+>             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+>               Центр помощи
+>             </h1>
+>             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+▒ использованию сервисана часто задаваемые вопросы и руководства по
+>             </p>
+>           </div>
+>         </div>
+>       </section>
+>       {/* FAQ Section */}
+>       <section className="py-16">
+>         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+▒</h2>      <h2 className="text-3xl font-bold text-center mb-12">Часто задаваемые вопросы
+>           <Accordion type="single" collapsible className="space-y-4">
+>             {faqData.map((item, index) => (
+>               <AccordionItem key={index} value={`item-${index}`}>
+>                 <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
+>                 <AccordionContent className="text-muted-foreground">
+>                   {item.answer}
+>                 </AccordionContent>
+>               </AccordionItem>
+>             ))}
+>           </Accordion>
+>         </div>
+>       </section>
+>       {/* Contact Support */}
+>       <section className="py-16 bg-muted/30">
+>           <h2 className="text-3xl font-bold mb-6">Нужна дополнительная помощь?</h2>
+>           <p className="text-muted-foreground mb-8">жна дополнительная помощь?</h2>
+▒ей службой поддержки не нашли ответ на свой вопрос, свяжитесь с наш
+>           </p>
+>           <Button size="lg" className="gap-2">
+>             <Phone className="h-5 w-5" />
+>             Связаться с поддержкой
+>           </Button>
+>         </div>
+>       </section>
+>     </div>
+>   );
+> }
+> EOF~
+> ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# sed -i '/import NotFound from/a import Help from "@/pages/Help";' client/src/App.tsx
+sed -i '/Route path="\/important"/a \        <Route path="/help" component={Help} />' client/src/App.tsx
+root@f418b3c5b5c3:~/LegalDocProcessor# grep -A 20 "register" server/routes.ts
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Авторизация
+  app.get('/api/auth/user', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Ошибка получения пользователя:", error);
+      res.status(500).json({ message: "Внутренняя ошибка сервера" });
+    }
+  });
+
+  // Получение шаблонов документов
+  app.get("/api/document-templates", async (req, res) => {
+    try {
+      const templates = await storage.getDocumentTemplates();
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# grep -A 20 "register" server/routes.ts
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Авторизация
+  app.get('/api/auth/user', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Ошибка получения пользователя:", error);
+      res.status(500).json({ message: "Внутренняя ошибка сервера" });
+    }
+  });
+
+  // Получение шаблонов документов
+  app.get("/api/document-templates", async (req, res) => {
+    try {
+      const templates = await storage.getDocumentTemplates();
+root@f418b3c5b5c3:~/LegalDocProcessor#
