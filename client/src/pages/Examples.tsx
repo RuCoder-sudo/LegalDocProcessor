@@ -201,8 +201,8 @@ Email: info@education-platform.ru`
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs value={selectedType} onValueChange={setSelectedType} className="space-y-8">
             {/* Tabs Navigation */}
-            <div className="overflow-x-auto">
-              <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+            <div className="overflow-x-auto pb-2">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 h-auto p-1">
                 {Object.entries(DOCUMENT_TYPES).map(([key, type]) => (
                   <TabsTrigger key={key} value={key} className="text-xs">
                     <i className={`${type.icon} mr-1`}></i>

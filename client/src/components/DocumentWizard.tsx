@@ -81,6 +81,7 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
       return response.json();
     },
     onSuccess: (document) => {
+      setIsGenerating(false);
       setCreatedDocument(document);
       setCurrentStep(3);
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
@@ -91,6 +92,7 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
       onSuccess?.(document);
     },
     onError: (error: any) => {
+      setIsGenerating(false);
       if (error.message.includes("LIMIT_REACHED")) {
         toast({
           title: "Лимит документов исчерпан",
@@ -360,10 +362,20 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex gap-4">
-                        <Button variant="outline" className="flex-1">
-                          <Eye className="mr-2 h-4 w-4" />
-                          Просмотреть
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <Button 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => {
+                            navigator.clipboard.writeText(createdDocument.generatedContent || '');
+                            toast({
+                              title: "Скопировано!",
+                              description: "Содержимое документа скопировано в буфер обмена",
+                            });
+                          }}
+                        >
+                          <Copy className="mr-2 h-4 w-4" />
+                          Копировать текст
                         </Button>
                         <Button className="flex-1">
                           <Download className="mr-2 h-4 w-4" />

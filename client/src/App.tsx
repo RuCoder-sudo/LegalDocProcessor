@@ -51,6 +51,7 @@ function Router() {
           <>
             <Route path="/dashboard" component={Home} />
             <Route path="/documents" component={Home} />
+            <Route path="/notifications" component={Home} />
           </>
         )}
         
