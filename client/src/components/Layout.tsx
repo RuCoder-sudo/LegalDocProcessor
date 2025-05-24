@@ -256,17 +256,20 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
             {/* Legal Notice */}
             <div className="border-t border-gray-700 mt-8 pt-6">
               <div className="text-center text-xs text-gray-500">
-                <p className="mb-2">
+                <p className="mb-2 break-words text-xs leading-relaxed">
                   <i className="fas fa-exclamation-triangle mr-1"></i>
-                  Документы,создаваемыенаплатформе,носятинформационныйхарактер.Длярешениясложныхправовыхвопросоврекомендуетсяконсультациясквалифицированнымюристом.Сайтиспользуетфайлыcookiedляулучшенияпользовательскогоопыта.Продолжаяиспользованиесайта,высоглашаетесьсобработкойданных.
+                  Документы, создаваемые на платформе, носят информационный характер. 
+                  Для решения сложных правовых вопросов рекомендуется консультация с квалифицированным юристом. 
+                  Сайт использует файлы cookie для улучшения пользовательского опыта. 
+                  Продолжая использование сайта, вы соглашаетесь с обработкой данных.
                 </p>
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <div className="flex items-center space-x-4">
-                    <Link href="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link>
+                  <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+                    <Link href="/privacy" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Политика конфиденциальности</Link>
                     <span className="text-gray-600">•</span>
-                    <Link href="/terms" className="hover:text-primary transition-colors">Пользовательское соглашение</Link>
+                    <Link href="/terms" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Пользовательское соглашение</Link>
                     <span className="text-gray-600">•</span>
-                    <Link href="/important" className="hover:text-primary transition-colors">Отказ от ответственности</Link>
+                    <Link href="/important" className="hover:text-primary transition-colors" onClick={() => window.scrollTo(0, 0)}>Отказ от ответственности</Link>
                   </div>
                   <Button
                     variant="ghost"

@@ -167,7 +167,7 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
     }
 
     // @ts-ignore
-    req.user = user;
+    req.user = { ...user, password: undefined };
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
