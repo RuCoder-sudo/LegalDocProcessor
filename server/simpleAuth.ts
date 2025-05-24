@@ -44,7 +44,7 @@ export function setupSimpleAuth(app: Express) {
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       // Создаем пользователя
-      const [newUser] = await db
+      const newUsers = await db
         .insert(users)
         .values({
           id: userId,
@@ -54,14 +54,26 @@ export function setupSimpleAuth(app: Express) {
           lastName: lastName || null,
         })
         .returning();
+      
+      const newUser = newUsers[0];
 
       // Сохраняем в сессии
       // @ts-ignore
       req.session.userId = newUser.id;
+      // @ts-ignore
+      req.session.user = newUser;
       
-      // Возвращаем пользователя без пароля
-      const { password: _, ...userWithoutPassword } = newUser;
-      res.json({ user: userWithoutPassword });
+      // Принудительно сохраняем сессию
+      req.session.save((err) => {
+        if (err) {
+          console.error('Registration session save error:', err);
+          return res.status(500).json({ message: "Ошибка сохранения сессии" });
+        }
+        
+        // Возвращаем пользователя без пароля
+        const { password: _, ...userWithoutPassword } = newUser;
+        res.json({ user: userWithoutPassword });
+      });
     } catch (error) {
       console.error("Registration error:", error);
       res.status(500).json({ message: "Ошибка при регистрации" });
@@ -113,11 +125,13 @@ export function setupSimpleAuth(app: Express) {
       }
 
       // Находим пользователя
-      const [user] = await db
+      const userResults = await db
         .select()
         .from(users)
         .where(eq(users.email, email))
         .limit(1);
+      
+      const user = userResults[0];
 
       if (!user) {
         return res.status(401).json({ message: "Неверный email или пароль" });
@@ -135,9 +149,20 @@ export function setupSimpleAuth(app: Express) {
       // @ts-ignore
       req.session.user = { ...user, password: undefined };
       
-      // Возвращаем пользователя без пароля
-      const { password: _, ...userWithoutPassword } = user;
-      res.json({ user: userWithoutPassword });
+      // Принудительно сохраняем сессию
+      req.session.save((err) => {
+        if (err) {
+          console.error("User login session save error:", err);
+          return res.status(500).json({ message: "Ошибка сохранения сессии" });
+        }
+        
+        // Возвращаем пользователя без пароля
+        const { password: _, ...userWithoutPassword } = user;
+        res.json({ 
+          message: "Вход выполнен успешно",
+          user: userWithoutPassword 
+        });
+      });
     } catch (error) {
       console.error("Login error:", error);
       res.status(500).json({ message: "Ошибка при входе" });
