@@ -225,6 +225,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // Admin routes
+  app.get('/api/admin/stats', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Недостаточно прав" });
+      }
+
+      const stats = await storage.getUserStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Ошибка получения статистики:", error);
+      res.status(500).json({ message: "Ошибка получения статистики" });
+    }
+  });
+
+  app.get('/api/admin/users', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Недостаточно прав" });
+      }
+
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Ошибка получения пользователей:", error);
+      res.status(500).json({ message: "Ошибка получения пользователей" });
+    }
+  });
+
+  app.patch('/api/admin/users/:userId/role', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const currentUserId = req.session.userId;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ message: "Недостаточно прав" });
+      }
+
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      const updatedUser = await storage.updateUserRole(userId, role);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Ошибка обновления роли:", error);
+      res.status(500).json({ message: "Ошибка обновления роли" });
+    }
+  });
+
+  app.post('/api/admin/notifications', requireAuth, async (req, res) => {
+    try {
+      // @ts-ignore
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Недостаточно прав" });
+      }
+
+      const { title, message, userId: targetUserId } = req.body;
+
+      if (targetUserId) {
+        // Отправить конкретному пользователю
+        await storage.createNotification({
+          userId: targetUserId,
+          title,
+          message,
+          type: 'info'
+        });
+      } else {
+        // Отправить всем пользователям
+        const users = await storage.getAllUsers();
+        for (const targetUser of users) {
+          await storage.createNotification({
+            userId: targetUser.id,
+            title,
+            message,
+            type: 'info'
+          });
+        }
+      }
+
+      res.json({ message: "Уведомления отправлены" });
+    } catch (error) {
+      console.error("Ошибка отправки уведомлений:", error);
+      res.status(500).json({ message: "Ошибка отправки уведомлений" });
+    }
+  });
+
   return httpServer;
 }
 

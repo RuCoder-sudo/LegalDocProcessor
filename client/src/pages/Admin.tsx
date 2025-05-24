@@ -6,9 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { User, AdminStats } from "@/lib/types";
@@ -21,7 +24,14 @@ import {
   Settings,
   UserCheck,
   Calendar,
-  Activity
+  Activity,
+  Bell,
+  MessageSquare,
+  Search,
+  Edit,
+  Trash,
+  Plus,
+  Send
 } from "lucide-react";
 
 export default function Admin() {
@@ -29,346 +39,345 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [notificationText, setNotificationText] = useState("");
+  const [notificationTitle, setNotificationTitle] = useState("");
 
-  // Redirect if not admin
+  // Проверяем права доступа
   if (!user || user.role !== 'admin') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-destructive" />
-              Доступ запрещен
-            </CardTitle>
-            <CardDescription>
-              У вас нет прав для доступа к админ-панели
+            <CardTitle className="text-center">Доступ запрещен</CardTitle>
+            <CardDescription className="text-center">
+              У вас нет прав для доступа к панели администратора
             </CardDescription>
           </CardHeader>
+          <CardContent className="text-center">
+            <Button asChild>
+              <a href="/api/login">Войти как администратор</a>
+            </Button>
+          </CardContent>
         </Card>
       </div>
     );
   }
 
-  const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
+  // Загрузка данных
+  const { data: stats } = useQuery<AdminStats>({
     queryKey: ["/api/admin/stats"],
   });
 
-  const { data: users = [], isLoading: usersLoading } = useQuery<User[]>({
+  const { data: users = [] } = useQuery<User[]>({
     queryKey: ["/api/admin/users"],
   });
 
-  const updateRoleMutation = useMutation({
+  // Мутации
+  const updateUserRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const response = await apiRequest("PUT", `/api/admin/users/${userId}/role`, { role });
-      return response.json();
+      return await apiRequest(`/api/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        body: JSON.stringify({ role }),
+        headers: { 'Content-Type': 'application/json' },
+      });
     },
     onSuccess: () => {
+      toast({ title: "Роль пользователя обновлена" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      setRoleDialogOpen(false);
-      setSelectedUser(null);
-      toast({
-        title: "Роль обновлена",
-        description: "Роль пользователя успешно изменена",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось изменить роль пользователя",
-        variant: "destructive",
-      });
     },
   });
 
-  const handleRoleChange = (role: string) => {
-    if (selectedUser) {
-      updateRoleMutation.mutate({ userId: selectedUser.id, role });
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getRoleBadge = (role: string) => {
-    const variants = {
-      admin: "destructive",
-      premium: "default", 
-      user: "secondary"
-    } as const;
-    
-    const labels = {
-      admin: "Админ",
-      premium: "Премиум",
-      user: "Пользователь"
-    };
-
-    return (
-      <Badge variant={variants[role as keyof typeof variants] || "secondary"}>
-        {labels[role as keyof typeof labels] || role}
-      </Badge>
-    );
-  };
-
-  const getSubscriptionBadge = (subscription: string) => {
-    return subscription === 'premium' ? (
-      <Badge className="bg-premium text-white">
-        <Crown className="w-3 h-3 mr-1" />
-        Премиум
-      </Badge>
-    ) : (
-      <Badge variant="outline">Бесплатный</Badge>
-    );
-  };
+  const sendNotification = useMutation({
+    mutationFn: async (data: { title: string; message: string; userId?: string }) => {
+      return await apiRequest('/api/admin/notifications', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({ title: "Уведомление отправлено" });
+      setNotificationTitle("");
+      setNotificationText("");
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-              <Settings className="h-8 w-8" />
-              Админ-панель
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Управление пользователями и мониторинг системы
-            </p>
-          </div>
-          <Badge variant="outline" className="text-sm">
-            <UserCheck className="w-3 h-3 mr-1" />
-            Администратор: {user.firstName} {user.lastName}
-          </Badge>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Панель администратора</h1>
+          <p className="text-muted-foreground">Управление пользователями, контентом и настройками</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Всего пользователей</CardDescription>
-              <CardTitle className="text-2xl">
-                {statsLoading ? "..." : stats?.totalUsers || 0}
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Всего пользователей</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Users className="mr-1 h-4 w-4" />
-                <span>Зарегистрированных</span>
-              </div>
+              <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Премиум пользователи</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Crown className="h-5 w-5 text-premium" />
-                {statsLoading ? "..." : stats?.premiumUsers || 0}
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Премиум пользователи</CardTitle>
+              <Crown className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <TrendingUp className="mr-1 h-4 w-4" />
-                <span>Активных подписок</span>
-              </div>
+              <div className="text-2xl font-bold">{stats?.premiumUsers || 0}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Создано документов</CardDescription>
-              <CardTitle className="text-2xl">
-                {statsLoading ? "..." : stats?.documentsCreated || 0}
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Документов создано</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <FileText className="mr-1 h-4 w-4" />
-                <span>Всего сгенерировано</span>
-              </div>
+              <div className="text-2xl font-bold">{stats?.documentsCreated || 0}</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Конверсия в премиум</CardDescription>
-              <CardTitle className="text-2xl">
-                {statsLoading || !stats ? "..." : `${Math.round((stats.premiumUsers / stats.totalUsers) * 100)}%`}
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Активность</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Activity className="mr-1 h-4 w-4" />
-                <span>Показатель конверсии</span>
-              </div>
+              <div className="text-2xl font-bold text-green-600">+12%</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Users Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Управление пользователями
-            </CardTitle>
-            <CardDescription>
-              Просмотр и редактирование информации о пользователях
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {usersLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Пользователь</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Роль</TableHead>
-                    <TableHead>Подписка</TableHead>
-                    <TableHead>Документов</TableHead>
-                    <TableHead>Дата регистрации</TableHead>
-                    <TableHead>Действия</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{u.firstName} {u.lastName}</div>
-                          <div className="text-sm text-muted-foreground">ID: {u.id}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{u.email}</TableCell>
-                      <TableCell>{getRoleBadge(u.role)}</TableCell>
-                      <TableCell>{getSubscriptionBadge(u.subscription)}</TableCell>
-                      <TableCell>
-                        <div className="text-center">
-                          <div className="font-medium">{u.documentsCreated}</div>
-                          {u.subscription === 'free' && (
-                            <div className="text-xs text-muted-foreground">/ {u.documentsLimit}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {formatDate(u.createdAt)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Dialog open={roleDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => {
-                          setRoleDialogOpen(open);
-                          if (!open) setSelectedUser(null);
-                        }}>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => setSelectedUser(u)}
-                            >
-                              Изменить роль
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Изменить роль пользователя</DialogTitle>
-                              <DialogDescription>
-                                Изменение роли для {u.firstName} {u.lastName} ({u.email})
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <div>
-                                <Label htmlFor="role">Новая роль</Label>
-                                <Select onValueChange={handleRoleChange} defaultValue={u.role}>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Выберите роль" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="user">Пользователь</SelectItem>
-                                    <SelectItem value="premium">Премиум</SelectItem>
-                                    <SelectItem value="admin">Администратор</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              
-                              <div className="bg-muted/50 p-3 rounded-lg text-sm">
-                                <h4 className="font-medium mb-2">Описание ролей:</h4>
-                                <ul className="space-y-1 text-muted-foreground">
-                                  <li>• <strong>Пользователь</strong> - базовый доступ</li>
-                                  <li>• <strong>Премиум</strong> - расширенные возможности</li>
-                                  <li>• <strong>Администратор</strong> - полный доступ</li>
-                                </ul>
-                              </div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
+        {/* Main Content */}
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="users">Пользователи</TabsTrigger>
+            <TabsTrigger value="notifications">Уведомления</TabsTrigger>
+            <TabsTrigger value="content">Контент</TabsTrigger>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="settings">Настройки</TabsTrigger>
+          </TabsList>
+
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Управление пользователями</CardTitle>
+                <CardDescription>
+                  Управление ролями пользователей и их подписками
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Пользователь</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Роль</TableHead>
+                      <TableHead>Подписка</TableHead>
+                      <TableHead>Документы</TableHead>
+                      <TableHead>Действия</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((u) => (
+                      <TableRow key={u.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{u.firstName} {u.lastName}</div>
+                            <div className="text-sm text-muted-foreground">ID: {u.id}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{u.email}</TableCell>
+                        <TableCell>
+                          <Badge variant={u.role === 'admin' ? 'destructive' : 'secondary'}>
+                            {u.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={u.subscription === 'premium' ? 'default' : 'outline'}>
+                            {u.subscription}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{u.documentsCreated || 0}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Select
+                              value={u.role}
+                              onValueChange={(role) => updateUserRole.mutate({ userId: u.id, role })}
+                            >
+                              <SelectTrigger className="w-[100px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="premium">Premium</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* System Info */}
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Информация о системе</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Версия:</span>
-                <span>1.0.0</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Последнее обновление:</span>
-                <span>{new Date().toLocaleDateString('ru-RU')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">База данных:</span>
-                <span>PostgreSQL</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Статус:</span>
-                <Badge className="bg-green-500">Работает</Badge>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Notifications Tab */}
+          <TabsContent value="notifications" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Отправка уведомлений</CardTitle>
+                <CardDescription>
+                  Отправляйте уведомления всем пользователям или отдельным группам
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="notif-title">Заголовок уведомления</Label>
+                  <Input
+                    id="notif-title"
+                    value={notificationTitle}
+                    onChange={(e) => setNotificationTitle(e.target.value)}
+                    placeholder="Добро пожаловать!"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="notif-text">Текст уведомления</Label>
+                  <Textarea
+                    id="notif-text"
+                    value={notificationText}
+                    onChange={(e) => setNotificationText(e.target.value)}
+                    placeholder="Введите текст уведомления..."
+                    rows={4}
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => sendNotification.mutate({
+                      title: notificationTitle,
+                      message: notificationText
+                    })}
+                    disabled={!notificationTitle || !notificationText}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Отправить всем
+                  </Button>
+                  <Button variant="outline">
+                    <Bell className="w-4 h-4 mr-2" />
+                    Премиум пользователям
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Быстрые действия</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
-                <FileText className="mr-2 h-4 w-4" />
-                Экспорт статистики
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
-                Просмотр логов
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Settings className="mr-2 h-4 w-4" />
-                Настройки системы
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+          {/* Content Tab */}
+          <TabsContent value="content" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Управление контентом</CardTitle>
+                <CardDescription>
+                  Статьи, шаблоны документов и другой контент
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <Button className="h-24 flex flex-col gap-2">
+                    <Plus className="w-6 h-6" />
+                    Добавить статью
+                  </Button>
+                  <Button variant="outline" className="h-24 flex flex-col gap-2">
+                    <Edit className="w-6 h-6" />
+                    Редактировать шаблоны
+                  </Button>
+                  <Button variant="outline" className="h-24 flex flex-col gap-2">
+                    <FileText className="w-6 h-6" />
+                    Управление примерами
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* SEO Tab */}
+          <TabsContent value="seo" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO настройки</CardTitle>
+                <CardDescription>
+                  Управление метатегами, sitemap и настройками поисковой оптимизации
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Мета-заголовок сайта</Label>
+                  <Input placeholder="ЮрДок Генератор - Создание юридических документов" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Мета-описание</Label>
+                  <Textarea placeholder="Автоматическое создание юридических документов в соответствии с 152-ФЗ..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Ключевые слова</Label>
+                  <Input placeholder="юридические документы, 152-ФЗ, политика конфиденциальности" />
+                </div>
+                <Button>Сохранить SEO настройки</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Системные настройки</CardTitle>
+                <CardDescription>
+                  Telegram бот, реферальная программа и другие настройки
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Telegram уведомления</Label>
+                      <p className="text-sm text-muted-foreground">Отправка уведомлений через Telegram бота</p>
+                    </div>
+                    <Switch />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Telegram Bot Token</Label>
+                    <Input placeholder="Введите токен бота" type="password" />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Реферальная программа</Label>
+                      <p className="text-sm text-muted-foreground">Включить систему рефералов</p>
+                    </div>
+                    <Switch />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Бонус за реферала (%)</Label>
+                    <Input placeholder="10" type="number" />
+                  </div>
+                </div>
+
+                <Button>Сохранить настройки</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
