@@ -187,43 +187,15 @@ export function setupSimpleAuth(app: Express) {
       console.log("Session data:", req.session);
       // @ts-ignore
       const userId = req.session?.userId;
+      // @ts-ignore
+      const user = req.session?.user;
       
-      if (!userId) {
+      if (!userId || !user) {
         console.log("No userId in session");
         return res.status(401).json({ message: "Unauthorized" });
       }
-
-      console.log("Found userId:", userId);
-
-      // Проверяем админа
-      if (userId === "admin_main") {
-        const adminUser = {
-          id: "admin_main",
-          email: "rucoder.rf@yandex.ru",
-          firstName: "Admin",
-          lastName: "User",
-          role: "admin" as const,
-          subscription: "premium" as const,
-          documentsCreated: 0,
-          documentsLimit: -1
-        };
-        console.log("Returning admin user");
-        return res.json(adminUser);
-      }
-
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-
-      if (!user) {
-        return res.status(401).json({ message: "Пользователь не найден" });
-      }
-
-      // Возвращаем пользователя без пароля
-      const { password, ...userWithoutPassword } = user;
-      res.json(userWithoutPassword);
+      
+      return res.json({ user });
     } catch (error) {
       console.error("Get user error:", error);
       res.status(500).json({ message: "Ошибка сервера" });
