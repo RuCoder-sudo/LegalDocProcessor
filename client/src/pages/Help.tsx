@@ -1,286 +1,478 @@
-import Layout from "@/components/Layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useState } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Layout from "@/components/Layout";
+
 import { 
+  Search, 
+  BookOpen, 
   HelpCircle, 
   FileText, 
-  Download, 
-  CreditCard, 
-  User, 
-  Settings, 
-  Mail, 
+  Shield, 
+  Zap, 
+  Crown,
+  Users,
+  Download,
+  QrCode,
+  Settings,
+  MessageSquare,
   Phone,
-  MessageCircle,
-  BookOpen,
-  Zap,
-  Crown
+  Mail,
+  Globe,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Star,
+  Lightbulb,
+  Target
 } from "lucide-react";
 
+const FAQ_ITEMS = [
+  {
+    category: "Начало работы",
+    icon: <Lightbulb className="h-5 w-5" />,
+    items: [
+      {
+        question: "Как зарегистрироваться в сервисе?",
+        answer: "Нажмите кнопку 'Войти' в правом верхнем углу, затем выберите 'Регистрация'. Заполните форму с вашим email и паролем. После регистрации вы получите доступ к бесплатному тарифу."
+      },
+      {
+        question: "Сколько документов можно создать бесплатно?",
+        answer: "На бесплатном тарифе вы можете создать до 3 документов в месяц. Для неограниченного создания документов переходите на тариф Премиум."
+      },
+      {
+        question: "Какие типы документов поддерживаются?",
+        answer: "Мы поддерживаем: Политику конфиденциальности, Пользовательское соглашение, Согласие на обработку ПД, Публичную оферту, Политику Cookie, Политику возврата и Устав сайта."
+      }
+    ]
+  },
+  {
+    category: "Создание документов",
+    icon: <FileText className="h-5 w-5" />,
+    items: [
+      {
+        question: "Как создать свой первый документ?",
+        answer: "1. Войдите в личный кабинет\n2. Нажмите 'Создать документ'\n3. Выберите тип документа\n4. Заполните форму с данными компании\n5. Проверьте предварительный просмотр\n6. Сохраните документ"
+      },
+      {
+        question: "Можно ли редактировать созданные документы?",
+        answer: "Да! На тарифе Премиум и Ультра вы можете редактировать документы неограниченное количество раз. На бесплатном тарифе редактирование ограничено."
+      },
+      {
+        question: "Как добавить логотип компании в документ?",
+        answer: "Функция добавления логотипа доступна на тарифах Премиум и Ультра. В форме создания документа найдите раздел 'Брендинг' и загрузите ваш логотип."
+      },
+      {
+        question: "Что такое расширенные шаблоны?",
+        answer: "Расширенные шаблоны - это премиум функция, которая позволяет использовать более детализированные формы с дополнительными полями, такими как радио-кнопки для выбора типа владельца сайта, настройки прав пользователей и администрации."
+      }
+    ]
+  },
+  {
+    category: "QR-коды и экспорт",
+    icon: <QrCode className="h-5 w-5" />,
+    items: [
+      {
+        question: "Как создать QR-код для документа?",
+        answer: "QR-коды доступны на тарифах Премиум и Ультра. При создании документа отметьте опцию 'Создать QR-код'. Вы можете настроить данные для QR-кода и скачать его отдельно."
+      },
+      {
+        question: "В каких форматах можно скачать документы?",
+        answer: "Бесплатный тариф: только просмотр текста\nПремиум: PDF, DOC, HTML\nУльтра: все форматы + дополнительные варианты экспорта"
+      },
+      {
+        question: "Можно ли убрать водяные знаки?",
+        answer: "Водяные знаки автоматически убираются на тарифах Премиум и Ультра. На бесплатном тарифе они присутствуют во всех документах."
+      }
+    ]
+  },
+  {
+    category: "Тарифы и оплата",
+    icon: <Crown className="h-5 w-5" />,
+    items: [
+      {
+        question: "Чем отличается тариф Премиум от Ультра?",
+        answer: "Премиум (1990₽/мес): безлимитные документы, QR-коды, экспорт, расширенные шаблоны\nУльтра (4990₽/мес): все функции Премиум + персональный менеджер, юридические консультации, API доступ, индивидуальные шаблоны"
+      },
+      {
+        question: "Можно ли сменить тариф в любое время?",
+        answer: "Да, вы можете повысить или понизить тариф в любое время через настройки аккаунта. При понижении тарифа изменения вступят в силу с следующего расчетного периода."
+      },
+      {
+        question: "Доступна ли рассрочка или корпоративные скидки?",
+        answer: "Для тарифа Ультра доступны индивидуальные условия оплаты и корпоративные скидки. Свяжитесь с нами для обсуждения условий."
+      }
+    ]
+  },
+  {
+    category: "Техническая поддержка",
+    icon: <Settings className="h-5 w-5" />,
+    items: [
+      {
+        question: "Как связаться с поддержкой?",
+        answer: "Email: rucoder.rf@yandex.ru\nTelegram: @RussCoder\nТелефон: +7 (985) 985-53-97\nФорма обратной связи на сайте\nВремя работы: Пн-Пт 9:00-18:00 МСК"
+      },
+      {
+        question: "Как настроить Telegram уведомления?",
+        answer: "На тарифах Премиум и Ультра в настройках профиля можно указать токен Telegram бота и ID канала для получения уведомлений о создании документов и других событиях."
+      },
+      {
+        question: "Что делать если документ не генерируется?",
+        answer: "1. Проверьте правильность заполнения всех обязательных полей\n2. Убедитесь что не превышен лимит тарифа\n3. Очистите кеш браузера\n4. Свяжитесь с поддержкой если проблема не решилась"
+      }
+    ]
+  },
+  {
+    category: "Правовые вопросы",
+    icon: <Shield className="h-5 w-5" />,
+    items: [
+      {
+        question: "Соответствуют ли документы российскому законодательству?",
+        answer: "Да, все наши шаблоны разработаны с учетом требований российского законодательства, включая 152-ФЗ 'О персональных данных' и другие нормативные акты."
+      },
+      {
+        question: "Нужно ли дополнительно проверять документы у юриста?",
+        answer: "Наши шаблоны покрывают стандартные случаи, но для специфических бизнес-процессов рекомендуем консультацию с юристом. Клиенты тарифа Ультра получают бесплатные юридические консультации."
+      },
+      {
+        question: "Как часто обновляются шаблоны?",
+        answer: "Мы отслеживаем изменения в законодательстве и обновляем шаблоны по мере необходимости. Клиенты Ультра получают приоритетные обновления."
+      }
+    ]
+  }
+];
+
+const GUIDES = [
+  {
+    title: "Быстрый старт",
+    description: "Создайте свой первый документ за 5 минут",
+    icon: <Target className="h-6 w-6" />,
+    steps: [
+      "Зарегистрируйтесь или войдите в аккаунт",
+      "Нажмите 'Создать документ' в личном кабинете", 
+      "Выберите тип документа (например, Политика конфиденциальности)",
+      "Заполните форму с данными вашей компании",
+      "Проверьте предварительный просмотр",
+      "Сохраните документ и скопируйте текст"
+    ]
+  },
+  {
+    title: "Настройка расширенных функций",
+    description: "Максимально используйте возможности Премиум тарифа",
+    icon: <Zap className="h-6 w-6" />,
+    steps: [
+      "Перейдите на тариф Премиум или Ультра",
+      "В настройках профиля укажите данные для Telegram бота",
+      "При создании документа включите генерацию QR-кода",
+      "Используйте расширенные шаблоны с дополнительными опциями",
+      "Настройте брендинг и добавьте логотип компании",
+      "Экспортируйте документы в нужном формате"
+    ]
+  },
+  {
+    title: "Работа с Уставом сайта",
+    description: "Создание подробного устава для вашего веб-ресурса", 
+    icon: <FileText className="h-6 w-6" />,
+    steps: [
+      "Выберите тип документа 'Устав сайта'",
+      "Укажите тип владельца (физ. или юр. лицо)",
+      "Определите является ли сайт СМИ",
+      "Настройте права пользователей и администрации",
+      "Выберите обязанности сторон из предложенных опций",
+      "Укажите типы собираемых персональных данных"
+    ]
+  }
+];
+
 export default function Help() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const filteredFAQ = FAQ_ITEMS.filter(category => {
+    if (activeCategory !== "all" && category.category !== activeCategory) return false;
+    if (!searchQuery) return true;
+    return category.items.some(item => 
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 py-8">
-        <div className="container mx-auto max-w-6xl px-4">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              Центр помощи
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Найдите ответы на популярные вопросы и получите помощь по использованию сервиса
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Основной контент */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Быстрый старт */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Zap className="h-5 w-5 mr-2 text-blue-600" />
-                    Быстрый старт
-                  </CardTitle>
-                  <CardDescription>
-                    Основные шаги для начала работы с сервисом
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                      <div>
-                        <h4 className="font-medium">Регистрация</h4>
-                        <p className="text-sm text-muted-foreground">Создайте аккаунт, указав email и пароль</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                      <div>
-                        <h4 className="font-medium">Выбор документа</h4>
-                        <p className="text-sm text-muted-foreground">Перейдите в генератор и выберите нужный тип документа</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                      <div>
-                        <h4 className="font-medium">Заполнение данных</h4>
-                        <p className="text-sm text-muted-foreground">Укажите информацию о вашей компании</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
-                      <div>
-                        <h4 className="font-medium">Скачивание</h4>
-                        <p className="text-sm text-muted-foreground">Получите готовый документ в формате PDF</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* FAQ */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <HelpCircle className="h-5 w-5 mr-2 text-blue-600" />
-                    Часто задаваемые вопросы
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Как создать документ?</AccordionTrigger>
-                      <AccordionContent>
-                        Перейдите на страницу "Генератор документов", выберите нужный тип документа, заполните форму с информацией о вашей компании и нажмите "Создать документ". Система автоматически сгенерирует документ, соответствующий российскому законодательству.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-2">
-                      <AccordionTrigger>Какие документы доступны бесплатно?</AccordionTrigger>
-                      <AccordionContent>
-                        В бесплатном тарифе вы можете создать до 2 документов любого типа: политика конфиденциальности, пользовательское соглашение, согласие на обработку данных, договор оферты, политика cookies и положение о возврате. Документы будут содержать водяной знак.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-3">
-                      <AccordionTrigger>Чем отличается премиум подписка?</AccordionTrigger>
-                      <AccordionContent>
-                        Премиум подписка дает безлимитное создание документов, удаление водяных знаков, доступ к расширенным шаблонам, генерацию QR-кодов, приоритетную поддержку и автоматические обновления при изменении законодательства.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-4">
-                      <AccordionTrigger>Где найти созданные документы?</AccordionTrigger>
-                      <AccordionContent>
-                        Все ваши документы сохраняются в личном кабинете. Войдите в аккаунт и перейдите в раздел "Личный кабинет", где вы увидите список всех созданных документов с возможностью просмотра и скачивания.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-5">
-                      <AccordionTrigger>Как обновить подписку?</AccordionTrigger>
-                      <AccordionContent>
-                        Перейдите на страницу "Тарифы", выберите подходящий план и нажмите "Обновить подписку". Оплата производится через безопасную платежную систему. После оплаты новые возможности станут доступны немедленно.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-6">
-                      <AccordionTrigger>Соответствуют ли документы законодательству?</AccordionTrigger>
-                      <AccordionContent>
-                        Да, все шаблоны разработаны практикующими юристами и регулярно обновляются в соответствии с изменениями в российском законодательстве. Мы следим за всеми изменениями в законах о персональных данных, защите прав потребителей и электронной коммерции.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-7">
-                      <AccordionTrigger>Можно ли редактировать готовые документы?</AccordionTrigger>
-                      <AccordionContent>
-                        Документы создаются на основе ваших данных и готовы к использованию. Для премиум пользователей доступны расширенные настройки и дополнительные поля. Если нужны существенные изменения, рекомендуем обратиться к юристу.
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="item-8">
-                      <AccordionTrigger>Что делать если документ не скачивается?</AccordionTrigger>
-                      <AccordionContent>
-                        Проверьте интернет-соединение и попробуйте еще раз. Убедитесь, что браузер не блокирует загрузки. Если проблема сохраняется, обратитесь в службу поддержки через форму обратной связи или по email support@legalrfdocs.ru.
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </CardContent>
-              </Card>
-
-              {/* Руководства по типам документов */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
-                    Руководства по документам
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 border rounded-lg">
-                      <h4 className="font-medium mb-2">Политика конфиденциальности</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Документ о том, как вы собираете и используете персональные данные пользователей
-                      </p>
-                      <Badge variant="secondary">Обязательно для сайтов</Badge>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <h4 className="font-medium mb-2">Пользовательское соглашение</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Правила использования вашего сайта или сервиса
-                      </p>
-                      <Badge variant="secondary">Защищает от споров</Badge>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <h4 className="font-medium mb-2">Согласие на обработку</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Форма для получения согласия на обработку персональных данных
-                      </p>
-                      <Badge variant="secondary">Требование 152-ФЗ</Badge>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <h4 className="font-medium mb-2">Договор оферты</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Публичный договор для интернет-магазинов и сервисов
-                      </p>
-                      <Badge variant="secondary">Для продаж</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Боковая панель */}
-            <div className="space-y-6">
-              {/* Быстрые действия */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Быстрые действия</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline">
-                    <FileText className="h-4 w-4 mr-2 text-blue-600" />
-                    Создать документ
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline">
-                    <User className="h-4 w-4 mr-2 text-blue-600" />
-                    Личный кабинет
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline">
-                    <Crown className="h-4 w-4 mr-2 text-blue-600" />
-                    Обновить подписку
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Связь с поддержкой */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Нужна помощь?</CardTitle>
-                  <CardDescription>
-                    Свяжитесь с нашей службой поддержки
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium">Email</p>
-                      <p className="text-sm text-muted-foreground">support@legalrfdocs.ru</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <MessageCircle className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium">Онлайн чат</p>
-                      <p className="text-sm text-muted-foreground">Доступен 24/7</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium">Телефон</p>
-                      <p className="text-sm text-muted-foreground">+7 (xxx) xxx-xx-xx</p>
-                    </div>
-                  </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Написать в поддержку
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Полезные ссылки */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Полезные ссылки</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button variant="ghost" className="w-full justify-start h-auto p-2">
-                    <div className="text-left">
-                      <p className="font-medium">Примеры документов</p>
-                      <p className="text-xs text-muted-foreground">Посмотрите готовые образцы</p>
-                    </div>
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start h-auto p-2">
-                    <div className="text-left">
-                      <p className="font-medium">Обновления законов</p>
-                      <p className="text-xs text-muted-foreground">Последние изменения</p>
-                    </div>
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start h-auto p-2">
-                    <div className="text-left">
-                      <p className="font-medium">Видео инструкции</p>
-                      <p className="text-xs text-muted-foreground">Обучающие материалы</p>
-                    </div>
-                  </Button>
-                </CardContent>
-              </Card>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-br from-blue-50 to-background dark:from-blue-950/20 py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="rounded-full bg-blue-500/10 p-4">
+                  <BookOpen className="h-12 w-12 text-blue-500" />
+                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Справочный центр
+              </h1>
+              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                Найдите ответы на все ваши вопросы о создании юридических документов
+              </p>
+              
+              {/* Search */}
+              <div className="max-w-2xl mx-auto relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Поиск по справке..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 text-lg"
+                />
+              </div>
             </div>
           </div>
+        </section>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Tabs defaultValue="faq" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+              <TabsTrigger value="faq" className="flex items-center gap-2">
+                <HelpCircle className="h-4 w-4" />
+                FAQ
+              </TabsTrigger>
+              <TabsTrigger value="guides" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Руководства
+              </TabsTrigger>
+              <TabsTrigger value="contact" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Контакты
+              </TabsTrigger>
+            </TabsList>
+
+            {/* FAQ Tab */}
+            <TabsContent value="faq" className="space-y-8">
+              {/* Category filters */}
+              <div className="flex flex-wrap gap-2 justify-center">
+                <Button
+                  variant={activeCategory === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveCategory("all")}
+                >
+                  Все вопросы
+                </Button>
+                {FAQ_ITEMS.map((category) => (
+                  <Button
+                    key={category.category}
+                    variant={activeCategory === category.category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setActiveCategory(category.category)}
+                    className="flex items-center gap-2"
+                  >
+                    {category.icon}
+                    {category.category}
+                  </Button>
+                ))}
+              </div>
+
+              {/* FAQ Content */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {filteredFAQ.map((category) => (
+                  <Card key={category.category}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        {category.icon}
+                        {category.category}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Accordion type="single" collapsible className="space-y-2">
+                        {category.items.map((item, index) => (
+                          <AccordionItem key={index} value={`${category.category}-${index}`}>
+                            <AccordionTrigger className="text-left">
+                              {item.question}
+                            </AccordionTrigger>
+                            <AccordionContent className="text-muted-foreground whitespace-pre-line">
+                              {item.answer}
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Guides Tab */}
+            <TabsContent value="guides" className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {GUIDES.map((guide, index) => (
+                  <Card key={index} className="h-full">
+                    <CardHeader>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="rounded-lg bg-blue-500/10 p-2">
+                          {guide.icon}
+                        </div>
+                        <Badge variant="secondary">Руководство</Badge>
+                      </div>
+                      <CardTitle>{guide.title}</CardTitle>
+                      <CardDescription>{guide.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ol className="space-y-3">
+                        {guide.steps.map((step, stepIndex) => (
+                          <li key={stepIndex} className="flex items-start gap-3">
+                            <div className="rounded-full bg-blue-500 text-white w-6 h-6 flex items-center justify-center text-sm font-semibold flex-shrink-0 mt-0.5">
+                              {stepIndex + 1}
+                            </div>
+                            <span className="text-sm text-muted-foreground">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Contact Tab */}
+            <TabsContent value="contact" className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Primary Support */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-6 w-6 text-blue-500" />
+                      Основная поддержка
+                    </CardTitle>
+                    <CardDescription>
+                      Быстрый ответ на ваши вопросы
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Mail className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Email</p>
+                        <p className="text-sm text-muted-foreground">rucoder.rf@yandex.ru</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Telegram</p>
+                        <p className="text-sm text-muted-foreground">@RussCoder</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Время работы</p>
+                        <p className="text-sm text-muted-foreground">Пн-Пт 9:00-18:00 МСК</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Phone Support */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Phone className="h-6 w-6 text-green-500" />
+                      Телефонная поддержка
+                    </CardTitle>
+                    <CardDescription>
+                      Для срочных вопросов
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">+7 (985) 985-53-97</p>
+                        <p className="text-sm text-muted-foreground">Звонки и WhatsApp</p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <p>• Бесплатно для клиентов Ультра</p>
+                      <p>• Приоритетная поддержка Премиум</p>
+                      <p>• Базовая поддержка для всех</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Website */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="h-6 w-6 text-purple-500" />
+                      Дополнительная информация
+                    </CardTitle>
+                    <CardDescription>
+                      Больше материалов и новостей
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Globe className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">Сайт разработчика</p>
+                        <p className="text-sm text-muted-foreground">рукодер.рф</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Button variant="outline" size="sm" asChild className="w-full">
+                        <Link href="/feedback">Обратная связь</Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild className="w-full">
+                        <Link href="/news">Новости и обновления</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Response Time Info */}
+              <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-full bg-blue-500/10 p-2">
+                      <Clock className="h-6 w-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                        Время ответа поддержки
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-blue-800 dark:text-blue-200">
+                            <strong>Ультра:</strong> до 2 часов
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-yellow-500" />
+                          <span className="text-blue-800 dark:text-blue-200">
+                            <strong>Премиум:</strong> до 8 часов
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4 text-gray-500" />
+                          <span className="text-blue-800 dark:text-blue-200">
+                            <strong>Бесплатный:</strong> до 24 часов
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </Layout>

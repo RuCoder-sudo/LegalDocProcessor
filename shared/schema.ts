@@ -284,10 +284,18 @@ export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type BlogPost = z.infer<typeof selectBlogPostSchema>;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type Notification = z.infer<typeof selectNotificationSchema>;
+export type InsertQrCode = z.infer<typeof insertQrCodeSchema>;
+export type QrCode = z.infer<typeof selectQrCodeSchema>;
+export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+export type Feedback = z.infer<typeof selectFeedbackSchema>;
+export type InsertHelpArticle = z.infer<typeof insertHelpArticleSchema>;
+export type HelpArticle = z.infer<typeof selectHelpArticleSchema>;
+export type InsertAdvancedTemplate = z.infer<typeof insertAdvancedTemplateSchema>;
+export type AdvancedTemplate = z.infer<typeof selectAdvancedTemplateSchema>;
 
 // Form validation schemas
 export const documentFormSchema = z.object({
-  type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return"]),
+  type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return", "charter"]),
   companyName: z.string().min(1, "Название компании обязательно"),
   inn: z.string().min(10, "ИНН должен содержать минимум 10 цифр").max(12),
   ogrn: z.string().optional(),
@@ -298,6 +306,50 @@ export const documentFormSchema = z.object({
   hostingProvider: z.string().optional(),
   phone: z.string().optional(),
   industry: z.string().optional(),
+  
+  // Расширенные поля для премиум/ультра пользователей
+  ownerType: z.enum(["individual", "legal"]).optional(), // Физ. лицо / Юр. лицо или ИП
+  isSmi: z.boolean().optional(), // Является ли сайт СМИ
+  userCanPost: z.boolean().optional(), // Размещает ли пользователь информацию
+  agreementStart: z.enum(["any_use", "after_registration"]).optional(),
+  agreementDuration: z.enum(["indefinite", "until_new_version"]).optional(),
+  canAdminChange: z.boolean().optional(),
+  notifyChanges: z.enum(["yes", "sometimes", "no"]).optional(),
+  
+  // Права пользователя
+  userRights: z.array(z.string()).optional(),
+  copyRights: z.array(z.string()).optional(),
+  hideInfoRights: z.array(z.string()).optional(),
+  useInfoRights: z.array(z.string()).optional(),
+  
+  // Права администрации
+  adminRights: z.array(z.string()).optional(),
+  
+  // Обязанности пользователя
+  userObligations: z.array(z.string()).optional(),
+  
+  // Обязанности администрации
+  adminObligations: z.array(z.string()).optional(),
+  
+  // Данные для обработки
+  dataTypes: z.array(z.string()).optional(),
+  
+  // QR-код опции
+  generateQr: z.boolean().optional(),
+  qrData: z.string().optional(),
 });
 
 export type DocumentFormData = z.infer<typeof documentFormSchema>;
+
+// Feedback form schema
+export const feedbackFormSchema = z.object({
+  type: z.enum(["suggestion", "complaint", "compliment", "question"]),
+  category: z.enum(["interface", "functionality", "content", "performance"]),
+  rating: z.number().min(1).max(5).optional(),
+  subject: z.string().min(1, "Тема обязательна"),
+  message: z.string().min(10, "Сообщение должно содержать минимум 10 символов"),
+  email: z.string().email().optional(),
+  isAnonymous: z.boolean().default(false),
+});
+
+export type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
