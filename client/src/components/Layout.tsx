@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
-// import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "@/components/ThemeProvider";
 import type { AuthUser } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,7 +24,7 @@ interface LayoutProps {
 export default function Layout({ children, showFooter = true }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
-  // const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
 
   const navigation = [
@@ -130,12 +130,14 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button asChild className="animate-pulse-glow">
-                  <a href="/api/login">
-                    <User className="mr-2 h-4 w-4" />
-                    Войти
-                  </a>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button asChild className="animate-pulse-glow">
+                    <Link href="/login">
+                      <User className="mr-2 h-4 w-4" />
+                      Войти
+                    </Link>
+                  </Button>
+                </div>
               )}
 
               {/* Mobile menu button */}

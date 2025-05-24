@@ -36,11 +36,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create document - ВРЕМЕННО БЕЗ АВТОРИЗАЦИИ
+  // Create document - ИСПРАВЛЕНА ПЕРЕДАЧА ДАННЫХ
   app.post('/api/documents', async (req: any, res) => {
     try {
-      const { type, formData } = req.body;
+      console.log('Full request body:', req.body);
+      
+      const { type, ...formData } = req.body;
       const userId = "admin_main"; // Временная заглушка
+
+      console.log('Extracted type:', type);
+      console.log('Extracted formData:', formData);
 
       // Check document limit
       const userDocCount = await db
@@ -57,8 +62,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Generate document content with full form data
-      const content = await generateDocumentContent(type, req.body);
+      // Generate document content with extracted form data
+      const content = await generateDocumentContent(type, formData);
 
       const [newDocument] = await db
         .insert(userDocuments)
