@@ -43,8 +43,28 @@ export const users = pgTable("users", {
 // Admin settings
 export const adminSettings = pgTable("admin_settings", {
   id: serial("id").primaryKey(),
+  // Telegram настройки
   telegramBotToken: varchar("telegram_bot_token"),
   telegramChannelId: varchar("telegram_channel_id"),
+  telegramSupport: varchar("telegram_support").default("@RussCoder"),
+  telegramSupportText: text("telegram_support_text").default("Telegram поддержка"),
+  // Email настройки  
+  supportEmail: varchar("support_email").default("rucoder.rf@yandex.ru"),
+  supportEmailText: text("support_email_text").default("Email поддержка"),
+  // WhatsApp настройки
+  whatsappNumber: varchar("whatsapp_number").default("+7 (985) 985-53-97"),
+  whatsappText: text("whatsapp_text").default("WhatsApp поддержка"),
+  // Сайт
+  websiteUrl: varchar("website_url").default("рукодер.рф"),
+  websiteText: text("website_text").default("Основной сайт"),
+  // Тарифы
+  freePlanLimit: integer("free_plan_limit").default(3),
+  freePlanName: varchar("free_plan_name").default("Бесплатный"),
+  premiumPlanLimit: integer("premium_plan_limit").default(100),
+  premiumPlanName: varchar("premium_plan_name").default("Премиум"),
+  premiumPlanPrice: integer("premium_plan_price").default(500),
+  premiumPlanDescription: text("premium_plan_description").default("Безлимитное создание документов, редактирование, экспорт в разные форматы, QR-коды"),
+  // SEO
   seoTitle: varchar("seo_title").default("ЮрДок Генератор - Автоматическое создание юридических документов"),
   seoDescription: text("seo_description").default("Профессиональный генератор юридических документов в соответствии с российским законодательством. Политики конфиденциальности, согласия на обработку ПД и другие документы."),
   seoKeywords: text("seo_keywords").default("юридические документы, политика конфиденциальности, согласие на обработку персональных данных, 152-ФЗ"),
