@@ -94,11 +94,22 @@ export function setupSimpleAuth(app: Express) {
         req.session.userId = adminUser.id;
         // @ts-ignore
         req.session.user = adminUser;
-
-        return res.json({ 
-          message: "Вход выполнен успешно", 
-          user: adminUser 
+        
+        console.log("Admin login - session set:", req.session);
+        
+        // Принудительно сохраняем сессию
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Ошибка сохранения сессии" });
+          }
+          console.log("Session saved successfully");
+          return res.json({ 
+            message: "Вход выполнен успешно", 
+            user: adminUser 
+          });
         });
+        return; // Важно! Возвращаемся здесь
       }
 
       // Находим пользователя
@@ -146,11 +157,31 @@ export function setupSimpleAuth(app: Express) {
   // Получить текущего пользователя
   app.get("/api/auth/user", async (req, res) => {
     try {
+      console.log("Session data:", req.session);
       // @ts-ignore
       const userId = req.session?.userId;
       
       if (!userId) {
+        console.log("No userId in session");
         return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      console.log("Found userId:", userId);
+
+      // Проверяем админа
+      if (userId === "admin_main") {
+        const adminUser = {
+          id: "admin_main",
+          email: "rucoder.rf@yandex.ru",
+          firstName: "Admin",
+          lastName: "User",
+          role: "admin" as const,
+          subscription: "premium" as const,
+          documentsCreated: 0,
+          documentsLimit: -1
+        };
+        console.log("Returning admin user");
+        return res.json(adminUser);
       }
 
       const [user] = await db
@@ -160,15 +191,15 @@ export function setupSimpleAuth(app: Express) {
         .limit(1);
 
       if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: "Пользователь не найден" });
       }
 
       // Возвращаем пользователя без пароля
-      const { password: _, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
-      console.error("Auth check error:", error);
-      res.status(401).json({ message: "Unauthorized" });
+      console.error("Get user error:", error);
+      res.status(500).json({ message: "Ошибка сервера" });
     }
   });
 }
