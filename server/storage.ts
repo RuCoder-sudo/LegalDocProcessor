@@ -4,6 +4,7 @@ import {
   userDocuments,
   blogPosts,
   notifications,
+  adminSettings,
   type User,
   type UpsertUser,
   type DocumentTemplate,
@@ -21,7 +22,6 @@ import { eq, desc, and, count } from "drizzle-orm";
 export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
-  createUser(user: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   getUserByEmail(email: string): Promise<User | undefined>;
   updateUserDocumentCount(userId: string): Promise<void>;
@@ -81,24 +81,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserDocumentCount(userId: string): Promise<void> {
-    const [result] = await db
+    const [{ count: docCount }] = await db
       .select({ count: count() })
       .from(userDocuments)
       .where(eq(userDocuments.userId, userId));
-    
+
     await db
       .update(users)
-      .set({ documentsCreated: result.count })
+      .set({ documentsCreated: docCount })
       .where(eq(users.id, userId));
   }
 
   // Document template operations
   async getDocumentTemplates(): Promise<DocumentTemplate[]> {
-    return await db
+    const templates = await db
       .select()
       .from(documentTemplates)
       .where(eq(documentTemplates.isActive, true))
       .orderBy(documentTemplates.name);
+    return templates as DocumentTemplate[];
   }
 
   async getDocumentTemplate(id: number): Promise<DocumentTemplate | undefined> {
@@ -106,36 +107,37 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(documentTemplates)
       .where(and(eq(documentTemplates.id, id), eq(documentTemplates.isActive, true)));
-    return template;
+    return template as DocumentTemplate;
   }
 
   async createDocumentTemplate(template: InsertDocumentTemplate): Promise<DocumentTemplate> {
-    const [created] = await db
+    const [newTemplate] = await db
       .insert(documentTemplates)
       .values(template)
       .returning();
-    return created;
+    return newTemplate as DocumentTemplate;
   }
 
   // User document operations
   async getUserDocuments(userId: string): Promise<UserDocument[]> {
-    return await db
+    const documents = await db
       .select()
       .from(userDocuments)
       .where(eq(userDocuments.userId, userId))
       .orderBy(desc(userDocuments.createdAt));
+    return documents as UserDocument[];
   }
 
   async createUserDocument(document: InsertUserDocument): Promise<UserDocument> {
-    const [created] = await db
+    const [newDocument] = await db
       .insert(userDocuments)
       .values(document)
       .returning();
     
-    // Update user document count
+    // Обновляем счетчик документов пользователя
     await this.updateUserDocumentCount(document.userId);
     
-    return created;
+    return newDocument as UserDocument;
   }
 
   async getUserDocument(id: number, userId: string): Promise<UserDocument | undefined> {
@@ -143,62 +145,60 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(userDocuments)
       .where(and(eq(userDocuments.id, id), eq(userDocuments.userId, userId)));
-    return document;
+    return document as UserDocument;
   }
 
   async updateUserDocument(id: number, userId: string, updates: Partial<InsertUserDocument>): Promise<UserDocument> {
-    const [updated] = await db
+    const [updatedDocument] = await db
       .update(userDocuments)
       .set({ ...updates, updatedAt: new Date() })
       .where(and(eq(userDocuments.id, id), eq(userDocuments.userId, userId)))
       .returning();
-    return updated;
+    return updatedDocument as UserDocument;
   }
 
   // Blog operations
   async getBlogPosts(published = true): Promise<BlogPost[]> {
-    const query = db.select().from(blogPosts);
-    
-    if (published) {
-      return await query
-        .where(eq(blogPosts.isPublished, true))
-        .orderBy(desc(blogPosts.publishedAt));
-    }
-    
-    return await query.orderBy(desc(blogPosts.createdAt));
+    const posts = await db
+      .select()
+      .from(blogPosts)
+      .where(published ? eq(blogPosts.isPublished, true) : undefined)
+      .orderBy(desc(blogPosts.publishedAt));
+    return posts;
   }
 
   async getBlogPost(slug: string): Promise<BlogPost | undefined> {
     const [post] = await db
       .select()
       .from(blogPosts)
-      .where(eq(blogPosts.slug, slug));
+      .where(and(eq(blogPosts.slug, slug), eq(blogPosts.isPublished, true)));
     return post;
   }
 
   async createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
-    const [created] = await db
+    const [newPost] = await db
       .insert(blogPosts)
       .values(post)
       .returning();
-    return created;
+    return newPost;
   }
 
   // Notification operations
   async getUserNotifications(userId: string): Promise<Notification[]> {
-    return await db
+    const userNotifications = await db
       .select()
       .from(notifications)
       .where(eq(notifications.userId, userId))
       .orderBy(desc(notifications.createdAt));
+    return userNotifications as Notification[];
   }
 
   async createNotification(notification: InsertNotification): Promise<Notification> {
-    const [created] = await db
+    const [newNotification] = await db
       .insert(notifications)
       .values(notification)
       .returning();
-    return created;
+    return newNotification as Notification;
   }
 
   async markNotificationRead(id: number, userId: string): Promise<void> {
@@ -210,33 +210,34 @@ export class DatabaseStorage implements IStorage {
 
   // Admin operations
   async getAllUsers(): Promise<User[]> {
-    return await db
+    const allUsers = await db
       .select()
       .from(users)
       .orderBy(desc(users.createdAt));
+    return allUsers;
   }
 
   async updateUserRole(userId: string, role: string): Promise<User> {
-    const [updated] = await db
+    const [updatedUser] = await db
       .update(users)
       .set({ role, updatedAt: new Date() })
       .where(eq(users.id, userId))
       .returning();
-    return updated;
+    return updatedUser;
   }
 
   async getUserStats(): Promise<{ totalUsers: number; premiumUsers: number; documentsCreated: number }> {
-    const [totalUsers] = await db.select({ count: count() }).from(users);
-    const [premiumUsers] = await db
+    const [totalUsersResult] = await db.select({ count: count() }).from(users);
+    const [premiumUsersResult] = await db
       .select({ count: count() })
       .from(users)
       .where(eq(users.subscription, "premium"));
-    const [documentsCreated] = await db.select({ count: count() }).from(userDocuments);
-    
+    const [documentsResult] = await db.select({ count: count() }).from(userDocuments);
+
     return {
-      totalUsers: totalUsers.count,
-      premiumUsers: premiumUsers.count,
-      documentsCreated: documentsCreated.count,
+      totalUsers: totalUsersResult.count,
+      premiumUsers: premiumUsersResult.count,
+      documentsCreated: documentsResult.count,
     };
   }
 }

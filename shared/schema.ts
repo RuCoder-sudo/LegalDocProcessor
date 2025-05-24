@@ -25,7 +25,7 @@ export const sessions = pgTable(
 
 // User storage table
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: varchar("id", { length: 50 }).primaryKey(),
   email: varchar("email").unique().notNull(),
   password: varchar("password").notNull(),
   firstName: varchar("first_name"),
@@ -36,6 +36,8 @@ export const users = pgTable("users", {
   documentsCreated: integer("documents_created").default(0),
   documentsLimit: integer("documents_limit").default(3),
   premiumUntil: timestamp("premium_until"),
+  telegramBotToken: varchar("telegram_bot_token"),
+  telegramChannelId: varchar("telegram_channel_id"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -89,12 +91,13 @@ export const documentTemplates = pgTable("document_templates", {
 // User documents
 export const userDocuments = pgTable("user_documents", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
   templateId: integer("template_id").references(() => documentTemplates.id),
   name: varchar("name").notNull(),
   type: varchar("type").notNull(),
   formData: jsonb("form_data").notNull(),
   generatedContent: text("generated_content"),
+  customFields: jsonb("custom_fields"), // для платных пользователей
   status: varchar("status").default("draft"), // draft, completed, archived
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -111,7 +114,7 @@ export const documentExports = pgTable("document_exports", {
 // Notifications
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
   title: varchar("title").notNull(),
   message: text("message").notNull(),
   type: varchar("type").notNull(), // legal_update, reminder, info

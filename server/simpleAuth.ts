@@ -40,10 +40,14 @@ export function setupSimpleAuth(app: Express) {
       // Хешируем пароль
       const hashedPassword = await bcrypt.hash(password, 12);
       
+      // Генерируем уникальный ID
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
       // Создаем пользователя
       const [newUser] = await db
         .insert(users)
         .values({
+          id: userId,
           email,
           password: hashedPassword,
           firstName: firstName || null,
