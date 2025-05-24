@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ export default function Examples() {
   const urlParams = new URLSearchParams(location.split('?')[1] || '');
   const typeFromUrl = urlParams.get('type');
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeFromUrl && DOCUMENT_TYPES[typeFromUrl as keyof typeof DOCUMENT_TYPES]) {
       setSelectedType(typeFromUrl);
     }
