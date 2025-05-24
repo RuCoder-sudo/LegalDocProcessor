@@ -161,7 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Admin login - session set:", (req as any).session);
         
         // Принудительно сохраняем сессию
-        (req as any).session.save((err: any) => {
+        return (req as any).session.save((err: any) => {
           if (err) {
             console.error("Session save error:", err);
             return res.status(500).json({ message: "Ошибка сохранения сессии" });
@@ -172,7 +172,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             user: adminUser 
           });
         });
-
       }
 
       // Находим пользователя
