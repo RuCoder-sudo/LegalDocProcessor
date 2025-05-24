@@ -131,7 +131,7 @@ export const blogPosts = pgTable("blog_posts", {
   content: text("content").notNull(),
   category: varchar("category").notNull(), // legal_news, guides, faq
   tags: text("tags").array(),
-  authorId: integer("author_id").references(() => users.id),
+  authorId: varchar("author_id").references(() => users.id),
   isPublished: boolean("is_published").default(false),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
