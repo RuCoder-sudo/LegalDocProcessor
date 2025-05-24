@@ -1,10 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import session from "express-session";
+import MemoryStore from "memorystore";
 import { users, userDocuments, blogPosts, adminSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+
+const MemStore = MemoryStore(session);
 
 // Auth middleware
 const requireAuth = async (req: any, res: any, next: any) => {
@@ -50,17 +53,21 @@ const requireAuth = async (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Session middleware
+  // Session middleware with MemoryStore
   app.use(session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
-    resave: true,
-    saveUninitialized: true,
     cookie: {
-      secure: false,
+      maxAge: 86400000, // 24 часа
       httpOnly: false,
-      maxAge: 24 * 60 * 60 * 1000,
+      secure: false,
       sameSite: 'lax'
-    }
+    },
+    store: new MemStore({
+      checkPeriod: 86400000 // очистка каждые 24 часа
+    }),
+    secret: process.env.SESSION_SECRET || "your-very-secure-secret-key-2024",
+    resave: false,
+    saveUninitialized: false,
+    name: 'sessionId'
   }));
 
   // Регистрация пользователя
@@ -159,6 +166,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         (req as any).session.user = adminUser;
         
         console.log("Admin login - session set:", (req as any).session);
+        console.log("Session ID:", (req as any).sessionID);
         
         // Принудительно сохраняем сессию
         return (req as any).session.save((err: any) => {
@@ -238,12 +246,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Получение данных текущего пользователя
   app.get('/api/auth/user', async (req, res) => {
     try {
+      console.log('=== GET /api/auth/user ===');
+      console.log('Session ID:', (req as any).sessionID);
       console.log('Session data:', (req as any).session);
+      console.log('Headers:', req.headers.cookie);
+      
       const userId = (req as any).session?.userId;
       const user = (req as any).session?.user;
       
+      console.log('UserId from session:', userId);
+      console.log('User from session:', user);
+      
       if (!userId || !user) {
-        console.log('No userId in session');
+        console.log('No userId in session - returning 401');
         return res.status(401).json({ message: "Unauthorized" });
       }
 
