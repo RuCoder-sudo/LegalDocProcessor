@@ -396,11 +396,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update user role (admin only)
-  app.put('/api/admin/users/:userId/role', requireAuth, async (req: any, res) => {
+  app.put('/api/admin/users/:userId/role', requireAuth, requireAdmin, async (req: any, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Доступ запрещен" });
-      }
 
       const { userId } = req.params;
       const { role } = req.body;
@@ -419,11 +416,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get admin stats (admin only)
-  app.get('/api/admin/stats', requireAuth, async (req: any, res) => {
+  app.get('/api/admin/stats', requireAuth, requireAdmin, async (req: any, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: "Доступ запрещен" });
-      }
 
       const allUsers = await db.select().from(users);
       const totalUsers = allUsers.length;
@@ -442,36 +436,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-  // Admin routes - исправлены критические ошибки
-  app.get('/api/admin/stats', requireAuth, async (req, res) => {
-    try {
-      // @ts-ignore
-      const userId = req.session.userId;
-      const [user] = await db.select().from(users).where(eq(users.id, userId));
-      
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Недостаточно прав" });
-      }
-
-      // Простая статистика из базы данных
-      const totalUsers = await db.select().from(users);
-      const premiumUsers = totalUsers.filter(u => u.subscription === 'premium');
-      const documentsCreated = await db.select().from(userDocuments);
-
-      const stats = {
-        totalUsers: totalUsers.length,
-        premiumUsers: premiumUsers.length,
-        documentsCreated: documentsCreated.length
-      };
-
-      res.json(stats);
-    } catch (error) {
-      console.error("Ошибка получения статистики:", error);
-      res.status(500).json({ message: "Ошибка получения статистики" });
-    }
-  });
-
-  app.get('/api/admin/users', requireAuth, async (req, res) => {
+  
+  // Additional admin routes are now handled by authMiddleware.ts
+  // Use requireAuth and requireAdmin middleware for all admin routes
     try {
       // @ts-ignore
       const userId = req.session.userId;
