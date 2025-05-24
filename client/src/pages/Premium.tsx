@@ -125,7 +125,9 @@ export default function Premium() {
                     </li>
                   </ul>
                 </div>
-                <Button className="w-full">Выбрать Премиум</Button>
+                <Button className="w-full" asChild>
+                  <Link href="/contacts">Выбрать Премиум</Link>
+                </Button>
               </CardContent>
             </Card>
 
@@ -167,7 +169,9 @@ export default function Premium() {
                     </li>
                   </ul>
                 </div>
-                <Button className="w-full" variant="outline">Связаться с нами</Button>
+                <Button className="w-full" variant="outline" asChild>
+                  <Link href="/contacts">Связаться с нами</Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

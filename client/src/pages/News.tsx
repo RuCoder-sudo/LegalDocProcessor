@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 
 export default function News() {
+  const [match, params] = useRoute("/news/:slug");
+  const slug = params?.slug;
+  
   const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
   });
@@ -98,6 +101,14 @@ export default function News() {
     return NEWS_CATEGORIES[category as keyof typeof NEWS_CATEGORIES] || NEWS_CATEGORIES.legal_news;
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   const getCategoryIcon = (category: string) => {
     const icons = {
       legal_news: AlertTriangle,
@@ -108,13 +119,67 @@ export default function News() {
     return icons[category as keyof typeof icons] || AlertTriangle;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // If slug is provided, show individual article
+  if (slug) {
+    const article = newsToShow.find(post => post.slug === slug);
+    
+    if (!article) {
+      return (
+        <div className="min-h-screen bg-background">
+          <section className="py-20">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h1 className="text-3xl font-bold text-foreground mb-4">Статья не найдена</h1>
+              <p className="text-muted-foreground mb-8">Запрашиваемая статья не существует или была удалена.</p>
+              <Button asChild>
+                <Link href="/news">Вернуться к новостям</Link>
+              </Button>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-background">
+        <section className="py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Button variant="ghost" className="mb-6" asChild>
+              <Link href="/news">← Вернуться к новостям</Link>
+            </Button>
+            
+            <article>
+              <header className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge>{getCategoryInfo(article.category).name}</Badge>
+                  <span className="text-sm text-muted-foreground">
+                    {formatDate(article.publishedAt || article.createdAt)}
+                  </span>
+                </div>
+                <h1 className="text-4xl font-bold text-foreground mb-4">{article.title}</h1>
+                <p className="text-xl text-muted-foreground">{article.excerpt}</p>
+              </header>
+              
+              <div className="prose max-w-none">
+                <p>Полный текст статьи будет доступен после подключения к системе управления контентом.</p>
+                <p>Пока что отображается краткое описание: {article.excerpt}</p>
+              </div>
+              
+              {article.tags && (
+                <div className="mt-8 pt-8 border-t">
+                  <h3 className="text-lg font-semibold mb-4">Теги</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {article.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary">{tag}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </article>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   const groupedNews = newsToShow.reduce((acc, post) => {
     const category = post.category || 'legal_news';
