@@ -81,25 +81,41 @@ export class DatabaseStorage implements IStorage {
   async upsertUser(userData: UpsertUser): Promise<User> {
     const userToInsert = {
       ...userData,
-      id: userData.id || crypto.randomUUID(),
       role: userData.role || 'user',
       subscription: userData.subscription || 'free',
       documentsCreated: userData.documentsCreated || 0,
       documentsLimit: userData.documentsLimit || 3,
     };
 
-    const [user] = await db
-      .insert(users)
-      .values(userToInsert)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
+    // Проверяем, есть ли уже пользователь с таким email
+    const existingUser = await this.getUserByEmail(userData.email);
+    if (existingUser) {
+      const [user] = await db
+        .update(users)
+        .set({
+          firstName: userToInsert.firstName,
+          lastName: userToInsert.lastName,
+          role: userToInsert.role,
+          subscription: userToInsert.subscription,
+          documentsCreated: userToInsert.documentsCreated,
+          documentsLimit: userToInsert.documentsLimit,
           updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+        })
+        .where(eq(users.id, existingUser.id))
+        .returning();
+      return user;
+    } else {
+      // Создаем нового пользователя с уникальным ID
+      const userWithId = {
+        ...userToInsert,
+        id: crypto.randomUUID()
+      };
+      const [user] = await db
+        .insert(users)
+        .values(userWithId)
+        .returning();
+      return user;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {

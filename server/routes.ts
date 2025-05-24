@@ -61,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Проверяем лимиты для бесплатных пользователей
-      if (user.subscription === "free" && user.documentsCreated >= user.documentsLimit) {
+      if (user.subscription === "free" && (user.documentsCreated || 0) >= (user.documentsLimit || 3)) {
         return res.status(403).json({ 
           message: "Достигнут лимит создания документов. Обновитесь до премиум аккаунта." 
         });
