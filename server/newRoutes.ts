@@ -52,14 +52,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Устанавливаем сессию
       (req as any).session.userId = newUser.id;
+      (req as any).session.user = newUser;
+      
+      // Сохраняем сессию принудительно
+      await new Promise((resolve, reject) => {
+        (req as any).session.save((err: any) => {
+          if (err) reject(err);
+          else resolve(true);
+        });
+      });
       
       res.json({ 
-        id: newUser.id, 
-        email: newUser.email, 
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        role: newUser.role,
-        subscription: newUser.subscription
+        user: {
+          id: newUser.id, 
+          email: newUser.email, 
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          role: newUser.role,
+          subscription: newUser.subscription,
+          documentsCreated: newUser.documentsCreated,
+          documentsLimit: newUser.documentsLimit
+        }
       });
     } catch (error) {
       console.error("Ошибка регистрации:", error);
@@ -89,14 +102,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Устанавливаем сессию
       (req as any).session.userId = user.id;
+      (req as any).session.user = user;
+      
+      console.log('Login - session set:', (req as any).session);
+      
+      // Сохраняем сессию принудительно
+      await new Promise((resolve, reject) => {
+        (req as any).session.save((err: any) => {
+          if (err) {
+            console.error('Session save error:', err);
+            reject(err);
+          } else {
+            console.log('Session saved successfully');
+            resolve(true);
+          }
+        });
+      });
       
       res.json({ 
-        id: user.id, 
-        email: user.email, 
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        subscription: user.subscription
+        message: "Вход выполнен успешно",
+        user: {
+          id: user.id, 
+          email: user.email, 
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          subscription: user.subscription,
+          documentsCreated: user.documentsCreated,
+          documentsLimit: user.documentsLimit
+        }
       });
     } catch (error) {
       console.error("Ошибка входа:", error);
@@ -117,9 +151,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Получение данных текущего пользователя
   app.get('/api/auth/user', async (req, res) => {
     try {
+      console.log('Session data:', (req as any).session);
       const userId = (req as any).session?.userId;
       
       if (!userId) {
+        console.log('No userId in session');
         return res.status(401).json({ message: "Unauthorized" });
       }
 

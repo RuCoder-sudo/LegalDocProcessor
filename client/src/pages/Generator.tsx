@@ -50,8 +50,7 @@ export default function Generator() {
   ];
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
         {/* Hero Section */}
         <section className="pt-8 pb-16 px-4">
           <div className="container mx-auto max-w-6xl text-center">
@@ -166,6 +165,5 @@ export default function Generator() {
           }}
         />
       </div>
-    </Layout>
   );
 }
