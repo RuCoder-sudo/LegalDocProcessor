@@ -12,6 +12,9 @@ import Examples from "@/pages/Examples";
 import News from "@/pages/News";
 import Contacts from "@/pages/Contacts";
 import Admin from "@/pages/Admin";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
+import Important from "@/pages/Important";
 import NotFound from "@/pages/not-found";
 
 function Router() {
