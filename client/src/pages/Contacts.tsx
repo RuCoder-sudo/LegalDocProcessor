@@ -181,7 +181,7 @@ export default function Contacts() {
                     <Scale className="h-8 w-8 text-purple-500" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl dark:text-white">Юридические консультации</CardTitle>
+                    <CardTitle className="text-xl text-gray-900 dark:text-gray-900">Юридические консультации</CardTitle>
                     <CardDescription>Правовая поддержка</CardDescription>
                   </div>
                 </div>
