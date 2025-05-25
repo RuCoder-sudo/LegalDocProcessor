@@ -139,13 +139,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get user ID from token or session
       let userId = null;
+      let isAdmin = false;
       
       if (req.headers.authorization) {
         const token = req.headers.authorization.split(' ')[1];
         try {
           const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
           userId = decoded.id;
-          console.log("Got userId from token:", userId);
+          isAdmin = decoded.role === 'admin';
+          console.log("Got userId from token:", userId, "isAdmin:", isAdmin);
         } catch (e) {
           console.error("Error decoding token:", e);
         }
@@ -155,7 +157,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const decoded = JSON.parse(Buffer.from(req.cookies['auth-token'], 'base64').toString('utf8'));
           userId = decoded.id;
-          console.log("Got userId from cookie:", userId);
+          isAdmin = decoded.role === 'admin';
+          console.log("Got userId from cookie:", userId, "isAdmin:", isAdmin);
         } catch (e) {
           console.error("Error decoding cookie:", e);
         }
@@ -167,8 +170,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Created temporary userId:", userId);
       }
       
+      // Проверяем лимиты для обычных пользователей (не админов)
+      if (!isAdmin && userId && !userId.startsWith('temp_')) {
+        const userDoc = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+        
+        if (userDoc.length > 0) {
+          const user = userDoc[0];
+          
+          // Проверяем лимиты только для бесплатных пользователей
+          if (user.subscription === 'free' && 
+              (user.documentsCreated || 0) >= (user.documentsLimit || 3)) {
+            return res.status(403).json({ 
+              message: "Достигнут лимит создания документов. Обновитесь до премиум аккаунта." 
+            });
+          }
+          
+          // Увеличиваем счетчик созданных документов
+          await db
+            .update(users)
+            .set({ 
+              documentsCreated: (user.documentsCreated || 0) + 1 
+            })
+            .where(eq(users.id, userId));
+        }
+      }
+      
       // Generate document content
       const content = await generateDocumentContent(type, formData);
+      
+      console.log("Сохраняем документ для пользователя:", userId);
       
       // Save to database
       const result = await db
@@ -183,13 +217,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         })
         .returning();
       
-      console.log("Document created:", result[0]);
+      console.log("Document created:", result[0].id);
       
       // Return the new document
       res.json(result[0]);
     } catch (error) {
       console.error("Error creating document:", error);
-      res.status(500).json({ message: "Ошибка при создании документа" });
+      res.status(500).json({ message: "Ошибка при создании документа", error: String(error) });
     }
   });
 

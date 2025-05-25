@@ -23,9 +23,11 @@ export function setupJwtAuth(app: Express) {
   // Регистрация
   app.post("/api/register", async (req, res) => {
     try {
+      console.log("Получен запрос на регистрацию:", req.body);
       const { email, password, firstName, lastName } = req.body;
       
       if (!email || !password) {
+        console.log("Ошибка: Email и пароль обязательны");
         return res.status(400).json({ message: "Email и пароль обязательны" });
       }
 
@@ -37,6 +39,7 @@ export function setupJwtAuth(app: Express) {
         .limit(1);
 
       if (existingUser.length > 0) {
+        console.log("Ошибка: Пользователь с таким email уже существует");
         return res.status(400).json({ message: "Пользователь с таким email уже существует" });
       }
 
@@ -45,6 +48,8 @@ export function setupJwtAuth(app: Express) {
       
       // Генерируем уникальный ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      console.log("Создание пользователя с ID:", userId);
       
       // Создаем пользователя
       const newUsers = await db
@@ -58,11 +63,17 @@ export function setupJwtAuth(app: Express) {
           role: 'user',
           subscription: 'free',
           documentsCreated: 0,
-          documentsLimit: 2
+          documentsLimit: 3  // Увеличиваем лимит до 3 документов
         })
         .returning();
       
+      if (!newUsers || newUsers.length === 0) {
+        console.error("Ошибка: Пользователь не был создан в базе данных");
+        return res.status(500).json({ message: "Ошибка создания пользователя в базе данных" });
+      }
+      
       const newUser = newUsers[0];
+      console.log("Пользователь успешно создан:", newUser.id);
 
       // Создаем токен
       const token = createToken({
@@ -79,12 +90,15 @@ export function setupJwtAuth(app: Express) {
         sameSite: 'lax'
       });
       
+      console.log("Установлен токен в cookie:", token ? "token установлен" : "token не установлен");
+      
       // Возвращаем пользователя без пароля
       const { password: _, ...userWithoutPassword } = newUser;
-      res.json({ user: userWithoutPassword });
+      console.log("Возвращаем данные пользователя:", userWithoutPassword);
+      return res.json({ user: userWithoutPassword });
     } catch (error) {
-      console.error("Registration error:", error);
-      res.status(500).json({ message: "Ошибка при регистрации" });
+      console.error("Ошибка при регистрации:", error);
+      return res.status(500).json({ message: "Ошибка при регистрации", error: error.message });
     }
   });
 

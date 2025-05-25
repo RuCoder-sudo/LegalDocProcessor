@@ -84,15 +84,28 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
   const createDocumentMutation = useMutation({
     mutationFn: async (data: DocumentFormData) => {
       console.log('Sending document data:', data);
+      
+      // Получаем token из localStorage или из cookie
+      const token = localStorage.getItem('auth-token') || document.cookie
+        .split('; ')
+        .find(row => row.startsWith('auth-token='))
+        ?.split('=')[1];
+      
+      console.log('Using auth token:', token ? 'token exists' : 'no token');
+      
       const response = await fetch("/api/documents", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : '',
         },
+        credentials: 'include', // Важно для работы с cookies
         body: JSON.stringify(data),
       });
+      
       if (!response.ok) {
         const error = await response.json();
+        console.error('Document creation error:', error);
         throw new Error(error.message || 'Ошибка создания документа');
       }
       return response.json();

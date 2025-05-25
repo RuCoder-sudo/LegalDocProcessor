@@ -1,0 +1,59 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sun May 25 00:30:41 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# lsof -i :5000
+COMMAND      PID USER   FD   TYPE     DEVICE SIZE/OFF NODE NAME
+PM2\x20v6 218676 root   26u  IPv4 3564385934      0t0  TCP *:5000 (LISTEN)
+root@f418b3c5b5c3:~# pm2 delete legaldoc
+[PM2] Applying action deleteProcessId on app [legaldoc](ids: [ 3 ])
+[PM2] [legaldoc](3) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 5.3%     │ 74.2mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~# echo 'DATABASE_URL="postgresql://legaldoc:yourpassword@localhost:5432/legaldocdb"
+PORT=3001' > /root/LegalDocProcessor/.env
+root@f418b3c5b5c3:~# echo "module.exports = {
+  apps : [{
+    name   : 'legaldoc',
+    script : 'npm',
+    args   : 'run dev',
+    env: {
+      DATABASE_URL: 'postgresql://legaldoc:yourpassword@localhost:5432/legaldocdb',
+      PORT: '3001',
+      NODE_ENV: 'development'
+    }
+  }]
+}" > /root/LegalDocProcessor/ecosystem.config.cjs
+root@f418b3c5b5c3:~# pm2 start ecosystem.config.cjs
+[PM2] Applying action restartProcessId on app [legalrfdocs](ids: [ 0 ])
+[PM2] [legalrfdocs](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 8    │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~# nano /etc/nginx/sites-available/legalrfdocs
+root@f418b3c5b5c3:~# nginx -t && systemctl reload nginx
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+root@f418b3c5b5c3:~# curl http://localhost:3001
+curl: (7) Failed to connect to localhost port 3001 after 0 ms: Connection refused
+root@f418b3c5b5c3:~#

@@ -1,0 +1,268 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sun May 25 00:13:30 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# rm -rf /root/LegalDocProcessor/
+root@f418b3c5b5c3:~# rm -rf attached_assets/
+rm -f yandex_cac514186201f343.html
+rm -f ecosystem.config.js
+rm -rf .replit
+rm -f replit.nix
+root@f418b3c5b5c3:~# cd /root/LegalDocProcessor/
+root@f418b3c5b5c3:~/LegalDocProcessor# npm install
+npm WARN deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm WARN deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+added 532 packages, and audited 533 packages in 27s
+
+70 packages are looking for funding
+  run `npm fund` for details
+
+7 moderate severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+root@f418b3c5b5c3:~/LegalDocProcessor# npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+/root/LegalDocProcessor/server/db.ts:9
+  throw new Error(
+        ^
+
+
+Error: DATABASE_URL must be set. Did you forget to provision a database?
+    at <anonymous> (/root/LegalDocProcessor/server/db.ts:9:9)
+    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+    at async loadESM (node:internal/process/esm_loader:28:7)
+    at async handleMainPromise (node:internal/modules/run_main:113:12)
+
+Node.js v20.11.0
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 start npm --name "legaldoc" -- run dev
+[PM2] Starting /usr/local/bin/npm in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ legaldoc           │ fork     │ 0    │ online    │ 0%       │ 468.0kb  │
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 0%       │ 73.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# echo 'DATABASE_URL="postgresql://username:password@localhost:5432/dbname"' > /root/LegalDocProcessor/.env
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legaldoc
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legaldoc](ids: [ 1 ])
+[PM2] [legaldoc](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ legaldoc           │ fork     │ 25   │ online    │ 0%       │ 4.0kb    │
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 0%       │ 74.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 logs legaldoc
+[TAILING] Tailing last 15 lines for [legaldoc] process (change the value with --lines option)
+/root/.pm2/logs/legaldoc-error.log last 15 lines:
+1|legaldoc |
+1|legaldoc | Node.js v20.11.0
+1|legaldoc | /root/LegalDocProcessor/server/db.ts:9
+1|legaldoc |   throw new Error(
+1|legaldoc |         ^
+1|legaldoc |
+1|legaldoc |
+1|legaldoc | Error: DATABASE_URL must be set. Did you forget to provision a database?
+1|legaldoc |     at <anonymous> (/root/LegalDocProcessor/server/db.ts:9:9)
+1|legaldoc |     at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+1|legaldoc |     at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+1|legaldoc |     at async loadESM (node:internal/process/esm_loader:28:7)
+1|legaldoc |     at async handleMainPromise (node:internal/modules/run_main:113:12)
+1|legaldoc |
+1|legaldoc | Node.js v20.11.0
+
+/root/.pm2/logs/legaldoc-out.log last 15 lines:
+1|legaldoc | > rest-express@1.0.0 dev
+1|legaldoc | > NODE_ENV=development tsx server/index.ts
+1|legaldoc |
+1|legaldoc |
+1|legaldoc | > rest-express@1.0.0 dev
+1|legaldoc | > NODE_ENV=development tsx server/index.ts
+1|legaldoc |
+1|legaldoc |
+1|legaldoc | > rest-express@1.0.0 dev
+1|legaldoc | > NODE_ENV=development tsx server/index.ts
+1|legaldoc |
+1|legaldoc |
+1|legaldoc | > rest-express@1.0.0 dev
+1|legaldoc | > NODE_ENV=development tsx server/index.ts
+1|legaldoc |
+
+1|legaldoc  | /root/LegalDocProcessor/server/db.ts:9
+1|legaldoc  |   throw new Error(
+1|legaldoc  |         ^
+1|legaldoc  | Error: DATABASE_URL must be set. Did you forget to provision a database?
+1|legaldoc  |     at <anonymous> (/root/LegalDocProcessor/server/db.ts:9:9)
+1|legaldoc  |     at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+1|legaldoc  |     at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+1|legaldoc  |     at async loadESM (node:internal/process/esm_loader:28:7)
+1|legaldoc  |     at async handleMainPromise (node:internal/modules/run_main:113:12)
+1|legaldoc  | Node.js v20.11.0
+1|legaldoc  | > rest-express@1.0.0 dev
+1|legaldoc  | > NODE_ENV=development tsx server/index.ts
+^C
+root@f418b3c5b5c3:~/LegalDocProcessor# apt update
+apt install postgresql postgresql-contrib
+Get:1 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Hit:2 http://archive.ubuntu.com/ubuntu jammy InRelease
+Get:3 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
+Hit:4 http://archive.canonical.com/ubuntu jammy InRelease
+Ign:5 https://repo.virtuozzo.com/ctpreset/deb  InRelease
+Ign:6 https://repo.virtuozzo.com/ctpreset/deb  Release
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Err:7 https://repo.virtuozzo.com/ctpreset/deb  Packages
+  403  Forbidden [IP: 94.254.0.211 443]
+Fetched 257 kB in 4s (58.4 kB/s)
+Reading package lists... Done
+E: Failed to fetch https://repo.virtuozzo.com/ctpreset/deb/Packages  403  Forbidden [IP: 94.254.0.211 443]
+E: Some index files failed to download. They have been ignored, or old ones used instead.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+postgresql is already the newest version (14+238).
+postgresql-contrib is already the newest version (14+238).
+0 upgraded, 0 newly installed, 0 to remove and 16 not upgraded.
+root@f418b3c5b5c3:~/LegalDocProcessor# sudo -u postgres psql -c "CREATE USER legaldoc WITH PASSWORD 'yourpassword';"
+CREATE ROLE
+root@f418b3c5b5c3:~/LegalDocProcessor# sudo -u postgres psql -c "CREATE DATABASE legaldocdb;"
+CREATE DATABASE
+root@f418b3c5b5c3:~/LegalDocProcessor# sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE legaldocdb TO legaldoc;"
+GRANT
+root@f418b3c5b5c3:~/LegalDocProcessor# echo 'DATABASE_URL="postgresql://legaldoc:yourpassword@localhost:5432/legaldocdb"' > /root/LegalDocProcessor/.env
+root@f418b3c5b5c3:~/LegalDocProcessor# cd /root/LegalDocProcessor/
+npm run db:push
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/root/LegalDocProcessor/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+[✓] Changes applied
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 restart legaldoc
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [legaldoc](ids: [ 1 ])
+[PM2] [legaldoc](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ legaldoc           │ fork     │ 39   │ online    │ 0%       │ 4.0kb    │
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 0%       │ 74.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# ^C
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 delete legaldoc
+[PM2] Applying action deleteProcessId on app [legaldoc](ids: [ 1 ])
+[PM2] [legaldoc](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 0%       │ 74.2mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 start npm --update-env --name "legaldoc" -- run dev
+[PM2] Starting /usr/local/bin/npm in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 2  │ legaldoc           │ fork     │ 0    │ online    │ 0%       │ 16.6mb   │
+│ 0  │ legalrfdocs        │ cluster  │ 7    │ online    │ 0%       │ 73.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@f418b3c5b5c3:~/LegalDocProcessor# pm2 logs legaldoc
+[TAILING] Tailing last 15 lines for [legaldoc] process (change the value with --lines option)
+/root/.pm2/logs/legaldoc-error.log last 15 lines:
+2|legaldoc |
+2|legaldoc | Node.js v20.11.0
+2|legaldoc | /root/LegalDocProcessor/server/db.ts:9
+2|legaldoc |   throw new Error(
+2|legaldoc |         ^
+2|legaldoc |
+2|legaldoc |
+2|legaldoc | Error: DATABASE_URL must be set. Did you forget to provision a database?
+2|legaldoc |     at <anonymous> (/root/LegalDocProcessor/server/db.ts:9:9)
+2|legaldoc |     at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+2|legaldoc |     at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+2|legaldoc |     at async loadESM (node:internal/process/esm_loader:28:7)
+2|legaldoc |     at async handleMainPromise (node:internal/modules/run_main:113:12)
+2|legaldoc |
+2|legaldoc | Node.js v20.11.0
+
+/root/.pm2/logs/legaldoc-out.log last 15 lines:
+2|legaldoc | > rest-express@1.0.0 dev
+2|legaldoc | > NODE_ENV=development tsx server/index.ts
+2|legaldoc |
+2|legaldoc |
+2|legaldoc | > rest-express@1.0.0 dev
+2|legaldoc | > NODE_ENV=development tsx server/index.ts
+2|legaldoc |
+2|legaldoc |
+2|legaldoc | > rest-express@1.0.0 dev
+2|legaldoc | > NODE_ENV=development tsx server/index.ts
+2|legaldoc |
+2|legaldoc |
+2|legaldoc | > rest-express@1.0.0 dev
+2|legaldoc | > NODE_ENV=development tsx server/index.ts
+2|legaldoc |
+
+2|legaldoc  | /root/LegalDocProcessor/server/db.ts:9
+2|legaldoc  |   throw new Error(
+2|legaldoc  |         ^
+2|legaldoc  | Error: DATABASE_URL must be set. Did you forget to provision a database?
+2|legaldoc  |     at <anonymous> (/root/LegalDocProcessor/server/db.ts:9:9)
+2|legaldoc  |     at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
+2|legaldoc  |     at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
+2|legaldoc  |     at async loadESM (node:internal/process/esm_loader:28:7)
+2|legaldoc  |     at async handleMainPromise (node:internal/modules/run_main:113:12)
+2|legaldoc  | Node.js v20.11.0
+2|legaldoc  | > rest-express@1.0.0 dev
+2|legaldoc  | > NODE_ENV=development tsx server/index.ts
+^C
+root@f418b3c5b5c3:~/LegalDocProcessor# echo 'PORT=3000' >> /root/LegalDocProcessor/.env
+root@f418b3c5b5c3:~/LegalDocProcessor# nano /etc/nginx/sites-available/legaldocprocessor
+root@f418b3c5b5c3:~/LegalDocProcessor# ln -s /etc/nginx/sites-available/legaldocprocessor /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+nginx: [warn] conflicting server name "legalrfdocs.ru" on 0.0.0.0:80, ignored
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+root@f418b3c5b5c3:~/LegalDocProcessor#

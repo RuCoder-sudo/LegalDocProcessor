@@ -1,0 +1,38 @@
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v25.0 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ⮞ SSH session to root@f418b3c5b5c3.vps.myjino.ru                     │
+    │   • Direct SSH      :  ✓                                             │
+    │   • SSH compression :  ✓                                             │
+    │   • SSH-browser     :  ✓                                             │
+    │   • X11-forwarding  :  ✗  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ⮞ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.2.0 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+Last login: Sun May 25 00:32:17 2025 from 109.252.119.183
+root@f418b3c5b5c3:~# pm2 delete legaldoc
+pm2 start ecosystem.config.cjs
+[PM2] Applying action deleteProcessId on app [legaldoc](ids: [ 0 ])
+[PM2] [legaldoc](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][WARN] Applications legalrfdocs not running, starting...
+[PM2][ERROR] Error: Script not found: /root/LegalDocProcessor/dist/index.js
+root@f418b3c5b5c3:~# netstat -tlpn | grep 3001
+root@f418b3c5b5c3:~# curl http://localhost:3001
+curl: (7) Failed to connect to localhost port 3001 after 0 ms: Connection refused
+root@f418b3c5b5c3:~# pm2 save
+[PM2] Saving current process list...
+[PM2][WARN] PM2 is not managing any process, skipping save...
+[PM2][WARN] To force saving use: pm2 save --force
+root@f418b3c5b5c3:~#
+
+
