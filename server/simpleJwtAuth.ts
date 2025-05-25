@@ -58,12 +58,12 @@ export function setupJwtAuth(app: Express) {
           id: userId,
           email,
           password: hashedPassword,
-          firstName: firstName || null,
-          lastName: lastName || null,
+          firstname: firstName || null,
+          lastname: lastName || null,
           role: 'user',
           subscription: 'premium', // Даем всем пользователям премиум-подписку
-          documentsCreated: 0,
-          documentsLimit: -1  // Безлимитное количество документов (-1 = неограниченно)
+          documentscreated: 0,
+          documentslimit: -1  // Безлимитное количество документов (-1 = неограниченно)
         })
         .returning();
       
