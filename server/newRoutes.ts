@@ -184,58 +184,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .onConflictDoNothing();
       }
       
-      // Проверяем лимиты для обычных пользователей (не админов)
-      if (!isAdmin && userId && !userId.startsWith('temp_')) {
-        const userDoc = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, userId))
-          .limit(1);
-        
-        if (userDoc.length > 0) {
-          const user = userDoc[0];
-          
-          // Проверяем лимиты только для бесплатных пользователей
-          if (user.subscription === 'free' && 
-              (user.documentscreated || 0) >= (user.documentslimit || 3)) {
-            return res.status(403).json({ 
-              message: "Достигнут лимит создания документов. Обновитесь до премиум аккаунта." 
-            });
-          }
-          
-          // Увеличиваем счетчик созданных документов
-          await db
-            .update(users)
-            .set({ 
-              documentscreated: (user.documentscreated || 0) + 1 
-            })
-            .where(eq(users.id, userId));
-        }
-      }
-      
-      // Убедимся что пользователь существует для временных пользователей
-      if (userId && userId.startsWith('temp_')) {
-        const existingUser = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, userId))
-          .limit(1);
-          
-        if (existingUser.length === 0) {
-          // Создаем временного пользователя если его нет
-          await db
-            .insert(users)
-            .values({
-              id: userId,
-              email: `${userId}@temp.com`,
-              password: 'temp',
-              role: 'user',
-              subscription: 'free',
-              documentscreated: 0,
-              documentslimit: 3
-            });
-        }
-      }
+      // Simplified - no database checks for now, just generate documents
 
       // Generate document content
       const content = await generateDocumentContent(type, formData);
