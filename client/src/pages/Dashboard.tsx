@@ -56,19 +56,14 @@ export default function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Подписка</CardTitle>
-                {user.subscription === 'premium' ? <Crown className="h-4 w-4 text-yellow-500" /> : 
-                 user.subscription === 'ultra' ? <Zap className="h-4 w-4 text-purple-500" /> : null}
+                {user.subscription === 'premium' ? <Crown className="h-4 w-4 text-yellow-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold capitalize">
-                  {user.subscription === 'free' && 'Бесплатная'}
-                  {user.subscription === 'premium' && 'Премиум'}
-                  {user.subscription === 'ultra' && 'Ультра'}
+                  {user.subscription === 'free' ? 'Бесплатная' : 'Премиум'}
                 </div>
                 <Badge variant={user.subscription === 'free' ? 'secondary' : 'default'} className="mt-2">
-                  {user.subscription === 'free' && 'Базовый доступ'}
-                  {user.subscription === 'premium' && 'Полный доступ'}
-                  {user.subscription === 'ultra' && 'Максимальный доступ'}
+                  {user.subscription === 'free' ? 'Базовый доступ' : 'Полный доступ'}
                 </Badge>
               </CardContent>
             </Card>
