@@ -246,11 +246,43 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
               </div>
 
               <form className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4 border rounded-lg p-4 mb-4">
+                  <Label className="text-base font-medium">Владелец сайта:</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="radio" 
+                        id="ownerType-individual" 
+                        className="w-4 h-4"
+                        value="individual"
+                        {...form.register("ownerType")}
+                        onChange={() => form.setValue("ownerType", "individual")}
+                        checked={form.watch("ownerType") === "individual"}
+                      />
+                      <Label htmlFor="ownerType-individual">Физ. лицо</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="radio" 
+                        id="ownerType-legal" 
+                        className="w-4 h-4"
+                        value="legal"
+                        {...form.register("ownerType")}
+                        onChange={() => form.setValue("ownerType", "legal")}
+                        checked={form.watch("ownerType") === "legal"}
+                      />
+                      <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Название компании *</Label>
+                  <Label htmlFor="companyName">
+                    {form.watch("ownerType") === "individual" ? "ФИО *" : "Название компании *"}
+                  </Label>
                   <Input
                     id="companyName"
-                    placeholder="ООО 'Ваша компания'"
+                    placeholder={form.watch("ownerType") === "individual" ? "Иванов Иван Иванович" : "ООО 'Ваша компания'"}
                     {...form.register("companyName")}
                   />
                   {form.formState.errors.companyName && (
@@ -258,26 +290,30 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="inn">ИНН *</Label>
-                  <Input
-                    id="inn"
-                    placeholder="1234567890"
-                    {...form.register("inn")}
-                  />
-                  {form.formState.errors.inn && (
-                    <p className="text-sm text-destructive">{form.formState.errors.inn.message}</p>
-                  )}
-                </div>
+                {form.watch("ownerType") === "legal" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="inn">ИНН *</Label>
+                      <Input
+                        id="inn"
+                        placeholder="1234567890"
+                        {...form.register("inn")}
+                      />
+                      {form.formState.errors.inn && (
+                        <p className="text-sm text-destructive">{form.formState.errors.inn.message}</p>
+                      )}
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="ogrn">ОГРН</Label>
-                  <Input
-                    id="ogrn"
-                    placeholder="1234567890123"
-                    {...form.register("ogrn")}
-                  />
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ogrn">ОГРН</Label>
+                      <Input
+                        id="ogrn"
+                        placeholder="1234567890123"
+                        {...form.register("ogrn")}
+                      />
+                    </div>
+                  </>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="websiteUrl">URL сайта *</Label>

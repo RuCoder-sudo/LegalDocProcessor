@@ -69,16 +69,27 @@ export default function AuthForms() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
+      console.log("Регистрация пользователя:", data);
       const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        credentials: 'include'
       });
       if (!response.ok) {
         const error = await response.json();
+        console.error("Ошибка регистрации:", error);
         throw new Error(error.message || "Ошибка регистрации");
       }
-      return response.json();
+      const result = await response.json();
+      console.log("Успешная регистрация:", result);
+      
+      // Сохраняем токен в localStorage если он вернулся с сервера
+      if (result.token) {
+        localStorage.setItem('auth-token', result.token);
+      }
+      
+      return result;
     },
     onSuccess: (data: any) => {
       toast({

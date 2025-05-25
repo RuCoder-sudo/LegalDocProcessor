@@ -324,7 +324,29 @@ function generateQRCodeSVG(data: string): string {
 }
 
 async function generateDocumentContent(type: string, formData: any): Promise<string> {
-  const { companyName, inn, ogrn, legalAddress, websiteUrl, contactEmail, phone, industry, ownerType, isSmi, userCanPost } = formData;
+  const { 
+    companyName, 
+    websiteUrl, 
+    contactEmail, 
+    phone, 
+    ownerType, 
+    isSmi, 
+    userCanPost,
+    userRights,
+    adminRights,
+    userObligations,
+    adminObligations,
+    agreementStart,
+    agreementDuration,
+    canAdminChange,
+    notifyChanges
+  } = formData;
+  
+  // ИНН и ОГРН используются только для юридических лиц
+  const inn = ownerType === "legal" ? formData.inn : null;
+  const ogrn = ownerType === "legal" ? formData.ogrn : null;
+  const legalAddress = ownerType === "legal" ? formData.legalAddress : null;
+  const industry = formData.industry || "не указана";
   
   switch (type) {
     case 'privacy':
