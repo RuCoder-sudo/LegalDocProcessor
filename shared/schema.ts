@@ -307,10 +307,10 @@ export const documentFormSchema = z.object({
   phone: z.string().optional(),
   industry: z.string().optional(),
   
-  // Расширенные поля для премиум/ультра пользователей
-  ownerType: z.enum(["individual", "legal"]).optional(), // Физ. лицо / Юр. лицо или ИП
-  isSmi: z.boolean().optional(), // Является ли сайт СМИ
-  userCanPost: z.boolean().optional(), // Размещает ли пользователь информацию
+  // Основные поля для всех пользователей
+  ownerType: z.enum(["individual", "legal"]).default("legal"), // Физ. лицо / Юр. лицо или ИП
+  isSmi: z.boolean().default(false), // Является ли сайт СМИ
+  userCanPost: z.boolean().default(false), // Размещает ли пользователь информацию
   agreementStart: z.enum(["any_use", "after_registration"]).optional(),
   agreementDuration: z.enum(["indefinite", "until_new_version"]).optional(),
   canAdminChange: z.boolean().optional(),

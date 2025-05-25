@@ -47,7 +47,8 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
   const queryClient = useQueryClient();
   const { user, isAuthenticated } = useAuth();
 
-  const isPremiumUser = user?.subscription === 'premium' || user?.subscription === 'ultra' || user?.role === 'admin';
+  // All features are now available to all registered users
+  const isPremiumUser = true;
 
   const form = useForm<DocumentFormData>({
     resolver: zodResolver(documentFormSchema),
@@ -63,7 +64,6 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
       hostingProvider: "",
       phone: "",
       industry: "",
-      // Расширенные поля
       ownerType: "legal",
       isSmi: false,
       userCanPost: false,
@@ -246,43 +246,38 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
               </div>
 
               <form className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4 border rounded-lg p-4 mb-4">
+                <div className="space-y-4 border rounded-lg p-4 mb-4 col-span-2">
                   <Label className="text-base font-medium">Владелец сайта:</Label>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="ownerType-individual" 
-                        className="w-4 h-4"
-                        value="individual"
-                        {...form.register("ownerType")}
-                        onChange={() => form.setValue("ownerType", "individual")}
-                        checked={form.watch("ownerType") === "individual"}
-                      />
-                      <Label htmlFor="ownerType-individual">Физ. лицо</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="ownerType-legal" 
-                        className="w-4 h-4"
-                        value="legal"
-                        {...form.register("ownerType")}
-                        onChange={() => form.setValue("ownerType", "legal")}
-                        checked={form.watch("ownerType") === "legal"}
-                      />
-                      <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
+                      <RadioGroup 
+                        defaultValue="legal" 
+                        onValueChange={(value) => {
+                          form.setValue("ownerType", value as "individual" | "legal");
+                        }}
+                        value={form.getValues("ownerType")}
+                        className="flex flex-row gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="individual" id="ownerType-individual" />
+                          <Label htmlFor="ownerType-individual">Физ. лицо</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="legal" id="ownerType-legal" />
+                          <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
+                        </div>
+                      </RadioGroup>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="companyName">
-                    {form.watch("ownerType") === "individual" ? "ФИО *" : "Название компании *"}
+                    {form.getValues().ownerType === "individual" ? "ФИО *" : "Название компании *"}
                   </Label>
                   <Input
                     id="companyName"
-                    placeholder={form.watch("ownerType") === "individual" ? "Иванов Иван Иванович" : "ООО 'Ваша компания'"}
+                    placeholder={form.getValues().ownerType === "individual" ? "Иванов Иван Иванович" : "ООО 'Ваша компания'"}
                     {...form.register("companyName")}
                   />
                   {form.formState.errors.companyName && (
@@ -290,7 +285,7 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                   )}
                 </div>
 
-                {form.watch("ownerType") === "legal" && (
+                {form.getValues().ownerType === "legal" && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="inn">ИНН *</Label>
