@@ -32,7 +32,6 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
     { name: "Генератор", href: "/generator", icon: "fas fa-magic" },
     { name: "Документы", href: "/documents", icon: "fas fa-file-alt", authRequired: true },
     { name: "Примеры", href: "/examples", icon: "fas fa-eye" },
-    { name: "Тарифы", href: "/premium", icon: "fas fa-crown" },
     { name: "Новости", href: "/news", icon: "fas fa-newspaper" },
     { name: "Контакты", href: "/contacts", icon: "fas fa-phone" },
   ];
@@ -248,7 +247,6 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
               <div>
                 <h3 className="text-lg font-semibold mb-4">Информация</h3>
                 <ul className="space-y-3 text-gray-300">
-                  <li><Link href="/premium" className="hover:text-primary transition-colors text-sm"><i className="fas fa-crown mr-2"></i>Тарифы</Link></li>
                   <li><Link href="/examples" className="hover:text-primary transition-colors text-sm"><i className="fas fa-eye mr-2"></i>Примеры документов</Link></li>
                   <li><Link href="/news" className="hover:text-primary transition-colors text-sm"><i className="fas fa-newspaper mr-2"></i>Правовые новости</Link></li>
                   <li><Link href="/help" className="hover:text-primary transition-colors text-sm"><i className="fas fa-question-circle mr-2"></i>Справка</Link></li>
