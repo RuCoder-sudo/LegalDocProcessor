@@ -11,17 +11,41 @@ export interface AuthUser {
 }
 
 export interface DocumentFormData {
-  type: 'privacy' | 'terms' | 'consent' | 'offer' | 'cookie' | 'return';
+  type: 'privacy' | 'terms' | 'consent' | 'offer' | 'cookie' | 'return' | 'charter';
+  ownerType: 'individual' | 'legal';
   companyName: string;
-  inn: string;
-  ogrn?: string;
-  legalAddress: string;
   websiteUrl: string;
   contactEmail: string;
-  registrar?: string;
-  hostingProvider?: string;
   phone?: string;
   industry?: string;
+  
+  // Поля для юридических лиц
+  inn?: string;
+  ogrn?: string;
+  legalAddress?: string;
+  
+  // Дополнительные поля
+  registrar?: string;
+  hostingProvider?: string;
+  
+  // Поля настройки
+  isSmi?: boolean;
+  userCanPost?: boolean;
+  agreementStart?: 'any_use' | 'after_registration';
+  agreementDuration?: 'indefinite' | 'until_new_version';
+  canAdminChange?: boolean;
+  notifyChanges?: 'yes' | 'sometimes' | 'no';
+  
+  // Массивы опций
+  userRights?: string[];
+  adminRights?: string[];
+  userObligations?: string[];
+  adminObligations?: string[];
+  dataTypes?: string[];
+  
+  // QR-код
+  generateQr?: boolean;
+  qrData?: string;
 }
 
 export interface UserDocument {

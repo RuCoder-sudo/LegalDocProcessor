@@ -54,17 +54,17 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
     resolver: zodResolver(documentFormSchema),
     defaultValues: {
       type: "privacy",
+      ownerType: "legal",
       companyName: "",
+      websiteUrl: "",
+      contactEmail: "",
+      phone: "",
+      industry: "",
       inn: "",
       ogrn: "",
       legalAddress: "",
-      websiteUrl: "",
-      contactEmail: "",
       registrar: "",
       hostingProvider: "",
-      phone: "",
-      industry: "",
-      ownerType: "legal",
       isSmi: false,
       userCanPost: false,
       agreementStart: "any_use",
@@ -248,27 +248,23 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
               <form className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4 border rounded-lg p-4 mb-4 col-span-2">
                   <Label className="text-base font-medium">Владелец сайта:</Label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <RadioGroup 
+                    defaultValue="legal" 
+                    onValueChange={(value) => {
+                      form.setValue("ownerType", value as "individual" | "legal");
+                    }}
+                    value={form.getValues().ownerType}
+                    className="flex flex-row gap-8"
+                  >
                     <div className="flex items-center space-x-2">
-                      <RadioGroup 
-                        defaultValue="legal" 
-                        onValueChange={(value) => {
-                          form.setValue("ownerType", value as "individual" | "legal");
-                        }}
-                        value={form.getValues("ownerType")}
-                        className="flex flex-row gap-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="individual" id="ownerType-individual" />
-                          <Label htmlFor="ownerType-individual">Физ. лицо</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="legal" id="ownerType-legal" />
-                          <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
-                        </div>
-                      </RadioGroup>
+                      <RadioGroupItem value="individual" id="ownerType-individual" />
+                      <Label htmlFor="ownerType-individual">Физ. лицо</Label>
                     </div>
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="legal" id="ownerType-legal" />
+                      <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
@@ -305,6 +301,15 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                         id="ogrn"
                         placeholder="1234567890123"
                         {...form.register("ogrn")}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="legalAddress">Юридический адрес</Label>
+                      <Input
+                        id="legalAddress"
+                        placeholder="г. Москва, ул. Примерная, д. 1"
+                        {...form.register("legalAddress")}
                       />
                     </div>
                   </>
@@ -389,6 +394,48 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+                
+                <div className="col-span-2 space-y-4 border rounded-lg p-4 mt-4">
+                  <Label className="text-base font-medium">Является ли Ваш сайт Средством Массовой Информации (СМИ)?</Label>
+                  <RadioGroup 
+                    defaultValue="false" 
+                    onValueChange={(value) => {
+                      form.setValue("isSmi", value === "true");
+                    }}
+                    value={form.getValues().isSmi ? "true" : "false"}
+                    className="flex flex-row gap-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="false" id="isSmi-no" />
+                      <Label htmlFor="isSmi-no">Нет</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="true" id="isSmi-yes" />
+                      <Label htmlFor="isSmi-yes">Да</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="col-span-2 space-y-4 border rounded-lg p-4">
+                  <Label className="text-base font-medium">Размещает ли пользователь какую-либо информацию на Вашем сайте?</Label>
+                  <RadioGroup 
+                    defaultValue="false" 
+                    onValueChange={(value) => {
+                      form.setValue("userCanPost", value === "true");
+                    }}
+                    value={form.getValues().userCanPost ? "true" : "false"}
+                    className="flex flex-row gap-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="false" id="userCanPost-no" />
+                      <Label htmlFor="userCanPost-no">Нет</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="true" id="userCanPost-yes" />
+                      <Label htmlFor="userCanPost-yes">Да</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
               </form>
             </div>

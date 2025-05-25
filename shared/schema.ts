@@ -296,19 +296,23 @@ export type AdvancedTemplate = z.infer<typeof selectAdvancedTemplateSchema>;
 // Form validation schemas
 export const documentFormSchema = z.object({
   type: z.enum(["privacy", "terms", "consent", "offer", "cookie", "return", "charter"]),
-  companyName: z.string().min(1, "Название компании обязательно"),
-  inn: z.string().min(10, "ИНН должен содержать минимум 10 цифр").max(12),
-  ogrn: z.string().optional(),
-  legalAddress: z.string().min(1, "Юридический адрес обязателен"),
+  ownerType: z.enum(["individual", "legal"]).default("legal"), // Физ. лицо / Юр. лицо или ИП
+  companyName: z.string().min(1, "Название компании или ФИО обязательно"),
   websiteUrl: z.string().url("Некорректный URL сайта"),
   contactEmail: z.string().email("Некорректный email"),
-  registrar: z.string().optional(),
-  hostingProvider: z.string().optional(),
   phone: z.string().optional(),
   industry: z.string().optional(),
   
-  // Основные поля для всех пользователей
-  ownerType: z.enum(["individual", "legal"]).default("legal"), // Физ. лицо / Юр. лицо или ИП
+  // Поля для юридических лиц
+  inn: z.string().min(10, "ИНН должен содержать минимум 10 цифр").max(12).optional(),
+  ogrn: z.string().optional(),
+  legalAddress: z.string().optional(),
+  
+  // Дополнительные поля
+  registrar: z.string().optional(),
+  hostingProvider: z.string().optional(),
+  
+  // Поля для всех пользователей
   isSmi: z.boolean().default(false), // Является ли сайт СМИ
   userCanPost: z.boolean().default(false), // Размещает ли пользователь информацию
   agreementStart: z.enum(["any_use", "after_registration"]).optional(),
