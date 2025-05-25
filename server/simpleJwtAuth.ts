@@ -67,7 +67,7 @@ export function setupJwtAuth(app: Express) {
         })
         .returning();
       
-      if (!newUsers || newUsers.length === 0) {
+      if (!newUsers || !Array.isArray(newUsers) || newUsers.length === 0) {
         console.error("Ошибка: Пользователь не был создан в базе данных");
         return res.status(500).json({ message: "Ошибка создания пользователя в базе данных" });
       }
