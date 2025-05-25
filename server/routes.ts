@@ -60,12 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      // Проверяем лимиты для бесплатных пользователей
-      if (user.subscription === "free" && (user.documentsCreated || 0) >= (user.documentsLimit || 3)) {
-        return res.status(403).json({ 
-          message: "Достигнут лимит создания документов. Обновитесь до премиум аккаунта." 
-        });
-      }
+      // Больше нет лимитов, все функции доступны после регистрации
 
       // Валидируем данные формы
       const validatedData = documentFormSchema.parse(req.body);
@@ -126,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Обновление документа (только для премиум пользователей)
+  // Обновление документа (доступно всем зарегистрированным пользователям)
   app.put("/api/documents/:id", requireAuth, async (req, res) => {
     try {
       // @ts-ignore
@@ -137,11 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      if (user.subscription !== "premium") {
-        return res.status(403).json({ 
-          message: "Редактирование документов доступно только для премиум пользователей" 
-        });
-      }
+      // Удалено ограничение для премиум пользователей
 
       const { id } = req.params;
       const updates = req.body;
@@ -154,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Генерация QR кода (только для премиум)
+  // Генерация QR кода (доступно всем зарегистрированным пользователям)
   app.post("/api/documents/:id/qr", requireAuth, async (req, res) => {
     try {
       // @ts-ignore
@@ -165,11 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      if (user.subscription !== "premium") {
-        return res.status(403).json({ 
-          message: "Генерация QR кодов доступна только для премиум пользователей" 
-        });
-      }
+      // Удалено ограничение для премиум пользователей
 
       const { id } = req.params;
       const document = await storage.getUserDocument(parseInt(id), userId);
