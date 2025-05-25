@@ -24,6 +24,16 @@ export async function apiRequest(
   } else {
     console.log(`Sending request to ${url} without token`);
   }
+  
+  // Если это запрос на выход, сразу удаляем токен
+  if (url === '/api/logout' && method === 'POST') {
+    console.log("Logging out - clearing local storage token");
+    localStorage.removeItem('auth-token');
+    // Обнуляем кэш данных о пользователе
+    window.location.href = '/';
+    // Полная перезагрузка страницы для сброса всех состояний
+    return new Response(JSON.stringify({ success: true }));
+  }
 
   const res = await fetch(url, {
     method,
