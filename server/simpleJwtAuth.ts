@@ -178,8 +178,22 @@ export function setupJwtAuth(app: Express) {
 
   // Выход
   app.post("/api/logout", (req, res) => {
-    res.clearCookie('auth-token');
-    res.json({ message: "Успешный выход" });
+    // Очищаем cookie с правильными параметрами, чтобы браузер точно удалил куки
+    res.clearCookie('auth-token', {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/'
+    });
+    
+    console.log("Logout request processed - clearing auth token");
+    
+    // Отправляем ответ с флагом для клиента, чтобы он удалил токен из localStorage
+    res.json({ 
+      message: "Успешный выход", 
+      success: true,
+      clearToken: true 
+    });
   });
 
   // Получить текущего пользователя

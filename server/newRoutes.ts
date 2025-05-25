@@ -129,6 +129,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Ошибка при загрузке шаблонов" });
     }
   });
+  
+  // Create document
+  app.post('/api/documents', async (req: any, res) => {
+    try {
+      console.log('Creating document, body:', req.body);
+      
+      const { type, ...formData } = req.body;
+      
+      // Get user ID from token or session
+      let userId = null;
+      
+      if (req.headers.authorization) {
+        const token = req.headers.authorization.split(' ')[1];
+        try {
+          const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
+          userId = decoded.id;
+          console.log("Got userId from token:", userId);
+        } catch (e) {
+          console.error("Error decoding token:", e);
+        }
+      }
+      
+      if (!userId && req.cookies && req.cookies['auth-token']) {
+        try {
+          const decoded = JSON.parse(Buffer.from(req.cookies['auth-token'], 'base64').toString('utf8'));
+          userId = decoded.id;
+          console.log("Got userId from cookie:", userId);
+        } catch (e) {
+          console.error("Error decoding cookie:", e);
+        }
+      }
+      
+      if (!userId) {
+        // For anonymous users, create a temporary ID
+        userId = `temp_${Date.now()}`;
+        console.log("Created temporary userId:", userId);
+      }
+      
+      // Generate document content
+      const content = await generateDocumentContent(type, formData);
+      
+      // Save to database
+      const result = await db
+        .insert(userDocuments)
+        .values({
+          userId,
+          name: `${getDocumentTypeName(type)} - ${formData.companyName || 'Untitled'}`,
+          type,
+          formData,
+          generatedContent: content,
+          status: 'completed'
+        })
+        .returning();
+      
+      console.log("Document created:", result[0]);
+      
+      // Return the new document
+      res.json(result[0]);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      res.status(500).json({ message: "Ошибка при создании документа" });
+    }
+  });
 
   // Admin settings (protected - admin only)
   app.get('/api/admin/settings', requireAuth, requireAdmin, async (req: any, res) => {
