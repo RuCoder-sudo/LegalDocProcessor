@@ -135,23 +135,8 @@ export default function Feedback() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-8">
+      <div className="pt-8 pb-16 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Заголовок */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="rounded-full bg-primary/10 p-3">
-                <MessageSquare className="h-8 w-8 text-primary" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              Обратная связь
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Помогите нам стать лучше! Ваше мнение очень важно для нас
-            </p>
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             

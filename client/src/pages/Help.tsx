@@ -189,35 +189,20 @@ export default function Help() {
   return (
     <Layout>
       <div>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-50 to-background dark:from-blue-950/20 py-20">
+        {/* Search */}
+        <div className="bg-gradient-to-br from-blue-50 to-background dark:from-blue-950/20 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="rounded-full bg-blue-500/10 p-4">
-                  <BookOpen className="h-12 w-12 text-blue-500" />
-                </div>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Справочный центр
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-                Найдите ответы на все ваши вопросы о создании юридических документов
-              </p>
-              
-              {/* Search */}
-              <div className="max-w-2xl mx-auto relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Поиск по справке..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 text-lg"
-                />
-              </div>
+            <div className="max-w-2xl mx-auto relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="Поиск по справке..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-12 text-lg"
+              />
             </div>
           </div>
-        </section>
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Tabs defaultValue="faq" className="space-y-8">

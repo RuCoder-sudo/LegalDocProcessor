@@ -28,7 +28,6 @@ const SITEMAP_SECTIONS = [
     links: [
       { href: "/", title: "Главная страница", description: "Обзор сервиса и основные функции" },
       { href: "/generator", title: "Генератор документов", description: "Создание юридических документов" },
-      { href: "/premium", title: "Тарифы", description: "Планы подписки и цены" },
       { href: "/examples", title: "Примеры документов", description: "Образцы созданных документов" },
     ]
   },
@@ -122,9 +121,9 @@ export default function Sitemap() {
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Crown className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold">3</div>
-                <p className="text-sm text-muted-foreground">Тарифных плана</p>
+                <FileText className="h-8 w-8 text-purple-500 mx-auto mb-2" />
+                <div className="text-2xl font-bold">10+</div>
+                <p className="text-sm text-muted-foreground">Типов документов</p>
               </CardContent>
             </Card>
             <Card className="text-center">
