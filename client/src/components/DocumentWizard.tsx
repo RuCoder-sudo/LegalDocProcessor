@@ -398,74 +398,44 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                 
                 <div className="col-span-2 space-y-4 border rounded-lg p-4 mt-4">
                   <Label className="text-base font-medium">Является ли Ваш сайт Средством Массовой Информации (СМИ)?</Label>
-                  <div className="flex flex-row gap-8 mt-2">
+                  <RadioGroup 
+                    value={form.getValues().isSmi ? "true" : "false"} 
+                    onValueChange={(value) => {
+                      form.setValue("isSmi", value === "true");
+                      form.trigger("isSmi");
+                    }}
+                    className="flex flex-row gap-8 mt-2"
+                  >
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="isSmi-no" 
-                        name="isSmi"
-                        value="false"
-                        checked={!form.getValues().isSmi}
-                        onChange={() => {
-                          form.setValue("isSmi", false);
-                          form.trigger("isSmi");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="false" id="isSmi-no" />
                       <Label htmlFor="isSmi-no">Нет</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="isSmi-yes" 
-                        name="isSmi"
-                        value="true"
-                        checked={form.getValues().isSmi}
-                        onChange={() => {
-                          form.setValue("isSmi", true);
-                          form.trigger("isSmi");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="true" id="isSmi-yes" />
                       <Label htmlFor="isSmi-yes">Да</Label>
                     </div>
-                  </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="col-span-2 space-y-4 border rounded-lg p-4">
                   <Label className="text-base font-medium">Размещает ли пользователь какую-либо информацию на Вашем сайте?</Label>
-                  <div className="flex flex-row gap-8 mt-2">
+                  <RadioGroup 
+                    value={form.getValues().userCanPost ? "true" : "false"} 
+                    onValueChange={(value) => {
+                      form.setValue("userCanPost", value === "true");
+                      form.trigger("userCanPost");
+                    }}
+                    className="flex flex-row gap-8 mt-2"
+                  >
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="userCanPost-no" 
-                        name="userCanPost"
-                        value="false"
-                        checked={!form.getValues().userCanPost}
-                        onChange={() => {
-                          form.setValue("userCanPost", false);
-                          form.trigger("userCanPost");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="false" id="userCanPost-no" />
                       <Label htmlFor="userCanPost-no">Нет</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="userCanPost-yes" 
-                        name="userCanPost"
-                        value="true"
-                        checked={form.getValues().userCanPost}
-                        onChange={() => {
-                          form.setValue("userCanPost", true);
-                          form.trigger("userCanPost");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="true" id="userCanPost-yes" />
                       <Label htmlFor="userCanPost-yes">Да</Label>
                     </div>
-                  </div>
+                  </RadioGroup>
                 </div>
               </form>
             </div>

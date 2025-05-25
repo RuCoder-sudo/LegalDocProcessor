@@ -165,9 +165,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (!userId) {
-        // For anonymous users, create a temporary ID
+        // For anonymous users, create a temporary user in database
         userId = `temp_${Date.now()}`;
         console.log("Created temporary userId:", userId);
+        
+        // Create temporary user in database
+        await db
+          .insert(users)
+          .values({
+            id: userId,
+            email: `${userId}@temp.com`,
+            role: 'user',
+            subscription: 'free',
+            documentsCreated: 0,
+            documentsLimit: 3
+          })
+          .onConflictDoNothing();
       }
       
       // Проверяем лимиты для обычных пользователей (не админов)
