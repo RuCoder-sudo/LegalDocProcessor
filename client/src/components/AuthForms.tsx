@@ -97,12 +97,18 @@ export default function AuthForms() {
         description: "Аккаунт создан! Добро пожаловать!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      
+      // Сохраняем токен в localStorage если он вернулся с сервера
+      if (data.token) {
+        localStorage.setItem('auth-token', data.token);
+      }
+      
       // Переходим в личный кабинет после регистрации
       setTimeout(() => {
         if (data.user?.role === 'admin') {
           window.location.href = "/admin";
         } else {
-          window.location.href = "/dashboard";
+          window.location.href = "/";  // Redirect to home instead of dashboard
         }
       }, 1000);
     },

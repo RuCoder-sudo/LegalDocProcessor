@@ -92,10 +92,13 @@ export function setupJwtAuth(app: Express) {
       
       console.log("Установлен токен в cookie:", token ? "token установлен" : "token не установлен");
       
-      // Возвращаем пользователя без пароля
+      // Возвращаем пользователя без пароля и токен
       const { password: _, ...userWithoutPassword } = newUser;
       console.log("Возвращаем данные пользователя:", userWithoutPassword);
-      return res.json({ user: userWithoutPassword });
+      return res.json({ 
+        user: userWithoutPassword,
+        token: token
+      });
     } catch (error) {
       console.error("Ошибка при регистрации:", error);
       return res.status(500).json({ message: "Ошибка при регистрации", error: error.message });
@@ -141,7 +144,8 @@ export function setupJwtAuth(app: Express) {
         console.log("Admin login successful, token set");
         return res.json({ 
           message: "Вход выполнен успешно", 
-          user: adminUser 
+          user: adminUser,
+          token: token
         });
       }
 
@@ -178,11 +182,12 @@ export function setupJwtAuth(app: Express) {
         sameSite: 'lax'
       });
       
-      // Возвращаем пользователя без пароля
+      // Возвращаем пользователя без пароля и токен
       const { password: _, ...userWithoutPassword } = user;
       res.json({ 
         message: "Вход выполнен успешно",
-        user: userWithoutPassword 
+        user: userWithoutPassword,
+        token: token
       });
     } catch (error) {
       console.error("Login error:", error);
