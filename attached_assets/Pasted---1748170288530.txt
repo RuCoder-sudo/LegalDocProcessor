@@ -1,0 +1,44 @@
+
+
+При создание документа поивляется Премиум возможности:
+
+• Редактирование созданных документов
+• Экспорт в PDF, DOC, TXT форматы
+• Безлимитное создание документов
+• Расширенные шаблоны для разных отраслей
+• Приоритетная поддержка
+• API доступ для интеграции   убрать это и всё намёки на тарифы!
+
+Когда нажимаешь скачать пдф пишет ошибка Премиум функция Только в премиум тарифе обновитеь для полного доступа! Это нужно убрать у нас всё бесплатнО!
+Из личного кабинета тоже убрать Премиум план Спасибо за использование премиум-плана!
+1) - я просил убрать две шапки и подвала  со страницы Карта сайта и /help и Обратная связь
+2) - Проверь регистрацию и личный кабинет на наличии ошибок чтоб все настроки работали и сохронялись
+3) - Проверить создание каждого файла и экспорта ещё раз на наличии ошибок
+4) - Провреить на работоспособность все кнопки на сайте! 
+5) - Проверить чтоб все функции работали
+6) - Проверь ещё раз все ошибки и исправь!
+7) - я скачал проект на пк https://replit.com/@melansode/LegalDocProcessor?v=1 удалил на сервере папку /root/LegalDocProcessor/
+ залил новую от сюда https://replit.com/@melansode/LegalDocProcessor?v=1 получилось так же адресс /root/LegalDocProcessor/ проект тот же.
+Это команды остались когда я перезаливал в другой раз сайт этот же 
+netstat -tlpn | grep 3001
+
+pm2 delete legaldoc
+PORT=3001 DATABASE_URL="postgresql://legaldoc:yourpassword@localhost:5432/legaldocdb" NODE_ENV=development pm2 start npm --name "legaldoc" -- run dev
+
+rm /etc/nginx/sites-enabled/legalrfdocs.ru
+cat > /etc/nginx/sites-available/legalrfdocs.conf << 'EOL'
+server {
+    listen 80;
+    server_name legalrfdocs.ru www.legalrfdocs.ru;
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOL
+ 
+напиши команды чтоб переустановить новую свежую версию проект я уже новый залил /root/LegalDocProcessor/

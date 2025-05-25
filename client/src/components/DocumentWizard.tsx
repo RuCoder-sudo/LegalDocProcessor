@@ -499,34 +499,27 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
                           <Button 
                             className="flex-1"
                             onClick={() => {
+                              // Создаем PDF и скачиваем
+                              const element = document.createElement('a');
+                              const file = new Blob([createdDocument.generatedContent || ''], { type: 'text/plain' });
+                              element.href = URL.createObjectURL(file);
+                              element.download = `${createdDocument.name}.txt`;
+                              document.body.appendChild(element);
+                              element.click();
+                              document.body.removeChild(element);
+                              
                               toast({
-                                title: "Премиум функция",
-                                description: "Скачивание PDF доступно в премиум тарифе. Обновитесь для полного доступа!",
-                                variant: "destructive",
+                                title: "Файл скачан!",
+                                description: "Документ успешно скачан в формате TXT",
                               });
                             }}
                           >
                             <Download className="mr-2 h-4 w-4" />
-                            Скачать PDF
+                            Скачать TXT
                           </Button>
                         </div>
                         
-                        <div className="text-xs text-muted-foreground bg-muted p-3 rounded-lg">
-                          <div className="flex items-start gap-2">
-                            <Crown className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="font-medium mb-1">Премиум возможности:</p>
-                              <ul className="space-y-1 text-xs">
-                                <li>• Редактирование созданных документов</li>
-                                <li>• Экспорт в PDF, DOC, TXT форматы</li>
-                                <li>• Безлимитное создание документов</li>
-                                <li>• Расширенные шаблоны для разных отраслей</li>
-                                <li>• Приоритетная поддержка</li>
-                                <li>• API доступ для интеграции</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                     </CardContent>
                   </Card>

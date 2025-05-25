@@ -21,7 +21,7 @@ import {
   Calendar,
   TrendingUp,
   AlertCircle 
-} from "lucide-react";
+, CheckCircle } from "lucide-react";
 
 export default function Home() {
   const { user } = useAuth();
@@ -95,22 +95,14 @@ export default function Home() {
                 <CardHeader className="pb-2">
                   <CardDescription>Статус подписки</CardDescription>
                   <CardTitle className="text-2xl flex items-center gap-2">
-                    {user?.subscription === 'premium' ? (
-                      <>
-                        <Crown className="h-5 w-5 text-premium" />
-                        Премиум
-                      </>
-                    ) : (
-                      'Бесплатный'
-                    )}
+                    <Bell className="h-5 w-5 text-primary" />
+                    Активный
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {user?.subscription === 'free' && (
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href="/premium">Перейти на премиум</Link>
-                    </Button>
-                  )}
+                  <p className="text-sm text-muted-foreground">
+                    Все функции доступны
+                  </p>
                 </CardContent>
               </Card>
 
@@ -261,55 +253,35 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            {/* Subscription Info */}
-            <Card className={user?.subscription === 'premium' ? 'border-premium/20' : 'border-warning/20'}>
+            {/* Service Info */}
+            <Card className="border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  {user?.subscription === 'premium' ? (
-                    <>
-                      <Crown className="h-5 w-5 text-premium" />
-                      Премиум план
-                    </>
-                  ) : (
-                    'Бесплатный план'
-                  )}
+                  <FileText className="h-5 w-5 text-primary" />
+                  Полный доступ
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {user?.subscription === 'premium' ? (
-                  <div className="space-y-3">
-                    <ul className="text-sm space-y-2">
-                      {SUBSCRIPTION_PLANS.premium.features.slice(0, 3).map((feature: string, index: number) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <i className="fas fa-check text-success w-4"></i>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Separator />
-                    <p className="text-xs text-muted-foreground">
-                      Спасибо за использование премиум-плана!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <ul className="text-sm space-y-2">
-                      {SUBSCRIPTION_PLANS.free.features.slice(0, 3).map((feature: string, index: number) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <i className="fas fa-check text-success w-4"></i>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Separator />
-                    <Button className="w-full premium-gradient text-white" asChild>
-                      <Link href="/premium">
-                        <Crown className="mr-2 h-4 w-4" />
-                        Перейти на премиум
-                      </Link>
-                    </Button>
-                  </div>
-                )}
+                <div className="space-y-3">
+                  <ul className="text-sm space-y-2">
+                    <li className="flex items-center gap-2">
+                      <Plus className="h-4 w-4 text-success" />
+                      <span>Безлимитное создание документов</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Download className="h-4 w-4 text-success" />
+                      <span>Скачивание в разных форматах</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-success" />
+                      <span>Все шаблоны документов</span>
+                    </li>
+                  </ul>
+                  <Separator />
+                  <p className="text-sm text-muted-foreground">
+                    Спасибо за использование нашего сервиса!
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
