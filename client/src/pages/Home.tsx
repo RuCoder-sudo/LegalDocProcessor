@@ -20,8 +20,7 @@ import {
   Eye, 
   Calendar,
   TrendingUp,
-  AlertCircle 
-, CheckCircle } from "lucide-react";
+  AlertCircle } from "lucide-react";
 
 export default function Home() {
   const { user } = useAuth();
