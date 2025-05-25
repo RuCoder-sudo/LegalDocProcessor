@@ -317,138 +317,80 @@ export default function Landing() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Преимущества нашей платформы
+              Почему выбирают нас
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Почему ведущие компании выбирают нас для создания юридических документов
+              Надежный сервис для создания юридически грамотных документов для любого бизнеса
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-blue-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-500/10 p-3">
-                    <Shield className="h-8 w-8 text-blue-500" />
-                  </div>
-                  <CardTitle className="text-lg">100% соответствие закону</CardTitle>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="border hover:shadow-lg transition-all text-center">
+              <CardHeader className="pb-2">
+                <div className="mx-auto rounded-lg bg-blue-500/10 p-3 w-16 h-16 flex items-center justify-center mb-4">
+                  <Shield className="h-8 w-8 text-blue-500" />
                 </div>
+                <CardTitle>Юридическая защита</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Все документы создаются с учетом последних изменений в 152-ФЗ и требований Роскомнадзора
+                <CardDescription className="text-base">
+                  Все документы соответствуют требованиям 152-ФЗ и актуальному законодательству РФ
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-green-500/10 p-3">
-                    <Wand2 className="h-8 w-8 text-green-500" />
-                  </div>
-                  <CardTitle className="text-lg">Экономия времени</CardTitle>
+            <Card className="border hover:shadow-lg transition-all text-center">
+              <CardHeader className="pb-2">
+                <div className="mx-auto rounded-lg bg-green-500/10 p-3 w-16 h-16 flex items-center justify-center mb-4">
+                  <Clock className="h-8 w-8 text-green-500" />
                 </div>
+                <CardTitle>Экономия времени</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Создание документа занимает 5-10 минут вместо нескольких дней работы с юристом
+                <CardDescription className="text-base">
+                  Создание документа занимает всего несколько минут вместо часов работы юриста
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-purple-500/10 p-3">
-                    <Download className="h-8 w-8 text-purple-500" />
-                  </div>
-                  <CardTitle className="text-lg">Готовые к использованию</CardTitle>
+            <Card className="border hover:shadow-lg transition-all text-center">
+              <CardHeader className="pb-2">
+                <div className="mx-auto rounded-lg bg-purple-500/10 p-3 w-16 h-16 flex items-center justify-center mb-4">
+                  <Users className="h-8 w-8 text-purple-500" />
                 </div>
+                <CardTitle>Для всех типов бизнеса</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Документы сразу готовы для размещения на сайте в форматах PDF, DOC, HTML
+                <CardDescription className="text-base">
+                  Подходит как для физических лиц, так и для компаний любого размера и отрасли
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-orange-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-orange-500/10 p-3">
-                    <CheckCircle className="h-8 w-8 text-orange-500" />
-                  </div>
-                  <CardTitle className="text-lg">Проверено экспертами</CardTitle>
+            <Card className="border hover:shadow-lg transition-all text-center">
+              <CardHeader className="pb-2">
+                <div className="mx-auto rounded-lg bg-orange-500/10 p-3 w-16 h-16 flex items-center justify-center mb-4">
+                  <Award className="h-8 w-8 text-orange-500" />
                 </div>
+                <CardTitle>Проверено экспертами</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Шаблоны разработаны практикующими юристами с опытом работы в IT-сфере
+                <CardDescription className="text-base">
+                  Шаблоны разработаны профессиональными юристами с опытом в сфере ИТ и защиты данных
                 </CardDescription>
               </CardContent>
             </Card>
-
-            <Card className="border-red-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-red-500/10 p-3">
-                    <Crown className="h-8 w-8 text-red-500" />
-                  </div>
-                  <CardTitle className="text-lg">Премиум возможности</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Безлимитное создание, редактирование, экспорт документов и персональная поддержка
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="border-indigo-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-indigo-500/10 p-3">
-                    <ArrowRight className="h-8 w-8 text-indigo-500" />
-                  </div>
-                  <CardTitle className="text-lg">Постоянные обновления</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Мы следим за изменениями в законодательстве и обновляем шаблоны автоматически
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Начните создавать документы прямо сейчас
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Зарегистрируйтесь и получите доступ ко всем функциям бесплатно
-            </p>
           </div>
           
-          <div className="flex justify-center mt-8">
+          <div className="mt-12 text-center">
             <Dialog>
               <DialogTrigger asChild>
-                <Button 
-                  size="lg" 
-                  className="px-10 py-6 text-lg font-semibold transition-all transform hover:scale-105"
-                >
-                  <Rocket className="mr-2 h-5 w-5" />
-                  Зарегистрироваться и начать
+                <Button size="lg" className="px-8 py-6 text-lg font-semibold">
+                  Попробовать бесплатно
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
@@ -456,43 +398,37 @@ export default function Landing() {
               </DialogContent>
             </Dialog>
           </div>
-          
-          <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="flex flex-col items-center text-center">
-              <div className="rounded-full bg-blue-500/10 p-4 mb-4">
-                <Shield className="h-8 w-8 text-blue-500" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Безопасно и надежно</h3>
-              <p className="text-muted-foreground">Ваши данные защищены в соответствии с требованиями 152-ФЗ</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center">
-              <div className="rounded-full bg-green-500/10 p-4 mb-4">
-                <Wand2 className="h-8 w-8 text-green-500" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Быстро и просто</h3>
-              <p className="text-muted-foreground">Простой процесс создания документов без лишних сложностей</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center">
-              <div className="rounded-full bg-purple-500/10 p-4 mb-4">
-                <CheckCircle className="h-8 w-8 text-purple-500" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Соответствие закону</h3>
-              <p className="text-muted-foreground">Все документы полностью соответствуют требованиям законодательства</p>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Document Wizard */}
-      <DocumentWizard 
-        open={wizardOpen} 
-        onOpenChange={setWizardOpen}
-        onSuccess={() => {
-          // Redirect to documents page or show success message
-        }}
-      />
+      {/* Call to Action Section */}
+      <section className="py-24 bg-gradient-to-br from-primary/10 to-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            Создайте свой первый документ прямо сейчас!
+          </h2>
+          <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+            Присоединяйтесь к тысячам довольных пользователей, которые уже автоматизировали создание юридических документов для своих сайтов
+          </p>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                size="lg" 
+                className="px-10 py-7 text-xl font-bold transition-all transform hover:scale-105"
+              >
+                <FileText className="mr-2 h-6 w-6" />
+                Начать бесплатно
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <AuthForms />
+            </DialogContent>
+          </Dialog>
+        </div>
+      </section>
+
+      {/* Document wizard */}
+      <DocumentWizard open={wizardOpen} onOpenChange={setWizardOpen} />
     </div>
   );
 }
