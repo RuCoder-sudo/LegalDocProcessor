@@ -248,38 +248,23 @@ export default function DocumentWizard({ open, onOpenChange, onSuccess }: Docume
               <form className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4 border rounded-lg p-4 mb-4 col-span-2">
                   <Label className="text-base font-medium">Владелец сайта:</Label>
-                  <div className="flex flex-row gap-8 mt-2">
+                  <RadioGroup 
+                    value={form.getValues().ownerType} 
+                    onValueChange={(value) => {
+                      form.setValue("ownerType", value as "individual" | "legal");
+                      form.trigger("ownerType");
+                    }}
+                    className="flex flex-row gap-8 mt-2"
+                  >
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="ownerType-individual" 
-                        name="ownerType"
-                        value="individual"
-                        checked={form.getValues().ownerType === "individual"}
-                        onChange={() => {
-                          form.setValue("ownerType", "individual");
-                          form.trigger("ownerType");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="individual" id="ownerType-individual" />
                       <Label htmlFor="ownerType-individual">Физ. лицо</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input 
-                        type="radio" 
-                        id="ownerType-legal" 
-                        name="ownerType"
-                        value="legal"
-                        checked={form.getValues().ownerType === "legal"}
-                        onChange={() => {
-                          form.setValue("ownerType", "legal");
-                          form.trigger("ownerType");
-                        }}
-                        className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      />
+                      <RadioGroupItem value="legal" id="ownerType-legal" />
                       <Label htmlFor="ownerType-legal">Юр. лицо или ИП</Label>
                     </div>
-                  </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="space-y-2">

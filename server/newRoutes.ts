@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await db
             .update(users)
             .set({ 
-              documentscreated: (user.documentscreated || 0) + 1 
+              documentsCreated: (user.documentsCreated || 0) + 1 
             })
             .where(eq(users.id, userId));
         }
