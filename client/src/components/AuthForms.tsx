@@ -101,15 +101,15 @@ export default function AuthForms() {
       // Сохраняем токен в localStorage если он вернулся с сервера
       if (data.token) {
         localStorage.setItem('auth-token', data.token);
+        console.log("Сохранен токен после регистрации:", data.token);
       }
       
-      // Переходим в личный кабинет после регистрации
+      // Обновляем информацию о пользователе
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      
+      // Переходим на главную страницу после регистрации
       setTimeout(() => {
-        if (data.user?.role === 'admin') {
-          window.location.href = "/admin";
-        } else {
-          window.location.href = "/";  // Redirect to home instead of dashboard
-        }
+        window.location.href = "/";
       }, 1000);
     },
     onError: (error: any) => {
