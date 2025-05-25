@@ -36,10 +36,11 @@ export default function Home() {
   });
 
   const unreadNotifications = notifications.filter(n => !n.isRead);
-  const isFreePlan = user?.subscription === 'free';
+  // All users have full access
+  const isFreePlan = false;
   const documentsUsed = user?.documentsCreated || 0;
-  const documentsLimit = user?.documentsLimit || 3;
-  const usagePercentage = isFreePlan ? (documentsUsed / documentsLimit) * 100 : 0;
+  const documentsLimit = 999;
+  const usagePercentage = 0;
 
   const recentDocuments = documents.slice(0, 5);
 

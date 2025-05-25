@@ -34,9 +34,8 @@ export default function Dashboard() {
     );
   }
 
-  const usagePercentage = user.documentsLimit > 0 
-    ? (user.documentsCreated / user.documentsLimit) * 100 
-    : 0;
+  // All users have unlimited documents
+  const usagePercentage = 0;
 
   return (
     <Layout>
@@ -119,25 +118,7 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Upgrade Banner for Free Users */}
-          {user.subscription === 'free' && (
-            <Card className="mb-8 border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20">
-              <CardHeader>
-                <CardTitle className="text-yellow-800 dark:text-yellow-200 flex items-center">
-                  <Crown className="h-5 w-5 mr-2" />
-                  Обновите до Премиум
-                </CardTitle>
-                <CardDescription className="text-yellow-700 dark:text-yellow-300">
-                  Получите безлимитное создание документов, QR-коды, расширенные шаблоны и экспорт без водяных знаков
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                  Обновить сейчас
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+          {/* Premium upgrade banner removed */}
 
           {/* Documents List */}
           <Card>
