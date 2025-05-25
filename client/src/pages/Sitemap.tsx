@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import Layout from "@/components/Layout";
+
 import { useAuth } from "@/hooks/useAuth";
 
 import { 
@@ -41,7 +41,7 @@ const SITEMAP_SECTIONS = [
       { href: "/examples?type=offer", title: "Публичная оферта", description: "Условия продажи товаров/услуг" },
       { href: "/examples?type=cookie", title: "Политика Cookie", description: "Информация об использовании cookie" },
       { href: "/examples?type=return", title: "Политика возврата", description: "Правила возврата товаров и средств" },
-      { href: "/examples?type=charter", title: "Устав сайта", description: "Правила поведения и использования платформы", premium: true },
+      { href: "/examples?type=charter", title: "Устав сайта", description: "Правила поведения и использования платформы" },
     ]
   },
   {
@@ -92,7 +92,6 @@ export default function Sitemap() {
   const allSections = [...SITEMAP_SECTIONS, ...userSections, ...adminSections];
 
   return (
-    <Layout>
       <div className="min-h-screen bg-background py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -169,12 +168,7 @@ export default function Sitemap() {
                             >
                               {link.title}
                             </Link>
-                            {link.premium && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Crown className="h-3 w-3 mr-1" />
-                                Премиум
-                              </Badge>
-                            )}
+
                           </div>
                           <p className="text-sm text-muted-foreground">
                             {link.description}
@@ -256,6 +250,5 @@ export default function Sitemap() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

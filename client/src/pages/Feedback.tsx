@@ -17,7 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import Layout from "@/components/Layout";
+
 
 import { 
   MessageSquare, 

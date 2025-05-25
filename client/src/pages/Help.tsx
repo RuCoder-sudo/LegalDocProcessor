@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Layout from "@/components/Layout";
+
 
 import { 
   Search, 
@@ -187,7 +187,6 @@ export default function Help() {
   });
 
   return (
-    <Layout>
       <div>
         {/* Search */}
         <div className="bg-gradient-to-br from-blue-50 to-background dark:from-blue-950/20 py-12">
