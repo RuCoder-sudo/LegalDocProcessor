@@ -28,21 +28,21 @@ export const users = pgTable("users", {
   id: varchar("id", { length: 50 }).primaryKey(),
   email: varchar("email").unique().notNull(),
   password: varchar("password").notNull(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
+  firstname: varchar("firstname"),
+  lastname: varchar("lastname"),
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role").default("user"), // user, premium, ultra, admin
   subscription: varchar("subscription").default("free"), // free, premium, ultra
-  documentsCreated: integer("documents_created").default(0),
-  documentsLimit: integer("documents_limit").default(3),
+  documentscreated: integer("documentscreated").default(0),
+  documentslimit: integer("documentslimit").default(3),
   premiumUntil: timestamp("premium_until"),
   telegramBotToken: varchar("telegram_bot_token"),
   telegramChannelId: varchar("telegram_channel_id"),
   referralCode: varchar("referral_code").unique(),
   referredBy: varchar("referred_by").references(() => users.id),
   referralEarnings: integer("referral_earnings").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdat: timestamp("createdat").defaultNow(),
+  updatedat: timestamp("updatedat").defaultNow(),
 });
 
 // Admin settings
