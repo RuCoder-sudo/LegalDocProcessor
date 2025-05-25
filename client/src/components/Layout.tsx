@@ -232,7 +232,7 @@ export default function Layout({ children, showFooter = true }: LayoutProps) {
 
               {/* Services Menu */}
               <div>
-                <h3 className="text-lg font-semibold mb-4">Услуги</h3>
+                <h3 className="text-lg font-semibold mb-4">Генератор</h3>
                 <ul className="space-y-3 text-gray-300">
                   <li><Link href="/examples?type=privacy" className="hover:text-primary transition-colors text-sm"><i className="fas fa-user-shield mr-2"></i>Политика конфиденциальности</Link></li>
                   <li><Link href="/examples?type=terms" className="hover:text-primary transition-colors text-sm"><i className="fas fa-handshake mr-2"></i>Пользовательское соглашение</Link></li>

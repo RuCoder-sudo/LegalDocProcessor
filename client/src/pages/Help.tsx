@@ -205,7 +205,7 @@ export default function Help() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background">
+      <div>
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-blue-50 to-background dark:from-blue-950/20 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
