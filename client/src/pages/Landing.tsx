@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DocumentWizard from "@/components/DocumentWizard";
 import AuthForms from "@/components/AuthForms";
+import NewsCarousel from "@/components/NewsCarousel";
 import { DOCUMENT_TYPES } from "@/lib/constants";
 import { 
   Scale, 
@@ -17,7 +18,11 @@ import {
   ArrowRight, 
   CheckCircle,
   Crown,
-  FileText
+  FileText,
+  Award,
+  Clock,
+  Users,
+  ThumbsUp
 } from "lucide-react";
 
 export default function Landing() {
@@ -287,6 +292,26 @@ export default function Landing() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Новости Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Новости и обновления</h2>
+            <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+              Будьте в курсе изменений законодательства и обновлений нашего сервиса
+            </p>
+          </div>
+
+          <NewsCarousel />
+          
+          <div className="mt-10 text-center">
+            <Button variant="outline" size="lg">
+              Смотреть все новости
+            </Button>
           </div>
         </div>
       </section>
