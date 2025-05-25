@@ -16,7 +16,8 @@ import {
   Play, 
   ArrowRight, 
   CheckCircle,
-  Crown 
+  Crown,
+  FileText
 } from "lucide-react";
 
 export default function Landing() {
@@ -119,6 +120,131 @@ export default function Landing() {
                 </CardDescription>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* Преимущества регистрации - новая секция */}
+      <section className="py-16 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Преимущества после регистрации
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Все функции бесплатно доступны сразу после простой регистрации
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-green-500/10 p-3">
+                    <FileText className="h-6 w-6 text-green-500" />
+                  </div>
+                  <CardTitle className="text-lg">Безлимитное создание</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Создавайте неограниченное количество документов для всех ваших проектов
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-blue-500/10 p-3">
+                    <Download className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <CardTitle className="text-lg">Экспорт документов</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Скачивайте документы в PDF, DOC и HTML форматах для удобного использования
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-purple-500/10 p-3">
+                    <Wand2 className="h-6 w-6 text-purple-500" />
+                  </div>
+                  <CardTitle className="text-lg">Редактирование</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Вносите изменения в ваши документы в любое время по мере необходимости
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-orange-500/10 p-3">
+                    <Shield className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <CardTitle className="text-lg">Юридическая защита</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Документы соответствуют всем требованиям законодательства РФ, включая 152-ФЗ
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-red-500/10 p-3">
+                    <ArrowRight className="h-6 w-6 text-red-500" />
+                  </div>
+                  <CardTitle className="text-lg">QR-коды</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Генерируйте QR-коды для ваших документов для быстрого доступа
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border hover:shadow-lg transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-indigo-500/10 p-3">
+                    <CheckCircle className="h-6 w-6 text-indigo-500" />
+                  </div>
+                  <CardTitle className="text-lg">Расширенные шаблоны</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Доступ к продвинутым шаблонам с учетом специфики вашего бизнеса
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-10 text-center">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="px-8 py-6 text-lg font-semibold">
+                  Зарегистрироваться и начать
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <AuthForms />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </section>
@@ -277,137 +403,59 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing Teaser */}
+      {/* Call to Action Section */}
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Выберите свой план
+              Начните создавать документы прямо сейчас
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Начните бесплатно и переходите на премиум при необходимости
+              Зарегистрируйтесь и получите доступ ко всем функциям бесплатно
             </p>
           </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Free Plan */}
-            <Card className="border-2">
-              <CardHeader>
-                <div className="text-center">
-                  <CardTitle className="text-2xl">Бесплатный</CardTitle>
-                  <div className="text-4xl font-bold my-2">0 ₽</div>
-                  <CardDescription>Для начинающих</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>До 3 документов в месяц</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Просмотр и копирование текста</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Базовые шаблоны документов</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Стандартная поддержка</span>
-                  </li>
-                </ul>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="w-full" variant="outline">
-                      Начать бесплатно
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <AuthForms />
-                  </DialogContent>
-                </Dialog>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plan */}
-            <Card className="border-2 border-premium relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-yellow-400 text-gray-900">Популярный</Badge>
+          
+          <div className="flex justify-center mt-8">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  size="lg" 
+                  className="px-10 py-6 text-lg font-semibold transition-all transform hover:scale-105"
+                >
+                  <Rocket className="mr-2 h-5 w-5" />
+                  Зарегистрироваться и начать
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <AuthForms />
+              </DialogContent>
+            </Dialog>
+          </div>
+          
+          <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="flex flex-col items-center text-center">
+              <div className="rounded-full bg-blue-500/10 p-4 mb-4">
+                <Shield className="h-8 w-8 text-blue-500" />
               </div>
-              
-              <CardHeader className="premium-gradient text-white">
-                <div className="text-center">
-                  <CardTitle className="text-2xl">Премиум</CardTitle>
-                  <div className="text-4xl font-bold my-2">Договорная</div>
-                  <CardDescription className="text-purple-100">Свяжитесь с @RussCoder</CardDescription>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Безлимитное создание документов</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Экспорт в PDF, DOC, HTML</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Редактирование документов</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Приоритетная поддержка</span>
-                  </li>
-                </ul>
-                <Button className="w-full premium-gradient text-white" asChild>
-                  <Link href="/premium">
-                    <Crown className="mr-2 h-4 w-4" />
-                    Узнать больше
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Ultra Plan */}
-            <Card className="border-2 border-gray-200">
-              <CardHeader>
-                <div className="text-center">
-                  <CardTitle className="text-2xl">Ультра</CardTitle>
-                  <div className="text-4xl font-bold my-2">₽4,990</div>
-                  <CardDescription>в месяц</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Все функции Премиум</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Персональный менеджер</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Юридические консультации</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Индивидуальные шаблоны</span>
-                  </li>
-                </ul>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link href="/contacts">
-                    Связаться с нами
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+              <h3 className="text-lg font-semibold mb-2">Безопасно и надежно</h3>
+              <p className="text-muted-foreground">Ваши данные защищены в соответствии с требованиями 152-ФЗ</p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center">
+              <div className="rounded-full bg-green-500/10 p-4 mb-4">
+                <Wand2 className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Быстро и просто</h3>
+              <p className="text-muted-foreground">Простой процесс создания документов без лишних сложностей</p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center">
+              <div className="rounded-full bg-purple-500/10 p-4 mb-4">
+                <CheckCircle className="h-8 w-8 text-purple-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Соответствие закону</h3>
+              <p className="text-muted-foreground">Все документы полностью соответствуют требованиям законодательства</p>
+            </div>
           </div>
         </div>
       </section>

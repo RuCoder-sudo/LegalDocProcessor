@@ -256,12 +256,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const updates = req.body;
       
+      console.log("Updating admin settings:", updates);
+      
       const settings = await db
         .select()
         .from(adminSettings)
         .limit(1);
 
       if (settings.length === 0) {
+        console.log("No existing settings found, creating new settings");
         const newSettings = await db
           .insert(adminSettings)
           .values(updates)
@@ -269,6 +272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(newSettings[0]);
       }
 
+      console.log("Updating existing settings with ID:", settings[0].id);
       const updatedSettings = await db
         .update(adminSettings)
         .set(updates)

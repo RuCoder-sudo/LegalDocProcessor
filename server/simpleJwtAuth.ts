@@ -61,9 +61,9 @@ export function setupJwtAuth(app: Express) {
           firstName: firstName || null,
           lastName: lastName || null,
           role: 'user',
-          subscription: 'free',
+          subscription: 'premium', // Даем всем пользователям премиум-подписку
           documentsCreated: 0,
-          documentsLimit: 3  // Увеличиваем лимит до 3 документов
+          documentsLimit: -1  // Безлимитное количество документов (-1 = неограниченно)
         })
         .returning();
       
